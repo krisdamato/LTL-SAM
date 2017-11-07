@@ -3,6 +3,7 @@ import nest
 import numpy as np
 import pylab
 import time
+from mpi4py import MPI
 
 class SAMModule:
 	"""
@@ -14,11 +15,11 @@ class SAMModule:
 	estimate the target conditional probability of the withheld variable.
 	"""
 
-	def __init__(self, randomise_seed=False):
+	def __init__(self, randomise_seed=False, params={}):
 		"""
 		Initialises RNGs and network settings with default values.
 		"""
-		self.set_defaults()
+		self.set_defaults(params)
 		self.initialised = False
 
 		# Randomise.
@@ -84,6 +85,7 @@ class SAMModule:
 			'nu_current_plus':30.0,
 			'nu_current_minus':-30.0,
 			'alpha_current_minus':-80.0,
+			'alpha_current_plus':0.0,
 			'first_learning_phase':learning_phase_1,
 			'second_learning_phase':learning_phase_2,
 			'sample_presentation_time':100.0, # 100 ms.
@@ -206,19 +208,18 @@ class SAMModule:
 			raise NotImplementedError
 
 
-	def create_network(self, num_x_vars=2, num_discrete_vals_x=2, num_discrete_vals_z=2, num_modes=2):
+	def create_network(self, num_x_vars=2, num_discrete_vals=2, num_modes=2, distribution=None):
 		"""
 		Creates a SAM module with the specified architecture.
 		"""
-
 		# Set bias baseline.
-		bias_baseline = helpers.determine_bias_baseline(self.params['T'], [num_discrete_vals_x for i in range(num_x_vars)])
+		bias_baseline = helpers.determine_bias_baseline(self.params['T'], [num_discrete_vals for i in range(num_x_vars)])
 		self.params['bias_baseline'] = bias_baseline
 
 		# Create neuron layers.
-		self.chi = nest.Create(self.params['chi_neuron_type'], n=num_discrete_vals_x * num_x_vars, params=self.chi_neuron_params)
-		self.alpha = nest.Create(self.params['alpha_neuron_type'], n=num_modes * num_discrete_vals_z, params=self.alpha_neuron_params)
-		self.zeta = nest.Create(self.params['zeta_neuron_type'], n=num_discrete_vals_z, params=self.zeta_neuron_params)
+		self.chi = nest.Create(self.params['chi_neuron_type'], n=num_discrete_vals * num_x_vars, params=self.chi_neuron_params)
+		self.alpha = nest.Create(self.params['alpha_neuron_type'], n=num_modes * num_discrete_vals, params=self.alpha_neuron_params)
+		self.zeta = nest.Create(self.params['zeta_neuron_type'], n=num_discrete_vals, params=self.zeta_neuron_params)
 		self.inhibitors = nest.Create(self.params['inhibitors_neuron_type'], n=self.params['num_inhibitors'], params=self.inhibitors_neuron_params)
 
 		# Track all neurons.
@@ -239,7 +240,16 @@ class SAMModule:
 			j = i // num_modes
 			nest.Connect([self.alpha[i]], [self.zeta[j]], syn_spec=self.alpha_zeta_synapse_params)
 
-		# Set initialised flag.
+		# If no distribution has been passed, generate one using the passed parameters.
+		self.distribution = distribution if distribution is not None else self.generate_distribution(num_x_vars + 1, num_discrete_vals)
+		if len(self.distribution) != pow(num_discrete_vals, num_x_vars + 1):
+			raise Exception("The number of variables in the distribution and parameters must match.")
+
+		# Set other flags/metainfo.
+		self.num_vars = num_x_vars + 1
+		self.num_discrete_vals = num_discrete_vals
+		self.num_modes = num_modes
+
 		self.initialised = True
 
 
@@ -252,51 +262,141 @@ class SAMModule:
 		return [(ni['global_id'], ni['vp']) for ni in node_info if ni['local']]
 
 
-	def inject_random_current(self, duration):
+	def are_nodes_local(self, neurons):
+		"""
+		Returns a list of True/False values for all nodes, indicating whether the 
+		nodes are local.
+		"""
+		node_info = nest.GetStatus(neurons)
+		return [ni['local'] for ni in node_info]
+
+
+	def generate_distribution(self, num_vars, num_discrete_vals):
+		"""
+		Generates a distribution randomly (see helpers documentation). This uses
+		the rank 0 process RNG to generate the random numbers.
+		"""
+		comm = MPI.COMM_WORLD
+		rank = comm.Get_rank()
+
+		# Broadcast the distribution to all MPI processes.
+		if rank == 0:
+		    dist = helpers.generate_distribution(num_vars, num_discrete_vals, self.rngs[0])
+		    print("Process 0 generating distribution.")
+		else:
+			dist = None
+			print("Process {} receiving distribution.".format(rank))
+
+		comm.bcast(dist, root=0)
+
+		return dist
+
+
+	def draw_random_sample(self, complete=True):
+		"""
+		Uses the rank 0 process to draw a random sample from the member distribution.
+		See the documentation in helpers for more details on how this works.
+		"""
+		comm = MPI.COMM_WORLD
+		rank = comm.Get_rank()
+
+		# Broadcast the sample to all MPI processes.
+		if rank == 0:
+		    sample = helpers.draw_from_distribution(self.distribution, complete, self.rngs[0])
+		    #print("Process 0 drew a sample:", sample)
+		else:
+			sample = None
+			#print("Process {} receiving a sample.".format(rank))
+
+		comm.bcast(sample, root=0)
+
+		return sample
+
+
+	def set_currents(self, state, inhibit_alpha=False):
+		"""
+		Sets excitatory/inhibitory currents to the network for the given state.
+		This does not simulate the network.
+		"""
+		def set_alpha_currents():
+			nodes = self.alpha
+			locals = self.are_nodes_local(nodes)
+			for i in range(len(nodes)):
+				var_index = len(state) - 1
+				node_value = (i // self.num_modes) + 1 # The + 1 is necessary since the neurons are 1-offset.
+				inhibit = state[var_index] != node_value
+				if locals[i]:
+					current = self.params['alpha_current_minus'] if inhibit else self.params['alpha_current_plus']
+					#print("Inhibiting node {}".format(nodes[i]) if inhibit else "Activating node {}".format(nodes[i]))
+					nest.SetStatus([nodes[i]], {'I_e':current})
+
+		def set_layer_currents(nodes, is_input):
+			locals = self.are_nodes_local(nodes)
+			for i in range(len(nodes)):
+				var_index = i // self.num_discrete_vals if is_input else len(state) - 1
+				node_value = (i % self.num_discrete_vals) + 1 # The + 1 is necessary since the neurons are 1-offset.
+				inhibit = state[var_index] != node_value
+				if locals[i]:
+					current = self.params['nu_current_minus'] if inhibit else self.params['nu_current_plus']
+					#print("Inhibiting node {}".format(nodes[i]) if inhibit else "Activating node {}".format(nodes[i]))
+					nest.SetStatus([nodes[i]], {'I_e':current})
+		
+		# Set input layer neurons.
+		set_layer_currents(self.chi, is_input=True)
+
+		# Set alpha layer neurons.
+		if inhibit_alpha:
+			set_alpha_currents()
+
+		# Set output layer neurons.
+		set_layer_currents(self.zeta, is_input=False)
+
+
+	def present_random_sample(self, duration):
 		"""
 		Simulates the network for the given duration while a constant external current
 		is presented to each population coding neuron in the network, chosen randomly 
-		to be excitatory or inhibitory.
+		to be excitatory or inhibitory from a valid state of the distribution.
+		Alpha neurons are inhibited if the value they represent does not match the 
+		sample value.
 		"""
-
-		def set_currents(neurons):
-			'Sets randomly chosen excitatory/inhibitory currents for passed neurons.'
-			for gid, vp in self.get_local_nodes(neurons):
-				rand = self.rngs[vp].randint(2) # Random integer in {0, 1}
-				current = self.params['nu_current_minus'] if rand == 0 else self.params['nu_current_plus']
-				print("Inhibiting {}".format(gid) if rand == 0 else "Activating {}".format(gid))
-				nest.SetStatus([gid], {'I_e':current})
-
 		if not self.initialised:
 			raise Exception("SAM module not initialised yet.")
 
-		# Set currents in input and output layers.
-		set_currents(self.chi)
-		set_currents(self.zeta)
+		# Get a random state from the distribution.
+		state = self.draw_random_sample(complete=True)
 
+		# Set currents in input and output layers.
+		self.set_currents(state, inhibit_alpha=True)
+
+		# Simulate.
+		nest.Simulate(duration)
+
+
+	def clear_currents(self):
+		"""
+		Convenience call that unsets all external currents.
+		"""
+		nest.SetStatus(self.all_neurons, {'I_e':0.0})
+
+
+	def connect_reader(self):
+		"""
+		Connects a spike reader to the network and returns it.
+		"""
 		# Create a spike reader.
 		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
 
 		# Connect all neurons to the spike reader.
 		nest.Connect(self.all_neurons, spikereader)
 
-		# Simulate.
-		nest.Simulate(duration / 2)
-
-		# Remove external currents.
-		nest.SetStatus(self.all_neurons, {'I_e':0.0})
-
-		# Simulate.
-		nest.Simulate(duration / 2)
-
-		# Plot spikes.
-		self.plot_spikes(spikereader)
+		return spikereader
 
 
 	def plot_spikes(self, spikereader):
 		"""
-		Connects a spike reader to each neuron and plots the spike trace over a simulation
-		with the given duration.
+		Plots the spike trace from all neurons the spikereader was connected to during
+		the simulation.
 		"""
 		# Get spikes and plot.
 		spikes = nest.GetStatus(spikereader, keys='events')[0]
