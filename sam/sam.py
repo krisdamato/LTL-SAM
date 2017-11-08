@@ -33,6 +33,9 @@ class SAMModule:
 		nest.SetKernelStatus({'grng_seed' : seed + n})
 		nest.SetKernelStatus({'rng_seeds' : range(seed + n + 1, seed + 2 * n + 1)})
 
+		# Reduce NEST verbosity.
+		nest.set_verbosity('M_ERROR')
+
 
 	def set_defaults(self, params={}):
 		"""
@@ -56,6 +59,7 @@ class SAMModule:
 			'T':0.4,
 			'use_rect_psp_exc':False,
 			'use_rect_psp_inh':True,
+			'inhibitors_use_rect_psp_exc':True,
 			'amplitude_exc':2.8,
 			'amplitude_inh':2.8,
 			'external_current':0.0,
@@ -128,7 +132,7 @@ class SAMModule:
 			'tau_exc':self.params['tau_exc'],
 			'tau_inh':self.params['tau'], 
 			'tau_bias':self.params['tau'],
-			'eta_bias': self.params['first_bias_rate'], # eta_bias is set to 0.02 manually after 600 s.
+			'eta_bias':0.0, # eta_bias is set to 0.02 manually after 600 s.
 			'b_baseline':self.params['bias_baseline'], # This is set by a call elsewhere.
 			'max_bias':self.params['max_bias'],
 			'min_bias':self.params['min_bias'],
@@ -156,20 +160,24 @@ class SAMModule:
 			self.alpha_neuron_params={
 				'use_random_bias':True,
 				'mu_bias':self.params['bias_alpha_mean'],
-				'sigma_bias':self.params['bias_alpha_std']
+				'sigma_bias':self.params['bias_alpha_std'],
+				'eta_bias': self.params['first_bias_rate']
 				}
 		else:
 			raise NotImplementedError
 
 		# Output population model.
 		if self.params['zeta_neuron_type'] == 'srm_pecevski_alpha':
-			self.zeta_neuron_params={"bias":self.params['bias_zeta']}
+			self.zeta_neuron_params={'bias':self.params['bias_zeta']}
 		else:
 			raise NotImplementedError
 
 		# Inhibitor population model.
 		if self.params['inhibitors_neuron_type'] == 'srm_pecevski_alpha':
-			self.inhibitors_neuron_params={"bias":self.params['bias_inhibitors']}
+			self.inhibitors_neuron_params={
+				'bias':self.params['bias_inhibitors'],
+				'rect_exc':self.params['inhibitors_use_rect_psp_exc']
+				}
 		else:
 			raise NotImplementedError
 
@@ -243,7 +251,8 @@ class SAMModule:
 		# If no distribution has been passed, generate one using the passed parameters.
 		self.distribution = distribution if distribution is not None else self.generate_distribution(num_x_vars + 1, num_discrete_vals)
 		if len(self.distribution) != pow(num_discrete_vals, num_x_vars + 1):
-			raise Exception("The number of variables in the distribution and parameters must match.")
+			raise Exception("The number of variables in the distribution and parameters must match. " + 
+				"Given a distribution of length {} but {} combinations of values and variables.".format(len(self.distribution), pow(num_discrete_vals, num_x_vars + 1)))
 
 		# Set other flags/metainfo.
 		self.num_vars = num_x_vars + 1
@@ -282,7 +291,7 @@ class SAMModule:
 		# Broadcast the distribution to all MPI processes.
 		if rank == 0:
 		    dist = helpers.generate_distribution(num_vars, num_discrete_vals, self.rngs[0])
-		    print("Process 0 generating distribution.")
+		    print("Process 0 generated distribution:", dist)
 		else:
 			dist = None
 			print("Process {} receiving distribution.".format(rank))
@@ -313,7 +322,7 @@ class SAMModule:
 		return sample
 
 
-	def set_currents(self, state, inhibit_alpha=False):
+	def set_currents(self, state, inhibit_alpha=False, force_zeta=True):
 		"""
 		Sets excitatory/inhibitory currents to the network for the given state.
 		This does not simulate the network.
@@ -349,7 +358,38 @@ class SAMModule:
 			set_alpha_currents()
 
 		# Set output layer neurons.
-		set_layer_currents(self.zeta, is_input=False)
+		if force_zeta:
+			set_layer_currents(self.zeta, is_input=False)
+
+
+	def set_intrinsic_rate(self, intrinsic_rate):
+		"""
+		Sets the learning rate of intrinsic plasticity in the alpha layer.
+		Applicable only for SRM Peceveski neurons.
+		"""
+		if self.params['alpha_neuron_type'] == 'srm_pecevski_alpha':
+			nest.SetStatus(self.alpha, {'eta_bias':intrinsic_rate})
+		else:
+			raise Exception("Cannot set a bias rate in neurons that don't support it.")
+
+
+	def set_plasticity_learning_time(self, learning_time):
+		"""
+		Sets the STDP learning time in the STDP connections.
+		"""
+		if self.params['chi_alpha_synapse_type'] == 'stdp_pecevski_synapse':
+			synapses = nest.GetConnections(self.chi, self.alpha)
+			nest.SetStatus(synapses, {'learning_time':learning_time}) # We stop learning by setting the learning time to 0.
+		else:
+			raise Exception("Cannot set a learning time in synapses that don't support it.")
+
+
+	def simulate_without_input(self, duration):
+		"""
+		Simulates the network without any input.
+		"""
+		self.clear_currents()
+		nest.Simulate(duration)
 
 
 	def present_random_sample(self, duration):
@@ -367,7 +407,26 @@ class SAMModule:
 		state = self.draw_random_sample(complete=True)
 
 		# Set currents in input and output layers.
-		self.set_currents(state, inhibit_alpha=True)
+		self.set_currents(state, inhibit_alpha=True, force_zeta=True)
+
+		# Simulate.
+		nest.Simulate(duration)
+
+
+	def present_input_evidence(self, duration, sample=None):
+		"""
+		Presents the given sample state or a random one drawn from the set distribution
+		and simulates for the given period. This only activates/inhibits the input 
+		layer. 
+		"""
+		if not self.initialised:
+			raise Exception("SAM module not initialised yet.")
+
+		# Get a random state from the distribution if one is not given.
+		state = sample if sample is not None else self.draw_random_sample(complete=True)
+
+		# Set currents in input layer.
+		self.set_currents(state, inhibit_alpha=False, force_zeta=False)
 
 		# Simulate.
 		nest.Simulate(duration)
@@ -380,7 +439,7 @@ class SAMModule:
 		nest.SetStatus(self.all_neurons, {'I_e':0.0})
 
 
-	def connect_reader(self):
+	def connect_reader(self, nodes):
 		"""
 		Connects a spike reader to the network and returns it.
 		"""
@@ -388,7 +447,7 @@ class SAMModule:
 		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
 
 		# Connect all neurons to the spike reader.
-		nest.Connect(self.all_neurons, spikereader)
+		nest.Connect(nodes, spikereader)
 
 		return spikereader
 
