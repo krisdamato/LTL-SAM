@@ -57,13 +57,13 @@ class SAMModule:
 			'weight_baseline':2.5 * np.log(0.2),
 			'tau':tau,
 			'T':0.4,
-			'use_rect_psp_exc':False,
+			'use_rect_psp_exc':True,
 			'use_rect_psp_inh':True,
 			'inhibitors_use_rect_psp_exc':True,
 			'amplitude_exc':2.8,
 			'amplitude_inh':2.8,
 			'external_current':0.0,
-			'tau_membrane':15.0,
+			'tau_membrane':0.1,
 			'tau_exc':8.5,
 			'first_bias_rate':0.01,
 			'second_bias_rate':0.02,
@@ -74,7 +74,7 @@ class SAMModule:
 			'initial_bias':5.0,
 			'dead_time_random':False,
 			'linear_term_prob':0.0,
-			'exp_term_prob':1/tau,
+			'exp_term_prob':0.01/tau, # 1000 factor is needed to turn ms into s.
 			'exp_term_prob_scale':1.0,
 			'weight_chi_alpha_mean':3.0,
 			'weight_chi_alpha_std':0.1,
@@ -101,12 +101,22 @@ class SAMModule:
 			'alpha_zeta_synapse_type':'static_synapse',
 			'alpha_inhibitors_synapse_type':'static_synapse',
 			'inhibitors_alpha_synapse_type':'static_synapse',
-			'num_inhibitors':5
+			'num_inhibitors':5,
+			'delay_alpha_inhibitors':0.1,
+			'delay_inhibitors_alpha':0.1
 		}
 
 		# Update defaults.
 		self.params.update(params)
+		self.update_nest_defaults()
 
+
+	def update_nest_defaults(self):
+		"""
+		Updates the nest defaults from the parameters.
+		NOTE: Any change of the network parameters needs a corresponding call to
+		this function in order to update settings.
+		"""
 		# Set NEST defaults.
 		nest.SetDefaults('static_synapse', params={'weight':self.params['initial_weight']})
 
@@ -176,7 +186,8 @@ class SAMModule:
 		if self.params['inhibitors_neuron_type'] == 'srm_pecevski_alpha':
 			self.inhibitors_neuron_params={
 				'bias':self.params['bias_inhibitors'],
-				'rect_exc':self.params['inhibitors_use_rect_psp_exc']
+				'rect_exc':self.params['inhibitors_use_rect_psp_exc'],
+				'tau_exc':self.params['tau']
 				}
 		else:
 			raise NotImplementedError
@@ -199,19 +210,30 @@ class SAMModule:
 
 		# Alpha-inhibitors synapses.
 		if self.params['alpha_inhibitors_synapse_type'] == 'static_synapse':
-			self.alpha_inhibitors_synapse_params={'weight':self.params['weight_alpha_inhibitors']}
+			self.alpha_inhibitors_synapse_params={
+				'model':'static_synapse',
+				'weight':self.params['weight_alpha_inhibitors'],
+				'delay':self.params['delay_alpha_inhibitors']
+				}
 		else:
 			raise NotImplementedError
 
 		# Inhibitors-alpha synapses.
 		if self.params['inhibitors_alpha_synapse_type'] == 'static_synapse':
-			self.inhibitors_alpha_synapse_params={'weight':self.params['weight_inhibitors_alpha']}
+			self.inhibitors_alpha_synapse_params={
+				'model':'static_synapse',
+				'weight':self.params['weight_inhibitors_alpha'],
+				'delay':self.params['delay_inhibitors_alpha']
+				}
 		else:
 			raise NotImplementedError
 
 		# Alpha-zeta synapses.
 		if self.params['alpha_zeta_synapse_type'] == 'static_synapse':
-			self.alpha_zeta_synapse_params={'weight':self.params['weight_alpha_zeta']}
+			self.alpha_zeta_synapse_params={
+				'model':'static_synapse',
+				'weight':self.params['weight_alpha_zeta']
+				}
 		else:
 			raise NotImplementedError
 
@@ -221,8 +243,8 @@ class SAMModule:
 		Creates a SAM module with the specified architecture.
 		"""
 		# Set bias baseline.
-		bias_baseline = helpers.determine_bias_baseline(self.params['T'], [num_discrete_vals for i in range(num_x_vars)])
-		self.params['bias_baseline'] = bias_baseline
+		self.params['bias_baseline'] = helpers.determine_bias_baseline(self.params['T'], [num_discrete_vals for i in range(num_x_vars)])
+		self.update_nest_defaults()
 
 		# Create neuron layers.
 		self.chi = nest.Create(self.params['chi_neuron_type'], n=num_discrete_vals * num_x_vars, params=self.chi_neuron_params)
@@ -336,7 +358,7 @@ class SAMModule:
 				inhibit = state[var_index] != node_value
 				if locals[i]:
 					current = self.params['alpha_current_minus'] if inhibit else self.params['alpha_current_plus']
-					#print("Inhibiting node {}".format(nodes[i]) if inhibit else "Activating node {}".format(nodes[i]))
+					# print("Inhibiting node {}".format(nodes[i]) if inhibit else "Activating node {}".format(nodes[i]))
 					nest.SetStatus([nodes[i]], {'I_e':current})
 
 		def set_layer_currents(nodes, is_input):
@@ -347,7 +369,7 @@ class SAMModule:
 				inhibit = state[var_index] != node_value
 				if locals[i]:
 					current = self.params['nu_current_minus'] if inhibit else self.params['nu_current_plus']
-					#print("Inhibiting node {}".format(nodes[i]) if inhibit else "Activating node {}".format(nodes[i]))
+					# print("Inhibiting node {}".format(nodes[i]) if inhibit else "Activating node {}".format(nodes[i]))
 					nest.SetStatus([nodes[i]], {'I_e':current})
 		
 		# Set input layer neurons.
@@ -439,6 +461,35 @@ class SAMModule:
 		nest.SetStatus(self.all_neurons, {'I_e':0.0})
 
 
+	def connect_multimeter(self, node):
+		"""
+		Connects a multimeter to the bias and membrane voltage of the selected node.
+		"""
+		# Create a multimeter.
+		multimeter = nest.Create('multimeter', params={"withtime":True, "record_from":["V_m", "bias"]})
+
+		# Connect to all neurons.
+		nest.Connect(multimeter, [node])
+
+		return multimeter
+
+
+	def plot_potential_and_bias(self, multimeter):
+		"""
+		Plots the voltage traces of the cell membrane and bias from all neurons that were
+		connected during the simulation.
+		"""
+		dmm = nest.GetStatus(multimeter)[0]
+		Vms = dmm["events"]["V_m"]
+		bias = dmm["events"]["bias"]
+		ts = dmm["events"]["times"]
+
+		pylab.figure()
+		pylab.plot(ts, Vms)
+		pylab.plot(ts, bias)
+		pylab.show()
+
+
 	def connect_reader(self, nodes):
 		"""
 		Connects a spike reader to the network and returns it.
@@ -452,6 +503,26 @@ class SAMModule:
 		return spikereader
 
 
+	def plot_all(self, multimeter, spikereader):
+		"""
+		Plots the spike trace and voltage traces of a single neuron on the same figure.
+		"""
+		# Get spikes and plot.
+		spikes = nest.GetStatus(spikereader, keys='events')[0]
+		senders = spikes['senders']
+		times = spikes['times']
+		dmm = nest.GetStatus(multimeter)[0]
+		Vms = dmm["events"]["V_m"]
+		bias = dmm["events"]["bias"]
+		ts = dmm["events"]["times"]
+
+		pylab.figure()
+		pylab.plot(ts, Vms)
+		pylab.plot(ts, bias)
+		pylab.plot(times, senders, '|')
+		pylab.show()
+
+
 	def plot_spikes(self, spikereader):
 		"""
 		Plots the spike trace from all neurons the spikereader was connected to during
@@ -462,6 +533,15 @@ class SAMModule:
 		senders = spikes['senders']
 		times = spikes['times']
 
+		# Count spikes per output neuron.
+		nines = 0
+		tens = 0
+		for i in range(len(senders)):
+			nines = nines + 1 if senders[i] == 9 else nines
+			tens = tens + 1 if senders[i] == 10 else tens
+		print("nines = {}, tens = {}".format(nines, tens))
+
+		# Plot
 		pylab.figure()
 		pylab.plot(times, senders, '|')
 		pylab.show()
