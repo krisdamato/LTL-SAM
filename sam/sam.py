@@ -19,6 +19,10 @@ class SAMModule:
 		"""
 		Initialises RNGs and network settings with default values.
 		"""
+		# Make SAM module extension available.
+		nest.Install('sammodule')
+
+		# Set parameter defaults.
 		self.set_defaults(params)
 		self.initialised = False
 
@@ -57,13 +61,13 @@ class SAMModule:
 			'weight_baseline':2.5 * np.log(0.2),
 			'tau':tau,
 			'T':0.4,
-			'use_rect_psp_exc':True,
+			'use_rect_psp_exc':False,
 			'use_rect_psp_inh':True,
 			'inhibitors_use_rect_psp_exc':True,
 			'amplitude_exc':2.8,
 			'amplitude_inh':2.8,
 			'external_current':0.0,
-			'tau_membrane':0.1,
+			'tau_membrane':0.01,
 			'tau_exc':8.5,
 			'first_bias_rate':0.01,
 			'second_bias_rate':0.02,
@@ -74,7 +78,7 @@ class SAMModule:
 			'initial_bias':5.0,
 			'dead_time_random':False,
 			'linear_term_prob':0.0,
-			'exp_term_prob':0.01/tau, # 1000 factor is needed to turn ms into s.
+			'exp_term_prob':1.0/tau, # 1000 factor is needed to turn ms into s.
 			'exp_term_prob_scale':1.0,
 			'weight_chi_alpha_mean':3.0,
 			'weight_chi_alpha_std':0.1,
@@ -102,8 +106,9 @@ class SAMModule:
 			'alpha_inhibitors_synapse_type':'static_synapse',
 			'inhibitors_alpha_synapse_type':'static_synapse',
 			'num_inhibitors':5,
-			'delay_alpha_inhibitors':0.1,
-			'delay_inhibitors_alpha':0.1
+			'delay_alpha_inhibitors':1.0,
+			'delay_inhibitors_alpha':1.0,
+			'time_resolution':0.1
 		}
 
 		# Update defaults.
@@ -118,6 +123,7 @@ class SAMModule:
 		this function in order to update settings.
 		"""
 		# Set NEST defaults.
+		nest.SetKernelStatus({'resolution':self.params['time_resolution']})
 		nest.SetDefaults('static_synapse', params={'weight':self.params['initial_weight']})
 
 		nest.SetDefaults('stdp_pecevski_synapse', params={
@@ -414,7 +420,7 @@ class SAMModule:
 		nest.Simulate(duration)
 
 
-	def present_random_sample(self, duration):
+	def present_random_sample(self, duration=None):
 		"""
 		Simulates the network for the given duration while a constant external current
 		is presented to each population coding neuron in the network, chosen randomly 
@@ -432,10 +438,10 @@ class SAMModule:
 		self.set_currents(state, inhibit_alpha=True, force_zeta=True)
 
 		# Simulate.
-		nest.Simulate(duration)
+		nest.Simulate(duration if duration is not None else self.params['sample_presentation_time'])
 
 
-	def present_input_evidence(self, duration, sample=None):
+	def present_input_evidence(self, duration=None, sample=None):
 		"""
 		Presents the given sample state or a random one drawn from the set distribution
 		and simulates for the given period. This only activates/inhibits the input 
@@ -451,7 +457,7 @@ class SAMModule:
 		self.set_currents(state, inhibit_alpha=False, force_zeta=False)
 
 		# Simulate.
-		nest.Simulate(duration)
+		nest.Simulate(duration if duration is not None else self.params['sample_presentation_time'])
 
 
 	def clear_currents(self):
@@ -553,5 +559,68 @@ class SAMModule:
 		"""
 		print("baseline =", self.params['bias_baseline'])
 		print(self.all_neurons)
-		
+
+
+	def get_neuron_biases(self, neurons):
+		"""
+		Convenience function that returns the bias of specified
+		neurons, assuming they keep track of bias.
+		"""
+		return np.array(nest.GetStatus(neurons, 'bias'))
+
+
+	def get_connection_weight(self, source, target):
+		"""
+		Convenience function that returns the weight of the
+		connection between two neurons.
+		"""
+		return nest.GetStatus(nest.GetConnections([source], [target]), 'weight')[0]
+
+
+	def compute_implicit_distribution(self):
+		"""
+		Returns the distribution encoded by the network's weights and biases
+		at this point in time.
+		Note: This does not look at spontaneous network activity, but the 
+		theoretical distribution implicitly encoded by the network architecture,
+		as described by Eqn. 5 in Peceveski et. al. 
+		"""
+		implicit = dict(self.distribution)
+		for t in implicit.keys():
+			xs = [t[i] for i in range(self.num_vars - 1)]
+			z = t[self.num_vars - 1]
+			p = 0
+			
+			# For each z value, the joint distribution is only concerned with 
+			# alphas that encode for that particular value (i.e. each alpha 
+			# neuron in the subpop that codes for that z value), since
+			# p(z|a) = 0 for other alphas.
+			for i in range(len(self.alpha)):
+				if i // self.num_modes != (z - 1): continue
+				subtotal = 0
+				alpha_neuron = self.alpha[i]
+
+				# Find sum of weights going into this alpha neuron.
+				for j in range(len(xs)):
+					chi_index = j * self.num_discrete_vals + xs[j] - 1
+					chi_neuron = self.chi[chi_index]
+					w_hat = self.get_connection_weight(chi_neuron, alpha_neuron) + self.params['weight_baseline']
+					subtotal += w_hat
+
+				# Find the bias of this alpha neuron.
+				b_hat = self.get_neuron_biases([alpha_neuron])[0] + self.params['bias_baseline']
+				subtotal += b_hat
+
+				# Add the exponential of the subtotal to the probability of this 
+				# combination of variables.
+				p += np.exp(subtotal)				
+
+			implicit[t] = p
+
+		# Normalise distribution.
+		total = np.sum(list(implicit.values()))
+		for k, v in implicit.items():
+			implicit[k] /= total
+
+		return implicit
 

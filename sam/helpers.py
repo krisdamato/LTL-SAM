@@ -1,5 +1,6 @@
 import itertools
 import numpy as np
+from scipy.stats import entropy
 
 def determine_bias_baseline(T, largest_values):
 	"""
@@ -10,6 +11,7 @@ def determine_bias_baseline(T, largest_values):
 
 	num_predictors = len(largest_values)
 	return (2.5 / T) * (-num_predictors * np.log(0.2) - np.sum([np.log(m + 1) for m in largest_values]) + np.log(0.02))
+
 
 def generate_distribution(num_vars, num_discrete_values, randomiser=np.random.RandomState()):
 	"""
@@ -34,6 +36,7 @@ def generate_distribution(num_vars, num_discrete_values, randomiser=np.random.Ra
 	
 	return dict(zip(possibilities, probabilities))
 
+
 def draw_from_distribution(distribution, complete=True, randomiser=np.random.RandomState()):
 	"""
 	Draws a complete or incomplete sample from the given distribution. A sample consists
@@ -51,3 +54,15 @@ def draw_from_distribution(distribution, complete=True, randomiser=np.random.Ran
 		sum = sum + value
 		if p < sum:
 			return key if complete else tuple(key[i] for i in range(len(key) - 1))
+
+
+def get_KL_divergence(estimate, target):
+	"""
+	Returns the KL divergence KL(estimate||target), where both distributions are
+	a dictionary of tuple:probability pairs.
+	"""
+	tuples = list(estimate.keys())
+	p = [estimate[k] for k in tuples]
+	q = [target[k] for k in tuples]
+	
+	return entropy(p, q)

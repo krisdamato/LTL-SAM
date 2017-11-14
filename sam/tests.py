@@ -1,4 +1,7 @@
+import helpers
 import nest
+import numpy as np
+import matplotlib.pyplot as plt
 from sam import *
 
 def test_sample_draws():
@@ -6,8 +9,6 @@ def test_sample_draws():
 	Tests whether drawing repeated samples from the distribution
 	does reconstruct the target distribution approximately.
 	"""
-	nest.Install('sammodule')
-
 	# Use the distribution from Peceveski et al.
 	distribution = {
 		(1,1,1):0.04,
@@ -39,7 +40,7 @@ def test_sample_draws():
 		(2,2,2):0
 	}
 
-	for i in range(10000):
+	for i in range(12000):
 		t = sam.draw_random_sample()
 		test_dist[t] = test_dist[t] + 1
 
@@ -47,7 +48,7 @@ def test_sample_draws():
 	for k, v in test_dist.items():
 		test_dist[k] = v / total
 
-	print(test_dist)
+	print("KL divergence from actual to estimate distribution is", helpers.get_KL_divergence(test_dist, distribution))
 
 
 def run_single_random_sample(plot_iteration_number, neuron_index=0):
@@ -55,9 +56,6 @@ def run_single_random_sample(plot_iteration_number, neuron_index=0):
 	Draws a single sample from the distribution, presents it to the SAM module
 	and plots the spikes and voltages after a specified number of iterations.
 	"""
-	nest.Install('sammodule')
-	nest.SetKernelStatus({'resolution':0.01})
-
 	# Use the distribution from Peceveski et al.
 	distribution = {
 		(1,1,1):0.04,
@@ -71,7 +69,7 @@ def run_single_random_sample(plot_iteration_number, neuron_index=0):
 	}
 
 	# Create module.
-	sam = SAMModule(randomise_seed=True)
+	sam = SAMModule(randomise_seed=True, params={'time_resolution':0.01})
 	sam.create_network(num_x_vars=2, 
 		num_discrete_vals=2, 
 		num_modes=2,
@@ -92,9 +90,6 @@ def run_pecevski_experiment(plot_intermediates=False):
 	presenting a particular multivariate distribution as target.
 	Plots intermediate results.
 	"""
-	nest.Install('sammodule')
-	#nest.SetKernelStatus({'resolution':0.01})
-
 	# Use the distribution from Peceveski et al.
 	distribution = {
 		(1,1,1):0.04,
@@ -108,36 +103,35 @@ def run_pecevski_experiment(plot_intermediates=False):
 	}
 
 	# Create module.
-	sam = SAMModule(randomise_seed=True)
+	sam = SAMModule(randomise_seed=False)
 	sam.create_network(num_x_vars=2, 
 		num_discrete_vals=2, 
 		num_modes=2,
 		distribution=distribution)
 
-	# Simulate.
-	for i in range(6000):
-		if i == 3000 and plot_intermediates:
-			mm1 = sam.connect_multimeter(sam.alpha[0])
-			mm2 = sam.connect_multimeter(sam.alpha[1])
-			sr1 = sam.connect_reader(sam.all_neurons)
-		sam.present_random_sample(100.0) # Inject a current for some time.
+	# Simulate and collect KL divergences.
+	t = 0
+	i = 0
+	skip = 10
+	kls = []
+	
+	while t < sam.params['first_learning_phase']:
+		sam.present_random_sample() # Inject a current for some time.
 		sam.clear_currents()
-		if i == 3000 and plot_intermediates:
-			sam.plot_potential_and_bias(mm1)
-			sam.plot_potential_and_bias(mm2)
-			sam.plot_spikes(sr1)
-	sam.set_intrinsic_rate(0.02)
-	for i in range(6000):
-		if i == 3000 and plot_intermediates:	
-			mm1 = sam.connect_multimeter(sam.alpha[0])
-			mm2 = sam.connect_multimeter(sam.alpha[1])
-			sr1 = sam.connect_reader(sam.all_neurons)
-		sam.present_random_sample(100.0) # Inject a current for some time.
+		if i % skip == 0:
+			implicit = sam.compute_implicit_distribution() 
+			kls.append(helpers.get_KL_divergence(implicit, distribution))
+		t += sam.params['sample_presentation_time']
+		i += 1
+	sam.set_intrinsic_rate(sam.params['second_bias_rate'])
+	while t < (sam.params['first_learning_phase'] + sam.params['second_learning_phase']):
+		sam.present_random_sample() # Inject a current for some time.
 		sam.clear_currents()
-		if i == 3000 and plot_intermediates:
-			sam.plot_potential_and_bias(mm1)
-			sam.plot_potential_and_bias(mm2)
-			sam.plot_spikes(sr1)
+		if i % skip == 0:
+			implicit = sam.compute_implicit_distribution() 
+			kls.append(helpers.get_KL_divergence(implicit, distribution))
+		t += sam.params['sample_presentation_time']
+		i += 1
 
 	sam.set_intrinsic_rate(0.0)
 	sam.set_plasticity_learning_time(0)
@@ -145,7 +139,12 @@ def run_pecevski_experiment(plot_intermediates=False):
 	# Present evidence.
 	sr = sam.connect_reader(sam.all_neurons)
 	sam.clear_currents()
-	sam.present_input_evidence(duration=2000.0, sample=(2,2,1))
+	sam.present_input_evidence(duration=2000.0, sample=(1,1,1))
 
 	# Plot spontaneous activity.
 	sam.plot_spikes(sr)
+
+	# Plot KL divergence plot.
+	plt.figure()
+	plt.plot(np.array(range(len(kls))) * skip * sam.params['sample_presentation_time'] * 1e-3, kls)
+	plt.show()
