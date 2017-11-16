@@ -15,19 +15,16 @@ class SAMModule:
 	estimate the target conditional probability of the withheld variable.
 	"""
 
-	def __init__(self, randomise_seed=False, params={}):
+	def __init__(self, randomise_seed=False, num_threads=1, params={}):
 		"""
 		Initialises RNGs and network settings with default values.
 		"""
 		# Make SAM module extension available.
 		nest.Install('sammodule')
 
-		# Set parameter defaults.
-		self.set_defaults(params)
-		self.initialised = False
-
 		# Randomise.
 		seed = int(time.time()) if randomise_seed else 705
+		nest.SetKernelStatus({'local_num_threads':num_threads})
 		n = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
 
 		print("Randomising {} processes using {} as main seed.".format(n * 2 + 1, seed))
@@ -39,6 +36,10 @@ class SAMModule:
 
 		# Reduce NEST verbosity.
 		nest.set_verbosity('M_ERROR')
+
+		# Set parameter defaults.
+		self.set_defaults(params)
+		self.initialised = False
 
 
 	def set_defaults(self, params={}):
@@ -61,20 +62,20 @@ class SAMModule:
 			'weight_baseline':2.5 * np.log(0.2),
 			'tau':tau,
 			'T':0.4,
-			'use_rect_psp_exc':False,
+			'use_rect_psp_exc':True,
 			'use_rect_psp_inh':True,
 			'inhibitors_use_rect_psp_exc':True,
 			'amplitude_exc':2.8,
 			'amplitude_inh':2.8,
 			'external_current':0.0,
 			'tau_membrane':0.01,
-			'tau_exc':8.5,
+			'tau_alpha':8.5,
 			'first_bias_rate':0.01,
 			'second_bias_rate':0.02,
 			'bias_baseline':0.0,
 			'max_bias':5.0,
 			'min_bias':-30.0,
-			'default_random_bias':False,
+			'default_random_bias':True,
 			'initial_bias':5.0,
 			'dead_time_random':False,
 			'linear_term_prob':0.0,
@@ -106,8 +107,10 @@ class SAMModule:
 			'alpha_inhibitors_synapse_type':'static_synapse',
 			'inhibitors_alpha_synapse_type':'static_synapse',
 			'num_inhibitors':5,
-			'delay_alpha_inhibitors':1.0,
-			'delay_inhibitors_alpha':1.0,
+			'delay_alpha_inhibitors':0.1,
+			'delay_inhibitors_alpha':0.1,
+			'delay_chi_alpha':1.0,
+			'delay_alpha_zeta':1.0,
 			'time_resolution':0.1
 		}
 
@@ -145,16 +148,13 @@ class SAMModule:
 			'e_0_inh':self.params['amplitude_inh'],
 			'I_e':self.params['external_current'],
 			'tau_m':self.params['tau_membrane'], # Membrane time constant (only affects current injections). Is this relevant?
-			'tau_exc':self.params['tau_exc'],
+			'tau_exc':self.params['tau'],
 			'tau_inh':self.params['tau'], 
 			'tau_bias':self.params['tau'],
 			'eta_bias':0.0, # eta_bias is set to 0.02 manually after 600 s.
 			'b_baseline':self.params['bias_baseline'], # This is set by a call elsewhere.
 			'max_bias':self.params['max_bias'],
 			'min_bias':self.params['min_bias'],
-			'mu_bias':self.params['bias_alpha_mean'],
-			'sigma_bias':self.params['bias_alpha_std'],
-			'use_random_bias':self.params['default_random_bias'],
 			'bias':self.params['initial_bias'],
 			'dead_time':self.params['tau'], # Abs. refractory period.
 			'dead_time_random':self.params['dead_time_random'],
@@ -167,18 +167,14 @@ class SAMModule:
 		# Create layer model specialisations.
 		# Input population model.
 		if self.params['chi_neuron_type'] == 'srm_pecevski_alpha':
-			self.chi_neuron_params={"bias":self.params['bias_chi']}
+			self.chi_neuron_params={'bias':self.params['bias_chi']}
 		else:
 			raise NotImplementedError
 
 		# Hidden population model.
 		if self.params['alpha_neuron_type'] == 'srm_pecevski_alpha':
-			self.alpha_neuron_params={
-				'use_random_bias':True,
-				'mu_bias':self.params['bias_alpha_mean'],
-				'sigma_bias':self.params['bias_alpha_std'],
-				'eta_bias': self.params['first_bias_rate']
-				}
+			# We will set alpha neuron biases during network construction.
+			self.alpha_neuron_params={'eta_bias':self.params['first_bias_rate']}
 		else:
 			raise NotImplementedError
 
@@ -209,7 +205,8 @@ class SAMModule:
 					'high':self.params['max_weight'],
 					'mu':self.params['weight_chi_alpha_mean'],
 					'sigma':self.params['weight_chi_alpha_std']
-					}
+					},
+				'delay':self.params['delay_chi_alpha']
 				}
 		else:
 			raise NotImplementedError
@@ -238,7 +235,8 @@ class SAMModule:
 		if self.params['alpha_zeta_synapse_type'] == 'static_synapse':
 			self.alpha_zeta_synapse_params={
 				'model':'static_synapse',
-				'weight':self.params['weight_alpha_zeta']
+				'weight':self.params['weight_alpha_zeta'],
+				'delay':self.params['delay_alpha_zeta']
 				}
 		else:
 			raise NotImplementedError
@@ -251,6 +249,7 @@ class SAMModule:
 		# Set bias baseline.
 		self.params['bias_baseline'] = helpers.determine_bias_baseline(self.params['T'], [num_discrete_vals for i in range(num_x_vars)])
 		self.update_nest_defaults()
+		print("Setting bias baseline to", self.params['bias_baseline'])
 
 		# Create neuron layers.
 		self.chi = nest.Create(self.params['chi_neuron_type'], n=num_discrete_vals * num_x_vars, params=self.chi_neuron_params)
@@ -270,6 +269,13 @@ class SAMModule:
 
 		# Inhibitors-alpha connectivity: all-to-all.
 		nest.Connect(self.inhibitors, self.alpha, conn_spec='all_to_all', syn_spec=self.inhibitors_alpha_synapse_params)
+
+		# Alpha bias randomisation.
+		self.set_random_biases(self.alpha, 
+			self.params['bias_alpha_mean'], 
+			self.params['bias_alpha_std'],
+			self.params['min_bias'],
+			self.params['max_bias'])
 
 		# Alpha-zeta connectivity: subpopulation-to-subpopulation-index.
 		for i in range(len(self.alpha)):
@@ -340,14 +346,51 @@ class SAMModule:
 		# Broadcast the sample to all MPI processes.
 		if rank == 0:
 		    sample = helpers.draw_from_distribution(self.distribution, complete, self.rngs[0])
-		    #print("Process 0 drew a sample:", sample)
 		else:
 			sample = None
-			#print("Process {} receiving a sample.".format(rank))
 
 		comm.bcast(sample, root=0)
 
 		return sample
+
+
+	def draw_normal_values(self, n, mu, sigma, min, max):
+		"""
+		Uses the rank 0 process to draw a random sequence of numbers from a normal
+		distribution with the specified parameters. 
+		"""
+		comm = MPI.COMM_WORLD
+		rank = comm.Get_rank()
+
+		# Broadcast the sample to all MPI processes.
+		if rank == 0:
+			# Do this element by element, since numpy does not offer trunc norm.
+			sample = []
+			while len(sample) < n:
+				r = self.rngs[0].normal(mu, sigma)
+				if r >= min and r <= max:
+					sample.append(r)
+			# print("Process 0 drew a sample of normal values:", sample)
+		else:
+			sample = None
+
+		comm.bcast(sample, root=0)
+
+		return sample
+
+
+	def set_random_biases(self, nodes, mu, sigma, min, max):
+		"""
+		Sets the biases in the passed neurons to a random value drawn from 
+		a normal distribution with the specificed mean and std.
+		Note: Assumes that the neurons support bias.
+		"""
+		normal_biases = self.draw_normal_values(len(nodes), mu, sigma, min, max)	
+		locals = self.are_nodes_local(nodes)
+		for i in range(len(nodes)):
+			if locals[i]:
+				# print("Setting bias in node {} to {}".format(nodes[i], normal_biases[i]))
+				nest.SetStatus([nodes[i]], {'bias':normal_biases[i]})
 
 
 	def set_currents(self, state, inhibit_alpha=False, force_zeta=True):
@@ -396,6 +439,7 @@ class SAMModule:
 		Applicable only for SRM Peceveski neurons.
 		"""
 		if self.params['alpha_neuron_type'] == 'srm_pecevski_alpha':
+			print("Setting bias rate to", intrinsic_rate)
 			nest.SetStatus(self.alpha, {'eta_bias':intrinsic_rate})
 		else:
 			raise Exception("Cannot set a bias rate in neurons that don't support it.")
@@ -403,7 +447,7 @@ class SAMModule:
 
 	def set_plasticity_learning_time(self, learning_time):
 		"""
-		Sets the STDP learning time in the STDP connections.
+		Sets the STDP learning time in the STDP connections (in ms).
 		"""
 		if self.params['chi_alpha_synapse_type'] == 'stdp_pecevski_synapse':
 			synapses = nest.GetConnections(self.chi, self.alpha)
@@ -613,7 +657,7 @@ class SAMModule:
 
 				# Add the exponential of the subtotal to the probability of this 
 				# combination of variables.
-				p += np.exp(subtotal)				
+				p += np.exp(subtotal)			
 
 			implicit[t] = p
 
@@ -623,4 +667,3 @@ class SAMModule:
 			implicit[k] /= total
 
 		return implicit
-

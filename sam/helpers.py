@@ -65,4 +65,4 @@ def get_KL_divergence(estimate, target):
 	p = [estimate[k] for k in tuples]
 	q = [target[k] for k in tuples]
 	
-	return entropy(p, q)
+	return entropy(q, p)
