@@ -1,10 +1,15 @@
 import logging
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
 import numpy as np
+import sam.helpers as helpers
+import sam.tests as tests
 
+from collections import OrderedDict
 from ltl import sdict
 from ltl.optimizees.optimizee import Optimizee
+from sam.sam import SAMModule
 
 logger = logging.getLogger("ltl-sam")
 nest.set_verbosity("M_WARNING")
@@ -12,197 +17,172 @@ nest.set_verbosity("M_WARNING")
 
 class SAMOptimizee(Optimizee):
     """
-    Simple Association Module, an SNN consisting of WTA circuitry that performs unsupervised learning of simple
-    multinomial probability distributions to learn associations between variables. Described in Pecevski et al. 2016
+    Provides the interface between the LTL API and the SAM class. See SAMModule for details on
+    the SAM neural network.
     """
 
-    def __init__(self, traj, n_NEST_threads=1):
+    def __init__(self, traj, n_NEST_threads=1, seed=0):
         super(SAMOptimizee, self).__init__(traj)
 
-        self.n_NEST_threads = n_NEST_threads
-        self._initialize()
+        # Make SAM module extension available.
+        nest.Install('sammodule')
+        
+        self.num_threads = n_NEST_threads
+        self.rs = np.random.RandomState(seed=seed)
 
         # create_individual can be called because __init__ is complete except for traj initialization
-        indiv_dict = self.create_individual()
-        for key, val in indiv_dict.items():
+        self.individual = self.create_individual()
+        for key, val in self.individual.items():
             traj.individual.f_add_parameter(key, val)
 
-    def _initialize(self):
-        # Set parameters of the NEST simulation kernel
-        nest.SetKernelStatus({'print_time': False,
-                              'local_num_threads': self.n_NEST_threads})
 
     def create_individual(self):
-        jee, jei, jie, jii = np.random.randint(1, 20, 4).astype(np.float64)
-        return dict(jee=jee, jei=jei, jie=jie, jii=jii)
-
-    def bounding_func(self, individual):
-        individual = {key: np.float64(value if value > 0.01 else 0.01) for key, value in individual.items()}
+        """
+        Creates random parameter values within given bounds.
+        Uses an RNG seeded with the main said of the SAM module.
+        """ 
+        param_spec = OrderedDict(sorted(SAMModule.parameter_spec().items())) # Sort for replicability
+        individual = {k: np.float64(self.rs.uniform(v[0], v[1])) for k, v in param_spec.items()}
         return individual
 
-    def prepare_network(self, num_x_vars=2, num_discrete_vals_x=2, num_discrete_vals_z=2, num_modes=2):
+
+    def bounding_func(self, individual):
         """
-        Creates a Stochastic Association Module (SAM), as described in Pecevski, 2016. A SAM is a Winner-Take-All (
-        WTA) module that performs unsupervised learning of a target multinomial distribution (density estimation).
-        Although in the sense of density estimation it is an unsupervised algorithm (during the learning phase
-        samples are simply presented from the target distribution, with no labelling or splitting into input/output),
-        the module learns the structure of variable interdependencies, so that withholding one variable and
-        presenting samples from the rest to the module causes it to estimate the target conditional probability of
-        the withheld variable.
-
-        Note: I have tried to replicate the network architecture and properties described in Pecevski, 2016. However,
-        NEST has some limitations that do not entirely allow this. The deviations are listed below:
-         1. Neurons cannot have different PSC forms simultaneously. Specifically, the alpha layer should have alpha
-         PSPs when stimulated by excitatory connections and rectangular IPSPs when stimulated by inhibitory neurons.
-         NEST does not allow this. Instead the inhibitory-alpha weights are increased to make up for this.
-         2. NEST deals with PSCs, not PSPs, so there is no simple one-to-one relationship.
-         3. NEST does not allow the flexibility of custom STDP equations (unless new models are created).
-
-        Network parameters:
-        ****************
-
-        (Excitatory neurons)
-        Number of X populations = num_x_vars
-        Number of neurons per X population = num_discrete_vals_x
-        Number of alpha populations = num_discrete_vals_z
-        Number of neurons per alpha population = num_modes
-        Number of zeta neurons = num_discrete_vals_z
-        Neuron type: SRM w/ alpha EPSP (iaf_psc_alpha)
-
-        (Inhibitory neurons)
-        Number of inhibitory neurons = 5
-
-        (Connectivity)
-        X-alpha connectivity: all-to-all
-        alpha-zeta connectivity: all-to-subpopulation index
-        alpha-inh connectivity: all-to-all
-
-        (Weights & Biases)
-        alpha-inh weights = w_e2i = 80
-        inh biases = b_inh = -10
-        population-coding neuron biases (X & zeta) = b_pp = -10
-        alpha-zeta weights = w_pp = 20
-        w_min = 0
-        w_max = 5
-        w_- (offset) = 2.5 log 0.2
-        plasticity offset (see Pecevski paper; too long to reproduce here)
-        inh-alpha weights = w_i2e = -7
-        b_min = -30
-        b_max = 5
-        Initial random weights: gaussian dist, mean w_init = 3, sigma_w0 = 0.1, redrawn to within [w_min, w_max]
-        Initial random biases: gaussian dist, mean b_init = 5, sigma_b0 = 0.1, redrawn to within [w_min, w_max]
-
-        (Learning & Inference)
-        Samples generated from target distribution
-        Neuron v^kl inj current = i_pp+ = 30 if y^k = l
-        Neuron v^kl inj current = i_pp- = -30 if y^k != l
-        Inh. current = -80, inj. in alpha subpops that do not trigger the zeta neuron corresponding to y^k = l (only
-        during learning)
-        Scaling term for potentiation (both for w and b) = T = 0.4
-        Learning process lasts 1200 s of biological time
-        For weights, nita (learning rate) decreased during first 600 s from 0.002 at t = 0 to 0.0006 at t = 600 s.
-        For weights, nita set to 0 (no synaptic plasticity) during second 600 s.
-        For biases, nita = 0.01 during first 600 s.
-        For biases, nita = 0.02 during second 600 s.
-
-        (Model parameters)
-        tau (abs. refractory period) = 15 ms
-        STDP time-window = tau
-        alpha-shape EPSP epsilon_o = 2.8
-        alpha-shape EPSP time constant = tau_alpha = 8.5 ms
-        From/to inh. neurons, PSP is rectangular with duration tau
-
+        Bounds the individual within the required bounds via coordinate clipping
         """
+        param_spec = SAMModule.parameter_spec()
+        individual = {k: np.float64(np.clip(v, a_min=param_spec[k][0], a_max=param_spec[k][1])) for k, v in individual.items()}
+        return individual
 
-        x = nest.Create("iaf_psc_alpha", num_discrete_vals_x * num_x_vars)
-        alpha = nest.Create("iaf_psc_alpha", num_discrete_vals_z * num_modes)
-        z = nest.Create("iaf_psc_alpha", num_discrete_vals_z)
-        inh = nest.Create("")
 
-    def simulate(self, traj, should_plot=False, debug=False):
+    def prepare_network(self, distribution, num_discrete_vals, num_modes):
+        """
+        Generates a network with the specified distribution parameters, but uses
+        the hyperparameters from the individual dictionary.
+        """
+        self.sam = SAMModule(randomise_seed=True)
 
-        jee = traj.individual.jee
-        jei = traj.individual.jei
-        jie = traj.individual.jie
-        jii = traj.individual.jii
+        # Find the number of variables.
+        num_vars = len(list(distribution.keys())[0])
 
-        if jee < 0 or jei < 0 or jie < 0 or jii < 0:
-            return (np.inf,)
+        # Convert the trajectory individual to a dictionary.
+        params = {k:self.individual[k] for k in SAMModule.parameter_spec().keys()}
 
-        logger.info("Running for %.2f, %.2f, %.2f, %.2f", jee, jei, jie, jii)
+        # Create a SAM module with the correct parameters.
+        params['num_threads'] = self.num_threads
 
-        simtime_ms = 1000.0
+        self.sam.create_network(num_x_vars=num_vars - 1, 
+            num_discrete_vals=num_discrete_vals, 
+            num_modes=num_modes,
+            distribution=distribution,
+            params=params)
 
-        # Delay distribution.
-        delay_dict = dict(distribution='normal_clipped', mu=10., sigma=20., low=3., high=200.)
+        logging.info("Creating a SAM network with overridden parameters:\n%s", helpers.get_dictionary_string(params))
 
-        # Create nodes -------------------------------------------------
+
+    def simulate(self, traj, show_plot=False):
+        """
+        Simulates a SAM module training on a target distribution; i.e. performing
+        density estimation as in Pecevski et al. 2016. The loss function is the
+        negative of the KL divergence between target and estimated distributions.
+        """
+        # Use the distribution from Peceveski et al.
+        distribution = {
+            (1,1,1):0.04,
+            (1,1,2):0.04,
+            (1,2,1):0.21,
+            (1,2,2):0.21,
+            (2,1,1):0.04,
+            (2,1,2):0.21,
+            (2,2,1):0.21,
+            (2,2,2):0.04
+        }
+
         nest.ResetKernel()
-        self._initialize()
-        nest.SetDefaults('iaf_psc_exp',
-                         {'C_m': 30.0,  # 1.0,
-                          'tau_m': 30.0,
-                          'E_L': 0.0,
-                          'V_th': 15.0,
-                          'tau_syn_ex': 3.0,
-                          'tau_syn_in': 2.0,
-                          'V_reset': 13.8})
+        self.individual = traj.individual
+        self.prepare_network(distribution=distribution, num_discrete_vals=2, num_modes=2)
+        
+        # Get the conditional of the module's target distribution.
+        distribution = self.sam.distribution
+        conditional = helpers.compute_conditional_distribution(self.sam.distribution, self.sam.num_discrete_vals)
 
-        # Create excitatory and inhibitory populations
-        noise_ex = nest.Create("poisson_generator")
-        noise_in = nest.Create("poisson_generator")
-        nest.SetStatus(noise_ex, {"rate": 80000.0})
-        nest.SetStatus(noise_in, {"rate": 15000.0})
+        # Train for the learning period set in the parameters.
+        t = 0
+        i = 0
+        set_second_rate = False
+        last_set_intrinsic_rate = self.sam.params['first_bias_rate']
+        skip_kld = 10   
+        skip_exp_cond = 1000
+        kls_joint = []
+        kls_cond = []
+        kls_cond_exp = []
+        set_second_rate = False
+        extra_time = 0
 
-        neurons1 = nest.Create('iaf_psc_alpha', 10000)
-        neuron2 = nest.Create('iaf_psc_alpha')
-        nest.SetStatus(neurons1, {"I_e": 0.0})
-        nest.SetStatus(neuron2, {"I_e": 0.0})
+        while t <= self.sam.params['learning_time']:
+            # Inject a current for some time.
+            self.sam.present_random_sample() 
+            self.sam.clear_currents()
+            t += self.sam.params['sample_presentation_time']
 
-        syn_dict_ex = {"weight": 1.2}
-        syn_dict_in = {"weight": -2.0}
-        nest.Connect(noise_ex, neurons1, syn_spec=syn_dict_ex)
-        nest.Connect(noise_in, neurons1, syn_spec=syn_dict_in)
-        nest.Connect(neurons1, neuron2, syn_spec={"weight": 7.0,
-                                                  "delay": 1.0})
+            # Compute theoretical distributions and measure KLD.
+            if show_plot and i % skip_kld == 0:
+                implicit = self.sam.compute_implicit_distribution()
+                implicit_conditional = helpers.compute_conditional_distribution(implicit, 2)
+                kls_joint.append(helpers.get_KL_divergence(implicit, distribution))
+                kls_cond.append(helpers.get_KL_divergence(implicit_conditional, conditional))
 
-        multimeter = nest.Create('multimeter')
-        nest.SetStatus(multimeter, {'withtime': True, 'record_from': ['V_m']})
+            # Measure experimental conditional distribution from spike activity.
+            if show_plot and i % skip_exp_cond == 0:
+                # Stop plasticity for testing.
+                self.sam.set_intrinsic_rate(0.0)
+                self.sam.set_plasticity_learning_time(0)
+                experimental_conditional = tests.measure_experimental_cond_distribution(self.sam, duration=2000.0)
+                kls_cond_exp.append(helpers.get_KL_divergence(experimental_conditional, conditional))
 
-        spikedetector = nest.Create('spike_detector',
-                                    params={'withgid': True, 'withtime': True})
+                # Restart plasticity.
+                extra_time += 2000
+                self.sam.set_intrinsic_rate(last_set_intrinsic_rate)
+                self.sam.set_plasticity_learning_time(int(self.sam.params['stdp_time_fraction'] * self.sam.params['learning_time'] + extra_time))
+                self.sam.clear_currents()
 
-        nest.Connect(multimeter, neuron2)
-        nest.Connect(neuron2, spikedetector)
+            # Set different intrinsic rate.
+            if t >= self.sam.params['learning_time'] * self.sam.params['intrinsic_step_time_fraction'] and set_second_rate == False:
+                set_second_rate = True
+                last_set_intrinsic_rate = self.sam.params['second_bias_rate']
+                self.sam.set_intrinsic_rate(last_set_intrinsic_rate)
+        
+            i += 1
 
-        # SIMULATE!! -----------------------------------------------------
-        nest.Simulate(simtime_ms)
+        self.sam.set_intrinsic_rate(0.0)
+        self.sam.set_plasticity_learning_time(0)
 
-        dmm = nest.GetStatus(multimeter)[0]
-        Vms1 = dmm["events"]["V_m"]
-        ts1 = dmm["events"]["times"]
+        # Plot KL divergence plot.
+        if show_plot:
+            # Present evidence.
+            tests.run_trained_test(self.sam)
 
-        import pylab
+            plt.figure()
+            plt.plot(np.array(range(len(kls_cond))) * skip_kld * self.sam.params['sample_presentation_time'] * 1e-3, kls_cond, label="KLd p(z|x)")
+            plt.plot(np.array(range(len(kls_joint))) * skip_kld * self.sam.params['sample_presentation_time'] * 1e-3, kls_joint, label="KLd p(x,z)")
+            plt.plot(np.array(range(len(kls_cond_exp))) * skip_exp_cond * self.sam.params['sample_presentation_time'] * 1e-3, kls_cond_exp, label="Exp. KLd p(z|x)")
+            plt.legend(loc='upper center')
+            plt.show()
 
-        pylab.figure(1)
-        pylab.plot(ts1, Vms1)
+        # Calculate final divergences.
+        implicit = self.sam.compute_implicit_distribution()
+        implicit_conditional = helpers.compute_conditional_distribution(implicit, self.sam.num_discrete_vals)
+        kld_joint = helpers.get_KL_divergence(implicit, distribution)
+        kld_cond = helpers.get_KL_divergence(implicit_conditional, conditional)
 
-        dSD = nest.GetStatus(spikedetector, keys="events")[0]
-        evs1 = dSD["senders"]
-        ts1 = dSD["times"]
+        logging.info("Final loss is {}".format(kld_joint))
 
-        pylab.figure(2)
-        pylab.plot(ts1, evs1, ".")
-
-        pylab.show()
-
-        return 0, 0
+        return (kld_joint, )
 
 
 def end(self):
-    logger.info("End of all experiments. Cleaning up...")
-    # There's nothing to clean up though
-
+    logger.info("End of experiment. Cleaning up...")
+    
 
 def main():
     import yaml
@@ -214,7 +194,7 @@ def main():
     from ltl import timed
 
     try:
-        with open('bin/path.conf') as f:
+        with open('../bin/path.conf') as f:
             root_dir_path = f.read().strip()
     except FileNotFoundError:
         raise FileNotFoundError(
@@ -223,20 +203,20 @@ def main():
             " before running the simulation"
         )
     paths = Paths('ltl-sam', dict(run_num='test'), root_dir_path=root_dir_path)
-    with open("bin/logging.yaml") as f:
+    with open("../bin/logging.yaml") as f:
         l_dict = yaml.load(f)
         log_output_file = os.path.join(paths.results_path, l_dict['handlers']['file']['filename'])
         l_dict['handlers']['file']['filename'] = log_output_file
         logging.config.dictConfig(l_dict)
 
     fake_traj = DummyTrajectory()
-    optimizee = SAMOptimizee(fake_traj, n_NEST_threads=4)
+    optimizee = SAMOptimizee(fake_traj, n_NEST_threads=1)
 
     fake_traj.individual = sdict(optimizee.create_individual())
 
     with timed(logger):
-        testing_error = optimizee.simulate(fake_traj, debug=True)
-    logger.info("Testing error is %s", testing_error)
+        loss = optimizee.simulate(fake_traj, show_plot=True)
+    logging.info("Final loss is {}".format(loss))
 
 
 if __name__ == "__main__":

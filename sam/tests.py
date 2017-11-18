@@ -1,11 +1,11 @@
 import copy 
-import helpers
 import itertools
 import matplotlib.pyplot as plt
 import nest
 import numpy as np
+import sam.helpers as helpers
 from collections import defaultdict
-from sam import *
+from sam.sam import *
 
 def test_sample_draws():
 	"""
@@ -168,25 +168,17 @@ def run_pecevski_experiment(plot_intermediates=False):
 		(2,2,2):0.04
 	}
 
-	distribution = {
-		(1,1,1):0.25,
-		(1,1,2):0.00,
-		(1,2,1):0.25,
-		(1,2,2):0.00,
-		(2,1,1):0.25,
-		(2,1,2):0.00,
-		(2,2,1):0.17,
-		(2,2,2):0.08
-	}
-
-	conditional = helpers.compute_conditional_distribution(distribution, 2)
-
 	# Create module.
-	sam = SAMModule(randomise_seed=False, num_threads=1)
+	sam = SAMModule(randomise_seed=False)
 	sam.create_network(num_x_vars=2, 
 		num_discrete_vals=2, 
 		num_modes=2,
-		distribution=distribution)
+		distribution=distribution,
+		params={'num_threads':1})
+
+	# Get the conditional of the module's target distribution.
+	distribution = sam.distribution
+	conditional = helpers.compute_conditional_distribution(sam.distribution, 2)
 
 	# Simulate and collect KL divergences.
 	t = 0
@@ -200,7 +192,7 @@ def run_pecevski_experiment(plot_intermediates=False):
 	last_set_intrinsic_rate = sam.params['first_bias_rate']
 	extra_time = 0
 
-	while t <= sam.params['first_learning_phase'] + sam.params['second_learning_phase'] :
+	while t <= sam.params['learning_time'] :
 		# Inject a current for some time.
 		sam.present_random_sample() 
 		sam.clear_currents()
@@ -224,11 +216,11 @@ def run_pecevski_experiment(plot_intermediates=False):
 			# Restart plasticity.
 			extra_time += 2000
 			sam.set_intrinsic_rate(last_set_intrinsic_rate)
-			sam.set_plasticity_learning_time(sam.params['stdp_time'] + extra_time)
+			sam.set_plasticity_learning_time(int(sam.params['stdp_time_fraction'] * sam.params['learning_time'] + extra_time))
 			sam.clear_currents()
 
 		# Set different intrinsic rate.
-		if t >= sam.params['first_learning_phase'] and set_second_rate == False:
+		if t >= sam.params['learning_time'] * sam.params['intrinsic_step_time_fraction'] and set_second_rate == False:
 			set_second_rate = True
 			last_set_intrinsic_rate = sam.params['second_bias_rate']
 			sam.set_intrinsic_rate(last_set_intrinsic_rate)

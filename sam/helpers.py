@@ -2,6 +2,7 @@ import itertools
 import numpy as np
 from scipy.stats import entropy
 
+
 def determine_bias_baseline(T, largest_values):
 	"""
 	Finds the baseline bias parameter value for the intrinsic plasticity rule, 
@@ -86,3 +87,14 @@ def compute_conditional_distribution(joint, num_discrete_values):
 			conditional[k] /= total 
 
 	return conditional
+
+
+def get_dictionary_string(d):
+	"""
+	Outputs a nicely formatted string with a dictionary's content.
+	"""
+	dict_string = ""
+	for k, v in d.items():
+		dict_string += "{}: {}\n".format(k,v)
+
+	return dict_string
