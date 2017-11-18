@@ -51,6 +51,7 @@ class SAMModule:
 		tau = 15.0
 		learning_phase_1 = 600000 # 600 s
 		learning_phase_2 = 600000 
+		delay = 0.05
 
 		self.params = {
 			'initial_stdp_rate':0.002,
@@ -61,12 +62,13 @@ class SAMModule:
 			'min_weight':0.0,
 			'weight_baseline':2.5 * np.log(0.2),
 			'tau':tau,
+			'delay':delay,
 			'T':0.4,
 			'use_rect_psp_exc':True,
 			'use_rect_psp_inh':True,
 			'inhibitors_use_rect_psp_exc':True,
-			'amplitude_exc':2.8,
-			'amplitude_inh':2.8,
+			'amplitude_exc':2.0,
+			'amplitude_inh':2.0,
 			'external_current':0.0,
 			'tau_membrane':0.01,
 			'tau_alpha':8.5,
@@ -79,7 +81,7 @@ class SAMModule:
 			'initial_bias':5.0,
 			'dead_time_random':False,
 			'linear_term_prob':0.0,
-			'exp_term_prob':1.0/tau, # 1000 factor is needed to turn ms into s.
+			'exp_term_prob':1.0/tau,
 			'exp_term_prob_scale':1.0,
 			'weight_chi_alpha_mean':3.0,
 			'weight_chi_alpha_std':0.1,
@@ -107,11 +109,12 @@ class SAMModule:
 			'alpha_inhibitors_synapse_type':'static_synapse',
 			'inhibitors_alpha_synapse_type':'static_synapse',
 			'num_inhibitors':5,
-			'delay_alpha_inhibitors':0.1,
-			'delay_inhibitors_alpha':0.1,
-			'delay_chi_alpha':1.0,
-			'delay_alpha_zeta':1.0,
-			'time_resolution':0.1
+			'delay_alpha_inhibitors':delay,
+			'delay_inhibitors_alpha':delay,
+			'delay_chi_alpha':delay,
+			'delay_alpha_zeta':delay,
+			'devices_delay':delay,
+			'time_resolution':delay
 		}
 
 		# Update defaults.
@@ -548,7 +551,7 @@ class SAMModule:
 		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
 
 		# Connect all neurons to the spike reader.
-		nest.Connect(nodes, spikereader)
+		nest.Connect(nodes, spikereader, syn_spec={'delay':self.params['devices_delay']})
 
 		return spikereader
 

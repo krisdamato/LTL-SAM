@@ -8,7 +8,6 @@ def determine_bias_baseline(T, largest_values):
 	which is used to shift bias update sizes.
 	largest_values: a list of maximal values of each predictor in this SAM.
 	"""
-
 	num_predictors = len(largest_values)
 	return (2.5 / T) * (-num_predictors * np.log(0.2) - np.sum([np.log(m + 1) for m in largest_values]) + np.log(0.02))
 
@@ -28,7 +27,6 @@ def generate_distribution(num_vars, num_discrete_values, randomiser=np.random.Ra
 	 (2, 2):0.01
 	}
 	"""
-
 	var_values = range(1, num_discrete_values + 1)
 	possibilities = list(itertools.product(var_values, repeat=num_vars))
 	probabilities = np.array([randomiser.random_sample() for p in possibilities])
@@ -47,7 +45,6 @@ def draw_from_distribution(distribution, complete=True, randomiser=np.random.Ran
 	randomiser: a numpy.random.RandomState
 	Returns a tuple drawn from the given distribution, e.g. (2, 2)
 	"""
-
 	p = randomiser.random_sample()
 	sum = 0.0
 	for key, value in distribution.items():
@@ -66,3 +63,26 @@ def get_KL_divergence(estimate, target):
 	q = [target[k] for k in tuples]
 	
 	return entropy(q, p)
+
+
+def compute_conditional_distribution(joint, num_discrete_values):
+	"""
+	Given a joint distribution p(x1, x2, ..., xn, z) in the form of tuple:probability pairs, 
+	this computes the conditional distribution p(z|x1, x2, ..., xn). z is assumed to be the
+	last tuple element, with values in {1, ..., num_discrete_values}.
+	"""
+	conditional = dict(joint)
+	num_x_vars = len(list(joint.keys())[0]) - 1
+	var_values = range(1, num_discrete_values + 1)
+	x_possibilities = list(itertools.product(var_values, repeat=num_x_vars))
+	possibilities = []
+	for p in x_possibilities:
+		cond_p = [p + (z, ) for z in range(1, num_discrete_values + 1)]
+		total = 0
+		for k, v in joint.items():
+			if k in cond_p:
+				total += v
+		for k in cond_p:
+			conditional[k] /= total 
+
+	return conditional

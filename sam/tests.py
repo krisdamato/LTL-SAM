@@ -1,8 +1,10 @@
+import copy 
 import helpers
 import itertools
+import matplotlib.pyplot as plt
 import nest
 import numpy as np
-import matplotlib.pyplot as plt
+from collections import defaultdict
 from sam import *
 
 def test_sample_draws():
@@ -91,7 +93,11 @@ def run_trained_test(sam):
 	counting output spikes.
 	"""
 	implicit = sam.compute_implicit_distribution() 
-	print("Implicit distribution is {}.\nKL divergence = {}".format(implicit, helpers.get_KL_divergence(implicit, sam.distribution)))
+	implicit_conditional = helpers.compute_conditional_distribution(implicit, sam.num_discrete_vals)
+	target_conditional = helpers.compute_conditional_distribution(sam.distribution, sam.num_discrete_vals)
+	print("Theoretical implicit distribution is {}.\nKL d. (joint) = {}\nKL d. (cond.) = {}".format(implicit, 
+		helpers.get_KL_divergence(implicit, sam.distribution),
+		helpers.get_KL_divergence(implicit_conditional, target_conditional)))
 
 	var_values = range(1, sam.num_discrete_vals + 1)
 	possibilities = list(itertools.product(var_values, repeat=sam.num_vars - 1))
@@ -106,6 +112,42 @@ def run_trained_test(sam):
 
 		# Plot evidenced activity.
 		sam.plot_spikes(sr)
+
+
+def measure_experimental_cond_distribution(sam, duration):
+	"""
+	Measures the conditional distribution of the provided SAM module
+	experimentally, i.e. by counting output spikes directly.
+	Note: For best results, stop all plasticity effects.
+	"""
+	var_values = range(1, sam.num_discrete_vals + 1)
+	possibilities = list(itertools.product(var_values, repeat=sam.num_vars - 1))
+	conditional = dict(sam.distribution)
+
+	for p in possibilities:
+		# print("Measuring experimental conditional distribution on input:", p)
+
+		# Present evidence.
+		sr = sam.connect_reader(sam.all_neurons)
+		sam.clear_currents()
+		sam.present_input_evidence(duration=duration, sample=p)
+
+		# Get spikes.
+		spikes = nest.GetStatus(sr, keys='events')[0]
+		senders = spikes['senders']
+		times = spikes['times']
+
+		# Count spikes per output neuron.
+		counts = defaultdict(int)
+		for node in senders:
+			counts[node] += 1 if node in sam.zeta else 0
+
+		# Calculate conditional probabilities.
+		total = np.sum(list(counts.values()))
+		for z in var_values:
+			conditional[p + (z,)] = counts[sam.zeta[z - 1]] / total
+
+	return conditional
 
 
 def run_pecevski_experiment(plot_intermediates=False):
@@ -126,8 +168,21 @@ def run_pecevski_experiment(plot_intermediates=False):
 		(2,2,2):0.04
 	}
 
+	distribution = {
+		(1,1,1):0.25,
+		(1,1,2):0.00,
+		(1,2,1):0.25,
+		(1,2,2):0.00,
+		(2,1,1):0.25,
+		(2,1,2):0.00,
+		(2,2,1):0.17,
+		(2,2,2):0.08
+	}
+
+	conditional = helpers.compute_conditional_distribution(distribution, 2)
+
 	# Create module.
-	sam = SAMModule(randomise_seed=True, num_threads=1)
+	sam = SAMModule(randomise_seed=False, num_threads=1)
 	sam.create_network(num_x_vars=2, 
 		num_discrete_vals=2, 
 		num_modes=2,
@@ -136,25 +191,48 @@ def run_pecevski_experiment(plot_intermediates=False):
 	# Simulate and collect KL divergences.
 	t = 0
 	i = 0
-	skip = 10	
-	kls = []
+	skip_kld = 10	
+	skip_exp_cond = 1000
+	kls_joint = []
+	kls_cond = []
+	kls_cond_exp = []
+	set_second_rate = False
+	last_set_intrinsic_rate = sam.params['first_bias_rate']
+	extra_time = 0
 
-	while t < sam.params['first_learning_phase']:
-		sam.present_random_sample() # Inject a current for some time.
+	while t <= sam.params['first_learning_phase'] + sam.params['second_learning_phase'] :
+		# Inject a current for some time.
+		sam.present_random_sample() 
 		sam.clear_currents()
-		if i % skip == 0:
-			implicit = sam.compute_implicit_distribution() 
-			kls.append(helpers.get_KL_divergence(implicit, distribution))
 		t += sam.params['sample_presentation_time']
-		i += 1
-	sam.set_intrinsic_rate(sam.params['second_bias_rate'])
-	while t < (sam.params['first_learning_phase'] + sam.params['second_learning_phase']):
-		sam.present_random_sample() # Inject a current for some time.
-		sam.clear_currents()
-		if i % skip == 0:
-			implicit = sam.compute_implicit_distribution() 
-			kls.append(helpers.get_KL_divergence(implicit, distribution))
-		t += sam.params['sample_presentation_time']
+
+		# Compute theoretical distributions and measure KLD.
+		if i % skip_kld == 0:
+			implicit = sam.compute_implicit_distribution()
+			implicit_conditional = helpers.compute_conditional_distribution(implicit, 2)
+			kls_joint.append(helpers.get_KL_divergence(implicit, distribution))
+			kls_cond.append(helpers.get_KL_divergence(implicit_conditional, conditional))
+
+		# Measure experimental conditional distribution from spike activity.
+		if i % skip_exp_cond == 0:
+			# Stop plasticity for testing.
+			sam.set_intrinsic_rate(0.0)
+			sam.set_plasticity_learning_time(0)
+			experimental_conditional = measure_experimental_cond_distribution(sam, duration=2000.0)
+			kls_cond_exp.append(helpers.get_KL_divergence(experimental_conditional, conditional))
+
+			# Restart plasticity.
+			extra_time += 2000
+			sam.set_intrinsic_rate(last_set_intrinsic_rate)
+			sam.set_plasticity_learning_time(sam.params['stdp_time'] + extra_time)
+			sam.clear_currents()
+
+		# Set different intrinsic rate.
+		if t >= sam.params['first_learning_phase'] and set_second_rate == False:
+			set_second_rate = True
+			last_set_intrinsic_rate = sam.params['second_bias_rate']
+			sam.set_intrinsic_rate(last_set_intrinsic_rate)
+		
 		i += 1
 
 	print(sam.get_neuron_biases(sam.alpha))
@@ -167,5 +245,8 @@ def run_pecevski_experiment(plot_intermediates=False):
 
 	# Plot KL divergence plot.
 	plt.figure()
-	plt.plot(np.array(range(len(kls))) * skip * sam.params['sample_presentation_time'] * 1e-3, kls)
+	plt.plot(np.array(range(len(kls_cond))) * skip_kld * sam.params['sample_presentation_time'] * 1e-3, kls_cond, label="KLd p(z|x)")
+	plt.plot(np.array(range(len(kls_joint))) * skip_kld * sam.params['sample_presentation_time'] * 1e-3, kls_joint, label="KLd p(x,z)")
+	plt.plot(np.array(range(len(kls_cond_exp))) * skip_exp_cond * sam.params['sample_presentation_time'] * 1e-3, kls_cond_exp, label="Exp. KLd p(z|x)")
+	plt.legend(loc='upper center')
 	plt.show()
