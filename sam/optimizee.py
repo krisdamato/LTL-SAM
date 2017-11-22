@@ -48,11 +48,20 @@ class SAMOptimizee(Optimizee):
 
     def bounding_func(self, individual):
         """
-        Bounds the individual within the required bounds via coordinate clipping
+        Bounds the individual within the required bounds via coordinate clipping.
         """
         param_spec = SAMModule.parameter_spec()
         individual = {k: np.float64(np.clip(v, a_min=param_spec[k][0], a_max=param_spec[k][1])) for k, v in individual.items()}
         return individual
+
+
+    def parameter_spec(self):
+        """
+        Returns the minima-maxima of each explorable variable.
+        Note: Dictionary is an OrderedDict with items sorted by key, to 
+        ensure that items are interpreted in the same way everywhere.
+        """
+        return OrderedDict(sorted(SAMModule.parameter_spec().items()))
 
 
     def prepare_network(self, distribution, num_discrete_vals, num_modes):
@@ -86,7 +95,7 @@ class SAMOptimizee(Optimizee):
         density estimation as in Pecevski et al. 2016. The loss function is the
         negative of the KL divergence between target and estimated distributions.
         """
-        # Use the distribution from Peceveski et al.
+        # Use the distribution from Peceveski et al., example 1.
         distribution = {
             (1,1,1):0.04,
             (1,1,2):0.04,
@@ -157,6 +166,9 @@ class SAMOptimizee(Optimizee):
         self.sam.set_intrinsic_rate(0.0)
         self.sam.set_plasticity_learning_time(0)
 
+        # Measure experimental conditional for the last time.
+        experimental_conditional = tests.measure_experimental_cond_distribution(self.sam, duration=2000.0)
+
         # Plot KL divergence plot.
         if show_plot:
             # Present evidence.
@@ -174,10 +186,13 @@ class SAMOptimizee(Optimizee):
         implicit_conditional = helpers.compute_conditional_distribution(implicit, self.sam.num_discrete_vals)
         kld_joint = helpers.get_KL_divergence(implicit, distribution)
         kld_cond = helpers.get_KL_divergence(implicit_conditional, conditional)
+        kld_cond_experimental = helpers.get_KL_divergence(experimental_conditional, conditional)
 
-        logging.info("Final loss is {}".format(kld_joint))
+        logging.info("Experimental conditional probability = {}".format(experimental_conditional))
+        logging.info("Target conditional probability = {}".format(conditional))
+        logging.info("Final loss is {}".format(kld_cond_experimental))
 
-        return (kld_joint, )
+        return (kld_cond_experimental, )
 
 
 def end(self):

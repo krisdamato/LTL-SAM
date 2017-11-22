@@ -34,19 +34,18 @@ class SAMModule:
 		limit of the parameters.
 		"""
 		param_spec = {
-			'initial_stdp_rate':(0.0, 1.0),
-			'final_stdp_rate':(0.0, 1.0),
+			'initial_stdp_rate':(0.0, 0.1),
+			'final_stdp_rate':(0.0, 0.1),
 			'stdp_time_fraction':(0, 1.0), 
 			'intrinsic_step_time_fraction':(0.0, 1.0),
 			'weight_baseline':(-10.0, 0.0),
 			'T':(0.0, 1.0),
-			'first_bias_rate':(0.0, 1.0),
-			'second_bias_rate':(0.0, 1.0),
+			'first_bias_rate':(0.0, 0.1),
+			'second_bias_rate':(0.0, 0.1),
 			'bias_baseline':(-40.0, 0.0),
-			'linear_term_prob':(0.0, 1.0),
 			'exp_term_prob':(0.0, 1.0),
 			'exp_term_prob_scale':(0.0, 10.0),
-			'relative_bias_spike_rate':(0.0, 1.0)
+			'relative_bias_spike_rate':(1e-5, 1.0)
 			}
 
 		return param_spec
@@ -108,7 +107,7 @@ class SAMModule:
 			'nu_current_minus':-30.0,
 			'alpha_current_minus':-80.0,
 			'alpha_current_plus':0.0,
-			'learning_time':300000,
+			'learning_time':600000,
 			'sample_presentation_time':100.0, # 100 ms.
 			'chi_neuron_type':'srm_pecevski_alpha',
 			'alpha_neuron_type':'srm_pecevski_alpha',
