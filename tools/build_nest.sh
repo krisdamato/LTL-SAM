@@ -1,3 +1,10 @@
+apt-get install -y build-essential cmake libltdl7-dev libreadline6-dev \
+libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy \
+python-matplotlib ipython openmpi-bin libopenmpi-dev python-nose cython python3-dev
+
+cd /home/krisdamato/
+mkdir nest-build
+cd nest-build
 cmake -DCMAKE_INSTALL_PREFIX:PATH=/home/krisdamato/NEST \
 	  /home/krisdamato/nest-simulator \
 	  -Dwith-python=3 \
@@ -10,3 +17,4 @@ make
 make install
 source /home/krisdamato/NEST/bin/nest_vars.sh
 make installcheck
+rm -r /home/krisdamato/nest-build
