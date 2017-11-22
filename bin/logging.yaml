@@ -1,0 +1,61 @@
+version: 1
+formatters:
+  simple:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+handlers:
+  console:
+    class: logging.StreamHandler
+    stream: ext://sys.stdout
+    formatter: simple
+  file:
+    class: logging.handlers.WatchedFileHandler
+    formatter: simple
+    filename: output.log
+loggers:
+  ltl-sam:
+    level: INFO
+    handlers: [file]
+    propagate: no
+  ltl-lsm:
+    level: INFO
+    handlers: [file]
+    propagate: no
+  ltl-ga:
+    level: INFO
+    handlers: [file]
+    propagate: no
+  ltl-sa:
+    level: INFO
+    handlers: [file]
+    propagate: no
+  ltl-ce:
+    level: INFO
+    handlers: [file]
+    propagate: no
+  ltl-face:
+    level: INFO
+    handlers: [file]
+    propagate: no
+  ltl-noisy-ce:
+    level: INFO
+    handlers: [file]
+    propagate: no
+  ltl-distribution:
+    level: INFO
+    handlers: [file]
+    propagate: no
+  ltl-lsm-ga:
+    level: INFO
+    handlers: [file]
+    propagate: no
+  ltl-lsm-sa:
+    level: INFO
+    handlers: [file]
+    propagate: no
+  pypet:
+    level: ERROR
+    handlers: [console]
+    propagate: no
+root:
+  level: INFO
+  handlers: [console]
