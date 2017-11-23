@@ -50,11 +50,11 @@ def main():
 
 
     # NOTE: Innerloop simulator
-    optimizee = SAMOptimizee(traj, n_NEST_threads=1)
+    optimizee = SAMOptimizee(traj, n_NEST_threads=4)
 
     # NOTE: Outerloop optimizer initialization
-    parameters = GeneticAlgorithmParameters(seed=0, popsize=30, CXPB=0.5,
-                                            MUTPB=1.0, NGEN=100, indpb=0.01,
+    parameters = GeneticAlgorithmParameters(seed=0, popsize=1, CXPB=0.5,
+                                            MUTPB=1.0, NGEN=1, indpb=0.01,
                                             tournsize=20, matepar=0.5,
                                             mutpar=1.0, remutate=False
                                             )
@@ -69,17 +69,24 @@ def main():
     # Add post processing
     env.add_postprocessing(optimizer.post_process)
 
+    # Add Recorder
+    recorder = Recorder(trajectory=traj,
+                        optimizee_name=optimizee.__class__.__name__, 
+                        optimizee_parameters=None,
+                        optimizer_name=optimizer.__class__.__name__,
+                        optimizer_parameters=optimizer.get_params())
+    recorder.start()
+
     # Run the simulation with all parameter combinations
     env.run(optimizee.simulate)
 
     # NOTE: Outerloop optimizer end
     optimizer.end(traj)
+    recorder.end()
 
     # Finally disable logging and close all log-files
     env.disable_logging()
-
-    # Run the simulation with all parameter combinations
-    env.run(optimizee.simulate)
+  
 
 if __name__ == '__main__':
     main()

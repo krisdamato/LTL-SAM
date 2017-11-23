@@ -44,7 +44,7 @@ class SAMModule:
 			'second_bias_rate':(0.0, 0.1),
 			'bias_baseline':(-40.0, 0.0),
 			'exp_term_prob':(0.0, 1.0),
-			'exp_term_prob_scale':(0.0, 10.0),
+			'exp_term_prob_scale':(0.0, 5.0),
 			'relative_bias_spike_rate':(1e-5, 1.0)
 			}
 
