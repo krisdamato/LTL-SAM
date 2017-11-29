@@ -25,6 +25,7 @@ def test_sample_draws():
 	}
 
 	# Create module.
+	nest.ResetKernel()
 	sam = SAMModule(randomise_seed=True)
 	sam.create_network(num_x_vars=2, 
 		num_discrete_vals=2, 
@@ -72,6 +73,7 @@ def run_single_random_sample(plot_iteration_number, neuron_index=0):
 	}
 
 	# Create module.
+	nest.ResetKernel()
 	sam = SAMModule(randomise_seed=True)
 	sam.create_network(num_x_vars=2, 
 		num_discrete_vals=2, 
@@ -169,6 +171,7 @@ def run_pecevski_experiment(plot_intermediates=False):
 	}
 
 	# Create module.
+	nest.ResetKernel()
 	sam = SAMModule(randomise_seed=False)
 	sam.create_network(num_x_vars=2, 
 		num_discrete_vals=2, 

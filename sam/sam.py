@@ -1,9 +1,11 @@
+import copy
 import logging
 import nest
 import numpy as np
 import pylab
 import sam.helpers as helpers
 import time
+from collections import defaultdict
 from mpi4py import MPI
 
 
@@ -45,7 +47,8 @@ class SAMModule:
 			'bias_baseline':(-40.0, 0.0),
 			'exp_term_prob':(0.0, 1.0),
 			'exp_term_prob_scale':(0.0, 5.0),
-			'relative_bias_spike_rate':(1e-5, 1.0)
+			'relative_bias_spike_rate':(1e-5, 1.0),
+			'max_depress_tau_multiplier':(2.0, 20.0)
 			}
 
 		return param_spec
@@ -61,7 +64,6 @@ class SAMModule:
 		delay = 0.05
 
 		self.params = {
-			'num_threads':1,
 			'initial_stdp_rate':0.002,
 			'final_stdp_rate':0.0006,
 			'stdp_time_fraction':0.5,
@@ -79,7 +81,7 @@ class SAMModule:
 			'amplitude_exc':2.0,
 			'amplitude_inh':2.0,
 			'external_current':0.0,
-			'tau_membrane':0.01,
+			'tau_membrane':delay/100,
 			'tau_alpha':8.5,
 			'first_bias_rate':0.01,
 			'second_bias_rate':0.02,
@@ -123,7 +125,7 @@ class SAMModule:
 			'delay_chi_alpha':delay,
 			'delay_alpha_zeta':delay,
 			'devices_delay':delay,
-			'time_resolution':delay
+			'max_depress_tau_multiplier':5.0
 		}
 
 		# Update defaults.
@@ -137,11 +139,6 @@ class SAMModule:
 		this function in order to update settings.
 		"""
 		# Set NEST defaults.
-		nest.ResetKernel()
-		nest.SetKernelStatus({
-			'resolution':self.params['time_resolution'],
-			'local_num_threads':self.params['num_threads']
-			})
 		n = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
 
 		logging.info("Randomising {} processes using {} as main seed.".format(n * 2 + 1, self.seed))
@@ -166,7 +163,8 @@ class SAMModule:
 			'weight':self.params['initial_weight'],
 			'w_baseline':self.params['weight_baseline'],
 			'tau':self.params['tau'],
-			'T':self.params['T']
+			'T':self.params['T'],
+			'depress_multiplier':self.params['max_depress_tau_multiplier']
 			})
 
 		nest.SetDefaults('srm_pecevski_alpha', params={
@@ -351,6 +349,35 @@ class SAMModule:
 		self.num_modes = num_modes
 
 		self.initialised = True
+
+
+	def clone(self):
+		"""
+		Returns a network with the same architecture and equal weights and biases.
+		"""
+		# Clone the network object and recreate the structure.
+		# Note: We pass the params to create_network because the function overwrites 
+		# the bias baseline unless the bias baseline is passed.
+		new_module = copy.deepcopy(self)
+		new_module.create_network(
+			num_x_vars=self.num_vars - 1,
+			num_discrete_vals=self.num_discrete_vals,
+			num_modes=self.num_modes,
+			distribution=self.distribution,
+			params=self.params)
+		
+		# Copy bias values.
+		if new_module.params['alpha_neuron_type'] == 'srm_pecevski_alpha':
+			alpha_biases = nest.GetStatus(self.alpha, 'bias')
+			nest.SetStatus(new_module.alpha, 'bias', alpha_biases)
+
+		# Copy synapse weights.
+		chi_alpha_conns = nest.GetConnections(self.chi, self.alpha)
+		chi_alpha_weights = nest.GetStatus(chi_alpha_conns, 'weight')
+		chi_alpha_conns_new = nest.GetConnections(new_module.chi, new_module.alpha)
+		nest.SetStatus(chi_alpha_conns_new, 'weight', chi_alpha_weights)
+
+		return new_module
 
 
 	def set_bias_baseline(self, baseline):
@@ -667,12 +694,11 @@ class SAMModule:
 		times = spikes['times']
 
 		# Count spikes per output neuron.
-		nines = 0
-		tens = 0
-		for i in range(len(senders)):
-			nines = nines + 1 if senders[i] == 9 else nines
-			tens = tens + 1 if senders[i] == 10 else tens
-		logging.info("nines = {}, tens = {}".format(nines, tens))
+		counts = defaultdict(int)
+		for node in senders:
+			counts[node] += 1 if node in self.zeta else 0
+		for i in self.zeta:
+			logging.info("Neuron {} spiked {} times".format(i, counts[i]))
 
 		# Plot
 		pylab.figure()

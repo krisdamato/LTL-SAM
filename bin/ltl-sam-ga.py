@@ -50,11 +50,11 @@ def main():
 
 
     # NOTE: Innerloop simulator
-    optimizee = SAMOptimizee(traj, n_NEST_threads=4)
+    optimizee = SAMOptimizee(traj, n_NEST_threads=1, time_resolution=0.05)
 
     # NOTE: Outerloop optimizer initialization
-    parameters = GeneticAlgorithmParameters(seed=0, popsize=1, CXPB=0.5,
-                                            MUTPB=1.0, NGEN=1, indpb=0.01,
+    parameters = GeneticAlgorithmParameters(seed=0, popsize=10, CXPB=0.5,
+                                            MUTPB=1.0, NGEN=5, indpb=0.01,
                                             tournsize=20, matepar=0.5,
                                             mutpar=1.0, remutate=False
                                             )
@@ -86,7 +86,17 @@ def main():
 
     # Finally disable logging and close all log-files
     env.disable_logging()
-  
+
+    # Quick plot of evolution mean fitnesses.
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from matplotlib.ticker import MaxNLocator
+    fig, ax = plt.subplots()
+    ax.plot(np.array(range(len(optimizer.gen_fitnesses))) + 1, optimizer.gen_fitnesses)
+    ax.set_xlabel("Generation Number")
+    ax.set_ylabel("Mean Population Fitness")
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    fig.savefig("fitness_evolution.png")
 
 if __name__ == '__main__':
     main()
