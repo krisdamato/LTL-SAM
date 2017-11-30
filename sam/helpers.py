@@ -1,6 +1,8 @@
 import itertools
 import numpy as np
+import os
 from scipy.stats import entropy
+from time import gmtime, strftime
 
 
 def determine_bias_baseline(T, largest_values):
@@ -98,3 +100,28 @@ def get_dictionary_string(d):
 		dict_string += "{}: {}\n".format(k,v)
 
 	return dict_string
+
+
+def create_directory(directory):
+	"""
+	Creates a directory if it does not exist.
+	"""
+	if not os.path.exists(directory):
+		os.makedirs(directory)
+
+
+def save_text(text, path):
+	"""
+	Creates a text file at specified path and saves the provided
+	text to it.
+	"""
+	f = open(path,'w')
+	f.write(text)
+	f.close()
+
+
+def get_now_string():
+	"""
+	Returns a string of the current timestamp.
+	"""
+	return strftime("%Y-%m-%d %H:%M:%S", gmtime())

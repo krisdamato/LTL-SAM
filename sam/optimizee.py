@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
 import numpy as np
+import os
 import sam.helpers as helpers
 import sam.tests as tests
 
@@ -21,7 +22,14 @@ class SAMOptimizee(Optimizee):
     the SAM neural network.
     """
 
-    def __init__(self, traj, n_NEST_threads=1, time_resolution=0.05, seed=0):
+    def __init__(
+            self, 
+            traj, 
+            time_resolution=0.05, 
+            num_fitness_trials=3, 
+            seed=0, 
+            n_NEST_threads=1, 
+            plots_directory='./sam_plots'):
         super(SAMOptimizee, self).__init__(traj)
 
         # Make SAM module extension available.
@@ -31,6 +39,9 @@ class SAMOptimizee(Optimizee):
             'resolution':time_resolution})
         
         self.rs = np.random.RandomState(seed=seed)
+        self.num_fitness_trials = num_fitness_trials
+        self.run_number = 0 # Is this NEST-process safe?
+        self.save_directory = plots_directory
 
         # create_individual can be called because __init__ is complete except for traj initialization
         self.individual = self.create_individual()
@@ -81,13 +92,6 @@ class SAMOptimizee(Optimizee):
         params = {k:self.individual[k] for k in SAMModule.parameter_spec().keys()}
 
         # Create a SAM module with the correct parameters.
-        # params =  {'exp_term_prob_scale': 0.99872377436615456, 'second_bias_rate': 0.0031838925806017661, 
-        # 'exp_term_prob': 0.054337987873591231, 'T': 0.54656816525350982, 'bias_baseline': -17.908545325837565, 
-        # 'weight_baseline': -2.5256030784231056, 'initial_stdp_rate': 0.041142504566102751, 
-        # 'intrinsic_step_time_fraction': 0.34534783619731912, 'final_stdp_rate': 0.027242613897462943, 
-        # 'relative_bias_spike_rate': 0.70453956098042092, 'max_depress_tau_multiplier': 9.7054547328557401, 
-        # 'first_bias_rate': 0.078586970615068905, 'stdp_time_fraction': 0.16469415278717528}
-
         self.sam.create_network(num_x_vars=num_vars - 1, 
             num_discrete_vals=num_discrete_vals, 
             num_modes=num_modes,
@@ -97,11 +101,13 @@ class SAMOptimizee(Optimizee):
         logging.info("Creating a SAM network with overridden parameters:\n%s", helpers.get_dictionary_string(params))
 
 
-    def simulate(self, traj, show_plot=False):
+    def simulate(self, traj, save_plot=True):
         """
         Simulates a SAM module training on a target distribution; i.e. performing
         density estimation as in Pecevski et al. 2016. The loss function is the
-        negative of the KL divergence between target and estimated distributions.
+        the KL divergence between target and estimated distributions.
+        If save_plot == True, will create a directory for each individual that 
+        contains a text file with individual params and plots for each trial.
         """
         # Use the distribution from Peceveski et al., example 1.
         distribution = {
@@ -115,104 +121,112 @@ class SAMOptimizee(Optimizee):
             (2,2,2):0.04
         }
 
-        # distribution = {
-        #     (1,1,1):0.00,
-        #     (1,1,2):0.25,
-        #     (1,2,1):0.25,
-        #     (1,2,2):0.00,
-        #     (2,1,1):0.00,
-        #     (2,1,2):0.25,
-        #     (2,2,1):0.25,
-        #     (2,2,2):0.00
-        # }
-
-        nest.ResetKernel()
-        self.individual = traj.individual
-        self.prepare_network(distribution=distribution, num_discrete_vals=2, num_modes=2)
+        # Prepare paths for each individual evaluation.
+        individual_directory = os.path.join(self.save_directory, str(self.run_number) + "_" + helpers.get_now_string())
+        text_path = os.path.join(individual_directory, 'params.txt')
         
-        # Get the conditional of the module's target distribution.
-        distribution = self.sam.distribution
-        conditional = helpers.compute_conditional_distribution(self.sam.distribution, self.sam.num_discrete_vals)
+        # Declare fitness metrics.
+        kld_joint = []
+        kld_conditional = []
+        kld_conditional_experimental = []
 
-        # Train for the learning period set in the parameters.
-        t = 0
-        i = 0
-        set_second_rate = False
-        last_set_intrinsic_rate = self.sam.params['first_bias_rate']
-        skip_kld = 10   
-        skip_exp_cond = 1000
-        kls_joint = []
-        kls_cond = []
-        kls_cond_exp = []
-        set_second_rate = False
-        extra_time = 0  
-        sam_clones = []
+        # Run a number of trials to calculate mean fitness of this individual
+        for trial in range(self.num_fitness_trials):
+            nest.ResetKernel()
+            self.individual = traj.individual
+            self.prepare_network(distribution=distribution, num_discrete_vals=2, num_modes=2)
+            
+            # Create directory and params file if requested.
+            if save_plot:
+                params_dict = OrderedDict(sorted(self.sam.params.items()))
+                helpers.create_directory(individual_directory)
+                helpers.save_text(helpers.get_dictionary_string(params_dict), text_path)
 
-        connections = nest.GetConnections(self.sam.chi, self.sam.alpha)
+            # Get the conditional of the module's target distribution.
+            distribution = self.sam.distribution
+            conditional = helpers.compute_conditional_distribution(self.sam.distribution, self.sam.num_discrete_vals)
 
-        while t <= self.sam.params['learning_time']:
-            # Inject a current for some time.
-            self.sam.present_random_sample() 
-            self.sam.clear_currents()
-            t += self.sam.params['sample_presentation_time']
+            # Train for the learning period set in the parameters.
+            t = 0
+            i = 0
+            set_second_rate = False
+            last_set_intrinsic_rate = self.sam.params['first_bias_rate']
+            skip_kld = 10   
+            skip_exp_cond = 1000
+            kls_joint = []
+            kls_cond = []
+            kls_cond_exp = []
+            set_second_rate = False
+            extra_time = 0  
+            sam_clones = []
 
-            # Compute theoretical distributions and measure KLD.
-            if show_plot and i % skip_kld == 0:
-                implicit = self.sam.compute_implicit_distribution()
-                implicit_conditional = helpers.compute_conditional_distribution(implicit, 2)
-                kls_joint.append(helpers.get_KL_divergence(implicit, distribution))
-                kls_cond.append(helpers.get_KL_divergence(implicit_conditional, conditional))
+            connections = nest.GetConnections(self.sam.chi, self.sam.alpha)
 
-            # Measure experimental conditional distribution from spike activity.
-            if show_plot and i % skip_exp_cond == 0:
-                # Clone module for later tests.
-                sam_clone = self.sam.clone()
+            while t <= self.sam.params['learning_time']:
+                # Inject a current for some time.
+                self.sam.present_random_sample() 
+                self.sam.clear_currents()
+                t += self.sam.params['sample_presentation_time']
 
-                # Stop plasticity on clone for testing.
-                sam_clone.set_intrinsic_rate(0.0)
-                sam_clone.set_plasticity_learning_time(0)
+                # Compute theoretical distributions and measure KLD.
+                if save_plot and i % skip_kld == 0:
+                    implicit = self.sam.compute_implicit_distribution()
+                    implicit_conditional = helpers.compute_conditional_distribution(implicit, 2)
+                    kls_joint.append(helpers.get_KL_divergence(implicit, distribution))
+                    kls_cond.append(helpers.get_KL_divergence(implicit_conditional, conditional))
 
-                sam_clones.append(sam_clone)
-                                
-            # Set different intrinsic rate.
-            if t >= self.sam.params['learning_time'] * self.sam.params['intrinsic_step_time_fraction'] and set_second_rate == False:
-                set_second_rate = True
-                last_set_intrinsic_rate = self.sam.params['second_bias_rate']
-                self.sam.set_intrinsic_rate(last_set_intrinsic_rate)
-        
-            i += 1
+                # Measure experimental conditional distribution from spike activity.
+                if save_plot and i % skip_exp_cond == 0:
+                    # Clone module for later tests.
+                    sam_clone = self.sam.clone()
 
-        self.sam.set_intrinsic_rate(0.0)
-        self.sam.set_plasticity_learning_time(0)
+                    # Stop plasticity on clone for testing.
+                    sam_clone.set_intrinsic_rate(0.0)
+                    sam_clone.set_plasticity_learning_time(0)
 
-        # Measure experimental conditional on para-experiment clones.
-        if show_plot:
-            plot_exp_conditionals = [tests.measure_experimental_cond_distribution(s, duration=2000.0) for s in sam_clones]
-            kls_cond_exp = [helpers.get_KL_divergence(p, conditional) for p in plot_exp_conditionals] 
+                    sam_clones.append(sam_clone)
+                                    
+                # Set different intrinsic rate.
+                if t >= self.sam.params['learning_time'] * self.sam.params['intrinsic_step_time_fraction'] and set_second_rate == False:
+                    set_second_rate = True
+                    last_set_intrinsic_rate = self.sam.params['second_bias_rate']
+                    self.sam.set_intrinsic_rate(last_set_intrinsic_rate)
+            
+                i += 1
 
-        # Plot KL divergence plot.
-        if show_plot:
-            plt.figure()
-            plt.plot(np.array(range(len(kls_cond))) * skip_kld * self.sam.params['sample_presentation_time'] * 1e-3, kls_cond, label="KLd p(z|x)")
-            plt.plot(np.array(range(len(kls_joint))) * skip_kld * self.sam.params['sample_presentation_time'] * 1e-3, kls_joint, label="KLd p(x,z)")
-            plt.plot(np.array(range(len(kls_cond_exp))) * skip_exp_cond * self.sam.params['sample_presentation_time'] * 1e-3, kls_cond_exp, label="Exp. KLd p(z|x)")
-            plt.legend(loc='upper center')
-            plt.show()
+            self.sam.set_intrinsic_rate(0.0)
+            self.sam.set_plasticity_learning_time(0)
 
-        # Calculate final divergences.
-        implicit = self.sam.compute_implicit_distribution()
-        implicit_conditional = helpers.compute_conditional_distribution(implicit, self.sam.num_discrete_vals)
-        kld_joint = helpers.get_KL_divergence(implicit, distribution)
-        kld_cond = helpers.get_KL_divergence(implicit_conditional, conditional)
+            # Measure experimental conditional on para-experiment clones.
+            if save_plot:
+                plot_exp_conditionals = [tests.measure_experimental_cond_distribution(s, duration=2000.0) for s in sam_clones]
+                kls_cond_exp = [helpers.get_KL_divergence(p, conditional) for p in plot_exp_conditionals] 
 
-        # Measure experimental conditional for the last time by averaging on 3 runs.
-        last_clone = self.sam.clone()
-        experimental_conditionals = [tests.measure_experimental_cond_distribution(last_clone, duration=2000.0) for i in range(3)]
-        kld_cond_experimental = np.sum([helpers.get_KL_divergence(p, conditional) for p in experimental_conditionals]) / len(experimental_conditionals)
+            # Plot KL divergence plot.
+            if save_plot:
+                plt.figure()
+                plt.plot(np.array(range(len(kls_cond))) * skip_kld * self.sam.params['sample_presentation_time'] * 1e-3, kls_cond, label="KLd p(z|x)")
+                plt.plot(np.array(range(len(kls_joint))) * skip_kld * self.sam.params['sample_presentation_time'] * 1e-3, kls_joint, label="KLd p(x,z)")
+                plt.plot(np.array(range(len(kls_cond_exp))) * skip_exp_cond * self.sam.params['sample_presentation_time'] * 1e-3, kls_cond_exp, label="Exp. KLd p(z|x)")
+                plt.legend(loc='upper center')
+                plt.savefig(os.path.join(individual_directory, str(trial) + '.png'))
 
-        logging.info("Theoretical J. KLd is {} [Loss]".format(kld_joint))
-        logging.info("Theoretical C. KLd is {}".format(kld_cond))
-        logging.info("Experimental C. KLd is {}".format(kld_cond_experimental))
+            # Calculate final divergences.
+            implicit = self.sam.compute_implicit_distribution()
+            implicit_conditional = helpers.compute_conditional_distribution(implicit, self.sam.num_discrete_vals)
+            kld_joint.append(helpers.get_KL_divergence(implicit, distribution))
+            kld_conditional.append(helpers.get_KL_divergence(implicit_conditional, conditional))
+
+            # Measure experimental conditional for the last time by averaging on 3 runs.
+            last_clone = self.sam.clone()
+            experimental_conditionals = [tests.measure_experimental_cond_distribution(last_clone, duration=2000.0) for i in range(3)]
+            kld_conditional_experimental.append(np.sum([helpers.get_KL_divergence(p, conditional) for p in experimental_conditionals]) / len(experimental_conditionals))
+
+        logging.info("Mean theoretical J. KLd is {} [Loss]".format(np.sum(kld_joint) / self.num_fitness_trials))
+        logging.info("Mean theoretical C. KLd is {}".format(np.sum(kld_conditional) / self.num_fitness_trials))
+        logging.info("Mean experimental C. KLd is {}".format(np.sum(kld_conditional_experimental) / self.num_fitness_trials))
+
+        self.run_number += 1
 
         return (kld_joint, )
 

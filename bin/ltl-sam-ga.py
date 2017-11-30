@@ -50,10 +50,10 @@ def main():
 
 
     # NOTE: Innerloop simulator
-    optimizee = SAMOptimizee(traj, n_NEST_threads=1, time_resolution=0.05)
+    optimizee = SAMOptimizee(traj, n_NEST_threads=1, time_resolution=0.05, plots_directory=paths.output_dir_path)
 
     # NOTE: Outerloop optimizer initialization
-    parameters = GeneticAlgorithmParameters(seed=0, popsize=10, CXPB=0.5,
+    parameters = GeneticAlgorithmParameters(seed=0, popsize=30, CXPB=0.5,
                                             MUTPB=1.0, NGEN=5, indpb=0.01,
                                             tournsize=20, matepar=0.5,
                                             mutpar=1.0, remutate=False
