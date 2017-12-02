@@ -42,6 +42,7 @@ class SAMOptimizee(Optimizee):
         self.num_fitness_trials = num_fitness_trials
         self.run_number = 0 # Is this NEST-process safe?
         self.save_directory = plots_directory
+        self.time_resolution = time_resolution
 
         # create_individual can be called because __init__ is complete except for traj initialization
         self.individual = self.create_individual()
@@ -90,6 +91,9 @@ class SAMOptimizee(Optimizee):
 
         # Convert the trajectory individual to a dictionary.
         params = {k:self.individual[k] for k in SAMModule.parameter_spec().keys()}
+
+        # Peg the delay to the time resolution.
+        params['delay'] = self.time_resolution
 
         # Create a SAM module with the correct parameters.
         self.sam.create_network(num_x_vars=num_vars - 1, 
@@ -210,6 +214,7 @@ class SAMOptimizee(Optimizee):
                 plt.plot(np.array(range(len(kls_cond_exp))) * skip_exp_cond * self.sam.params['sample_presentation_time'] * 1e-3, kls_cond_exp, label="Exp. KLd p(z|x)")
                 plt.legend(loc='upper center')
                 plt.savefig(os.path.join(individual_directory, str(trial) + '.png'))
+                plt.close()
 
             # Calculate final divergences.
             implicit = self.sam.compute_implicit_distribution()
@@ -228,7 +233,7 @@ class SAMOptimizee(Optimizee):
 
         self.run_number += 1
 
-        return (kld_joint, )
+        return (np.sum(kld_conditional_experimental) / self.num_fitness_trials, )
 
 
 def end(self):

@@ -21,11 +21,9 @@ class SAMModule:
 
 	def __init__(self, randomise_seed=False):
 		"""
-		Initialises RNGs and network settings with default values.
+		Initialises basic parameters.
 		"""
-		# Set seed.
 		self.seed = int(time.time()) if randomise_seed else 705
-
 		self.initialised = False
 
 
@@ -36,10 +34,8 @@ class SAMModule:
 		limit of the parameters.
 		"""
 		param_spec = {
-			'initial_stdp_rate':(0.0, 0.1),
-			'final_stdp_rate':(0.0, 0.1),
-			'stdp_time_fraction':(0, 1.0), 
-			'intrinsic_step_time_fraction':(0.0, 1.0),
+			'initial_stdp_rate':(0.0, 0.01),
+			'final_stdp_rate':(0.0, 0.01),
 			'weight_baseline':(-10.0, 0.0),
 			'T':(0.0, 1.0),
 			'first_bias_rate':(0.0, 0.1),
@@ -59,10 +55,11 @@ class SAMModule:
 		Sets SAM defaults to Pecevski et al. 2016 values.
 		params: dictionary of parameters to set.
 		"""
-		# Set defaults.
-		tau = 15.0
-		delay = 0.05
+		# Set common properties.
+		tau = 15.0 if 'tau' not in params else params['tau']
+		delay = 0.05 if 'delay' not in params else params['delay']
 
+		# Set all derived and underived properties.
 		self.params = {
 			'initial_stdp_rate':0.002,
 			'final_stdp_rate':0.0006,
@@ -290,9 +287,13 @@ class SAMModule:
 			raise NotImplementedError
 
 
-	def create_network(self, num_x_vars=2, num_discrete_vals=2, num_modes=2, distribution=None, params={}):
+	def create_network(self, num_x_vars=2, num_discrete_vals=2, num_modes=2, distribution=None, dep_index=-1, params={}, create_input_layer=True):
 		"""
 		Creates a SAM module with the specified architecture.
+		distribution: Users can specify the distribution themselves, in which case they need to take care that the 
+			other parameters are within the constraints set by this distribution (e.g. num_x_vars).
+		dep_index: Specifies the index (within the distribution tuples) of the output variable (-1 = last).
+		
 		"""
 		# Set parameter defaults.
 		self.set_sam_defaults(params)
@@ -305,9 +306,15 @@ class SAMModule:
 		# Set NEST defaults. 
 		# Note: This has to happen after SAM defaults are set.
 		self.set_nest_defaults()
+			
+		# Create input layer if the module is standalone.
+		if create_input_layer:
+			self.created_input_layer = True
+			self.chi = nest.Create(self.params['chi_neuron_type'], n=num_discrete_vals * num_x_vars, params=self.chi_neuron_params)
+		else:
+			self.chi = [] # Needs to be set separately.
 
-		# Create neuron layers.
-		self.chi = nest.Create(self.params['chi_neuron_type'], n=num_discrete_vals * num_x_vars, params=self.chi_neuron_params)
+		# Create other layers.
 		self.alpha = nest.Create(self.params['alpha_neuron_type'], n=num_modes * num_discrete_vals, params=self.alpha_neuron_params)
 		self.zeta = nest.Create(self.params['zeta_neuron_type'], n=num_discrete_vals, params=self.zeta_neuron_params)
 		self.inhibitors = nest.Create(self.params['inhibitors_neuron_type'], n=self.params['num_inhibitors'], params=self.inhibitors_neuron_params)
@@ -317,7 +324,8 @@ class SAMModule:
 
 		# Connect layers.
 		# Chi-alpha connectivity: all-to-all.
-		nest.Connect(self.chi, self.alpha, conn_spec='all_to_all', syn_spec=self.chi_alpha_synapse_params)
+		if create_input_layer:
+			nest.Connect(self.chi, self.alpha, conn_spec='all_to_all', syn_spec=self.chi_alpha_synapse_params)
 
 		# Alpha-inhibitors connectivity: all-to-all.
 		nest.Connect(self.alpha, self.inhibitors, conn_spec='all_to_all', syn_spec=self.alpha_inhibitors_synapse_params)
@@ -338,6 +346,7 @@ class SAMModule:
 			nest.Connect([self.alpha[i]], [self.zeta[j]], syn_spec=self.alpha_zeta_synapse_params)
 
 		# If no distribution has been passed, generate one using the passed parameters.
+		self.output_index = dep_index
 		self.distribution = distribution if distribution is not None else self.generate_distribution(num_x_vars + 1, num_discrete_vals)
 		if len(self.distribution) != pow(num_discrete_vals, num_x_vars + 1):
 			raise Exception("The number of variables in the distribution and parameters must match. " + 
@@ -348,23 +357,55 @@ class SAMModule:
 		self.num_discrete_vals = num_discrete_vals
 		self.num_modes = num_modes
 
+		# The network is initialised only if it its fully constructed.
+		self.initialised = True if create_input_layer else False
+
+
+	def set_input_layer(self, nodes):
+		"""
+		If the module uses output from other modules as its input layer, the existing neuron indices can be passed 
+		here. The user must take care to pass the neurons in the right order. Overwrites any existing input neurons
+		if already specified and connects new input layer to alpha layer.
+		"""
+		if len(nodes) != self.num_discrete_vals * (self.num_vars - 1):
+			raise Exception("The number of input neurons must match the network parameters. Provided with an array " +
+				"of pre-existing neurons of length {}".format(len(nodes)))
+		
+		self.uses_preexisting_input = True
+		self.chi = nodes
+
+		# Reset the all_neurons aggregate.
+		self.all_neurons = self.chi + self.alpha + self.zeta + self.inhibitors
+
+		# Connect chi to alpha neurons: all-to-all.
+		nest.Connect(self.chi, self.alpha, conn_spec='all_to_all', syn_spec=self.chi_alpha_synapse_params)
+
+		# Only now is the network fully initialised.
 		self.initialised = True
 
 
 	def clone(self):
 		"""
 		Returns a network with the same architecture and equal weights and biases.
+		Note: We pass the params to create_network because the function overwrites 
+		the bias baseline unless the bias baseline is passed. Also, note that
+		if the network was built using pre-existing inputs, it will not clone
+		the input layer, but will instead leave the input layer undefined and
+		unconnected.
 		"""
-		# Clone the network object and recreate the structure.
-		# Note: We pass the params to create_network because the function overwrites 
-		# the bias baseline unless the bias baseline is passed.
 		new_module = copy.deepcopy(self)
 		new_module.create_network(
 			num_x_vars=self.num_vars - 1,
 			num_discrete_vals=self.num_discrete_vals,
 			num_modes=self.num_modes,
 			distribution=self.distribution,
-			params=self.params)
+			dep_index=self.output_index,
+			params=self.params,
+			create_input_layer=self.created_input_layer)
+
+		# Flag the module uninitialised if the input layer was provided externally.
+		if not self.created_input_layer:
+			new_module.initialised = False
 		
 		# Copy bias values.
 		if new_module.params['alpha_neuron_type'] == 'srm_pecevski_alpha':
@@ -372,12 +413,39 @@ class SAMModule:
 			nest.SetStatus(new_module.alpha, 'bias', alpha_biases)
 
 		# Copy synapse weights.
-		chi_alpha_conns = nest.GetConnections(self.chi, self.alpha)
-		chi_alpha_weights = nest.GetStatus(chi_alpha_conns, 'weight')
-		chi_alpha_conns_new = nest.GetConnections(new_module.chi, new_module.alpha)
-		nest.SetStatus(chi_alpha_conns_new, 'weight', chi_alpha_weights)
+		if self.create_input_layer:
+			chi_alpha_conns = nest.GetConnections(self.chi, self.alpha)
+			chi_alpha_weights = nest.GetStatus(chi_alpha_conns, 'weight')
+			chi_alpha_conns_new = nest.GetConnections(new_module.chi, new_module.alpha)
+			nest.SetStatus(chi_alpha_conns_new, 'weight', chi_alpha_weights)
 
 		return new_module
+
+
+	def copy_dynamic_properties(self, module):
+		"""
+		Copies the dynamic properties such as weights and biases from the
+		specified module. 
+		Note: Assumes both modules are fully constructed and initialised.
+		"""
+		# Copy all biases.
+		if module.params['chi_neuron_type'] == 'srm_pecevski_alpha':
+			biases = nest.GetStatus(module.chi, 'bias')
+			nest.SetStatus(self.chi, 'bias', biases)
+
+		if module.params['alpha_neuron_type'] == 'srm_pecevski_alpha':
+			biases = nest.GetStatus(module.alpha, 'bias')
+			nest.SetStatus(self.alpha, 'bias', biases)
+
+		if module.params['zeta_neuron_type'] == 'srm_pecevski_alpha':
+			biases = nest.GetStatus(module.zeta, 'bias')
+			nest.SetStatus(self.zeta, 'bias', biases)
+
+		# Copy all weights.
+		conns = nest.GetConnections(module.all_neurons, module.all_neurons)
+		weights = nest.GetStatus(conns, 'weight')
+		conns_new = nest.GetConnections(self.all_neurons, self.all_neurons)
+		nest.SetStatus(conns_new, 'weight', weights)
 
 
 	def set_bias_baseline(self, baseline):
@@ -434,9 +502,9 @@ class SAMModule:
 		return dist
 
 
-	def draw_random_sample(self, complete=True):
+	def draw_random_sample(self):
 		"""
-		Uses the rank 0 process to draw a random sample from the member distribution.
+		Uses the rank 0 process to draw a random sample from the target distribution.
 		See the documentation in helpers for more details on how this works.
 		"""
 		comm = MPI.COMM_WORLD
@@ -444,7 +512,7 @@ class SAMModule:
 
 		# Broadcast the sample to all MPI processes.
 		if rank == 0:
-		    sample = helpers.draw_from_distribution(self.distribution, complete, self.rngs[0])
+		    sample = helpers.draw_from_distribution(self.distribution, complete=True, self.rngs[0])
 		else:
 			sample = None
 
@@ -469,7 +537,6 @@ class SAMModule:
 				r = self.rngs[0].normal(mu, sigma)
 				if r >= min and r <= max:
 					sample.append(r)
-			# logging.info("Process 0 drew a sample of normal values:", sample)
 		else:
 			sample = None
 
@@ -488,48 +555,73 @@ class SAMModule:
 		locals = self.are_nodes_local(nodes)
 		for i in range(len(nodes)):
 			if locals[i]:
-				# logging.info("Setting bias in node {} to {}".format(nodes[i], normal_biases[i]))
 				nest.SetStatus([nodes[i]], {'bias':normal_biases[i]})
 
 
-	def set_currents(self, state, inhibit_alpha=False, force_zeta=True):
+	def set_input_currents(self, state):
+		"""
+		Inhibits/forces the input layer neurons according to the provided state.
+		state: a tuple containing the values to be encoded by the input population
+		code, one value for each subpopulation of chi neurons.
+		Note: This function is not abstracted away because SAMGraph needs access
+		to currents layer-by-layer.
+		"""
+		locals = self.are_nodes_local(self.chi)
+		for i in range(len(self.chi)):
+			var_index = i // self.num_discrete_vals
+			node_value = (i % self.num_discrete_vals) + 1 # The + 1 is necessary since the neuron values are 1-offset.
+			inhibit = state[var_index] != node_value
+			if locals[i]:
+				current = self.params['nu_current_minus'] if inhibit else self.params['nu_current_plus']
+				nest.SetStatus([nodes[i]], {'I_e':current})
+
+
+	def set_hidden_currents(self, value):
+		"""
+		Inhibits/forces the alpha layer neurons according to the provided value.
+		value: a value to be encoded by the output population.
+		Note: This function is not abstracted away because SAMGraph needs access
+		to currents layer-by-layer.
+		"""
+		locals = self.are_nodes_local(self.alpha)
+		for i in range(len(self.alpha)):
+			node_value = (i // self.num_modes) + 1 # The + 1 is necessary since the neuron values are 1-offset.
+			inhibit = value != node_value
+			if locals[i]:
+				current = self.params['alpha_current_minus'] if inhibit else self.params['alpha_current_plus']
+				nest.SetStatus([nodes[i]], {'I_e':current})
+
+
+	def set_output_currents(self, value):
+		"""
+		Inhibits/forces the output layer neurons according to the provided value.
+		value: a value to be encoded by the output population.
+		Note: This function is not abstracted away because SAMGraph needs access
+		to currents layer-by-layer.
+		"""
+		locals = self.are_nodes_local(self.zeta)
+		for i in range(len(self.zeta)):
+			node_value = i + 1 # The + 1 is necessary since the neuron values are 1-offset.
+			inhibit = value != node_value
+			if locals[i]:
+				current = self.params['nu_current_minus'] if inhibit else self.params['nu_current_plus']
+				nest.SetStatus([nodes[i]], {'I_e':current})
+
+
+	def set_currents(self, state, inhibit_alpha=False):
 		"""
 		Sets excitatory/inhibitory currents to the network for the given state.
 		This does not simulate the network.
-		"""
-		def set_alpha_currents():
-			nodes = self.alpha
-			locals = self.are_nodes_local(nodes)
-			for i in range(len(nodes)):
-				var_index = len(state) - 1
-				node_value = (i // self.num_modes) + 1 # The + 1 is necessary since the neurons are 1-offset.
-				inhibit = state[var_index] != node_value
-				if locals[i]:
-					current = self.params['alpha_current_minus'] if inhibit else self.params['alpha_current_plus']
-					# logging.info("Inhibiting node {}".format(nodes[i]) if inhibit else "Activating node {}".format(nodes[i]))
-					nest.SetStatus([nodes[i]], {'I_e':current})
+		"""		
+		# Extract input values.
+		input_values = [state[i] for i in range(len(state)) if i is not self.output_index]
 
-		def set_layer_currents(nodes, is_input):
-			locals = self.are_nodes_local(nodes)
-			for i in range(len(nodes)):
-				var_index = i // self.num_discrete_vals if is_input else len(state) - 1
-				node_value = (i % self.num_discrete_vals) + 1 # The + 1 is necessary since the neurons are 1-offset.
-				inhibit = state[var_index] != node_value
-				if locals[i]:
-					current = self.params['nu_current_minus'] if inhibit else self.params['nu_current_plus']
-					# logging.info("Inhibiting node {}".format(nodes[i]) if inhibit else "Activating node {}".format(nodes[i]))
-					nest.SetStatus([nodes[i]], {'I_e':current})
-		
 		# Set input layer neurons.
-		set_layer_currents(self.chi, is_input=True)
+		self.set_input_currents(input_values)
 
 		# Set alpha layer neurons.
 		if inhibit_alpha:
-			set_alpha_currents()
-
-		# Set output layer neurons.
-		if force_zeta:
-			set_layer_currents(self.zeta, is_input=False)
+			self.set_hidden_currents(state[self.output_index])
 
 
 	def set_intrinsic_rate(self, intrinsic_rate):
@@ -586,10 +678,10 @@ class SAMModule:
 			raise Exception("SAM module not initialised yet.")
 
 		# Get a random state from the distribution.
-		state = self.draw_random_sample(complete=True)
+		state = self.draw_random_sample()
 
 		# Set currents in input and output layers.
-		self.set_currents(state, inhibit_alpha=True, force_zeta=True)
+		self.set_currents(state, inhibit_alpha=True)
 
 		# Simulate.
 		nest.Simulate(duration if duration is not None else self.params['sample_presentation_time'])
@@ -605,10 +697,10 @@ class SAMModule:
 			raise Exception("SAM module not initialised yet.")
 
 		# Get a random state from the distribution if one is not given.
-		state = sample if sample is not None else self.draw_random_sample(complete=True)
+		state = sample if sample is not None else self.draw_random_sample()
 
 		# Set currents in input layer.
-		self.set_currents(state, inhibit_alpha=False, force_zeta=False)
+		self.set_currents(state, inhibit_alpha=False)
 
 		# Simulate.
 		nest.Simulate(duration if duration is not None else self.params['sample_presentation_time'])

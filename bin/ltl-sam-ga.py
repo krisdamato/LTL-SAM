@@ -54,7 +54,7 @@ def main():
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=30, CXPB=0.5,
-                                            MUTPB=1.0, NGEN=5, indpb=0.01,
+                                            MUTPB=1.0, NGEN=10, indpb=0.01,
                                             tournsize=20, matepar=0.5,
                                             mutpar=1.0, remutate=False
                                             )

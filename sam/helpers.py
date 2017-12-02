@@ -68,27 +68,70 @@ def get_KL_divergence(estimate, target):
 	return entropy(q, p)
 
 
-def compute_conditional_distribution(joint, num_discrete_values):
+def compute_conditional_distribution(joint, num_discrete_values, dep_index=-1):
 	"""
-	Given a joint distribution p(x1, x2, ..., xn, z) in the form of tuple:probability pairs, 
-	this computes the conditional distribution p(z|x1, x2, ..., xn). z is assumed to be the
-	last tuple element, with values in {1, ..., num_discrete_values}.
+	Given a joint distribution p(x1, x2, ..., xn) in the form of tuple:probability pairs, 
+	this computes the conditional distribution p(xi|x1, ..., xi-1, xi+1, ..., xn). xi is 
+	assumed to be the last tuple element, with values in {1, ..., num_discrete_values} if 
+	the index is not supplied.
 	"""
 	conditional = dict(joint)
 	num_x_vars = len(list(joint.keys())[0]) - 1
 	var_values = range(1, num_discrete_values + 1)
 	x_possibilities = list(itertools.product(var_values, repeat=num_x_vars))
-	possibilities = []
+	dep_index = dep_index if dep_index != -1 else num_x_vars
+
 	for p in x_possibilities:
-		cond_p = [p + (z, ) for z in range(1, num_discrete_values + 1)]
+		p_prepend = tuple([p[i] for i in range(dep_index)])
+		p_append = tuple([p[i] for i in range(dep_index, num_x_vars)])
+		search_p = [p_prepend + (z, ) + p_append for z in range(1, num_discrete_values + 1)]
+
 		total = 0
 		for k, v in joint.items():
-			if k in cond_p:
+			if k in search_p:
 				total += v
-		for k in cond_p:
+		for k in search_p:
 			conditional[k] /= total 
 
 	return conditional
+
+
+def compute_marginal_distribution(joint, keep, num_discrete_values):
+	"""
+	Given a full joint distribution p(y1, ..., yn) in the form of RV tuple:probability pairs,
+	this computes the marginal distribution p(yk1, yk2, ..., ykn), where [yk1, ..., ykn] are
+	specified in keep as "yi" strings, e.g. "y1". Returns a distribution with the same format
+	as the joint distribution, preserving order between variables, except that only a subset
+	of variables is retained.
+	NOTE: This assumes that the first variable is called "y1", not "y0".
+	"""
+	# Find which variables to marginalize.
+	keep_indices = [int(s[1:]) - 1 for s in keep]
+	num_vars = len(list(joint.keys())[0])
+	var_indices = list(range(num_vars))
+	remove_indices = list(set(var_indices) - set(keep_indices))
+
+	# Create a multi-dimensional array from the joint distribution.
+	shape = [num_discrete_values] * num_vars
+	joint_array = np.empty(shape)
+	for t, p in joint.items():
+		# We have to subtract 1 from the tuple components, since values in
+		# the distribution start at 1.
+		t = tuple(np.array(t) - 1)
+		joint_array[t] = p
+
+	# Sum over the distribution to remove all marginalized variables.
+	marginal_array = np.sum(joint_array, axis=tuple(remove_indices))
+
+	# Convert the array into a dictionary of tuple:probability pairs.
+	marginal = dict()
+	var_values = range(1, num_discrete_values + 1)
+	possibilities = list(itertools.product(var_values, repeat=len(keep_indices)))
+	for p in possibilities:
+		t = tuple(np.array(p) - 1)
+		marginal[p] = marginal_array[t]
+
+	return marginal
 
 
 def get_dictionary_string(d):
