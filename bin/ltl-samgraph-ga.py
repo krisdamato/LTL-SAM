@@ -7,13 +7,13 @@ from ltl.logging_tools import create_shared_logger_data, configure_loggers
 from ltl.optimizers.evolution import GeneticAlgorithmOptimizer, GeneticAlgorithmParameters
 from ltl.paths import Paths
 from ltl.recorder import Recorder
-from sam.optimizee import SAMOptimizee, SAMGraphOptimizee
+from sam.optimizee import SAMGraphOptimizee
 
-logger = logging.getLogger('bin.ltl-sam-ga')
+logger = logging.getLogger('bin.ltl-samgraph-ga')
 
 
 def main():
-    name = 'LTL-SAM-GA'
+    name = 'LTL-SAMGRAPH-GA'
     try:
         with open('bin/path.conf') as f:
             root_dir_path = f.read().strip()
@@ -50,7 +50,7 @@ def main():
 
 
     # NOTE: Innerloop simulator
-    optimizee = SAMOptimizee(traj, n_NEST_threads=1, time_resolution=0.05, plots_directory=paths.output_dir_path)
+    optimizee = SAMGraphOptimizee(traj, n_NEST_threads=1, time_resolution=0.05, plots_directory=paths.output_dir_path)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=30, CXPB=0.5,

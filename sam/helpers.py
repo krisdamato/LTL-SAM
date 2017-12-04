@@ -1,5 +1,6 @@
 import itertools
 import numpy as np
+import re
 import os
 from scipy.stats import entropy
 from time import gmtime, strftime
@@ -66,6 +67,52 @@ def get_KL_divergence(estimate, target):
 	q = [target[k] for k in tuples]
 	
 	return entropy(q, p)
+
+
+def compute_joint_distribution(eqn, num_discrete_values, *dists):
+	"""
+	Given a decomposition of a joint distribution, e.g. "p(y1,y2,y3) = p(y1)p(y2)p(y3|y1,y2)",
+	this computes the full joint distribution dictionary with all possibilities. The equation
+	must be passed as a string, using '|' to indicate conditionality and ',' between variables.
+	The passed distributions must correspond to the order on the RHS of the equation. 
+	Note: this assumes that the order of RVs in the passed distributions corresponds to the 
+	variable indices, e.g. "p(y3|y1,y2)" assumes that the tuples in the passed dictionary 
+	of this distribution are ordered as (y1,y2,y3). Also, it is assumed that the distributions 
+	match the type and number of variables indicated in the equation (e.g. "p(y3|y1,y2)" is a 
+	3-variable conditional distribution).
+	"""
+	# Parse string.
+	split = eqn.replace(' ', '').split('=')
+	lhs = split[0]
+	rhs = split[1]
+
+	# Find the list of variables.
+	vars = sorted(re.search(r'\((.*?)\)', lhs).group(1).split(','))
+
+	# Find all distributions on the RHS, and their variables.
+	rhs_ps = re.findall(r'\((.*?)\)', rhs)
+	rhs_vars = [sorted(p.replace('|', ',').split(',')) for p in rhs_ps]
+
+	# For each possibility on the LHS, work out the probability using the passed distribtions.
+	var_values = range(1, num_discrete_values + 1)
+	possibilities = list(itertools.product(var_values, repeat=len(vars)))
+	joint = {}
+	for p in possibilities:
+		# Work out the probabilities of each RHS distribution for this combination of RV values.
+		probability = 1.0
+		for dist_vars, dist in zip(rhs_vars, dists):
+			# Find the RV tuple indices of the RVs in this dist.
+			indices = [int(s[1:]) - 1 for s in dist_vars]
+
+			# Find the RVs at those indices.
+			rvs = tuple([p[i] for i in indices])
+
+			# Find the probability at those RVs in this distribution.
+			probability *= dist[rvs]
+
+		joint[p] = probability
+
+	return joint
 
 
 def compute_conditional_distribution(joint, num_discrete_values, dep_index=-1):

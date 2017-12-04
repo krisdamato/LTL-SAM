@@ -1,7 +1,8 @@
 import copy
-import helpers
-import mpi4py
-import sam
+import nest
+import sam.helpers as helpers
+from mpi4py import MPI
+from sam.sam import SAMModule
 
 
 class SAMGraph:
@@ -19,7 +20,7 @@ class SAMGraph:
 		self.initialised = False
 
 
-	def create_network(self, num_discrete_vals=2, num_modes=2, dependencies, distribution, params={}):
+	def create_network(self, dependencies, distribution, num_discrete_vals=2, num_modes=2, params={}):
 		"""
 		Generates a graph of SAM modules interconnected according to the supplied
 		dependencies. 
@@ -42,7 +43,7 @@ class SAMGraph:
 		# Create a SAM module for each dependency, ignoring input layers for now.
 		for ym, ys in dependencies.items():
 			module_vars = sorted([ym] + ys)
-			num_dependencies = len(dependencies)
+			num_dependencies = len(module_vars) - 1
 			self.sams[ym] = SAMModule(randomise_seed=self.randomise_seed)
 			self.sams[ym].create_network(num_x_vars=num_dependencies, 
 				num_discrete_vals=num_discrete_vals, 
@@ -83,17 +84,29 @@ class SAMGraph:
 			new_network.sams[ym].copy_dynamic_properties(self.sams[ym])
 
 
+	@staticmethod
+	def parameter_spec():
+		"""
+		Returns a dictionary of param_name:(min, max) pairs, which describe the legal
+		limit of the parameters.
+		"""
+		return SAMModule.parameter_spec()
+
+
 	def draw_random_sample(self):
 		"""
 		Uses the rank 0 process to draw a random sample from the target distribution.
 		See the documentation in helpers for more details on how this works.
+		Note: since SAMGraph does not gave RNGs, it uses the first RNG of the first 
+		SAM module.
 		"""
 		comm = MPI.COMM_WORLD
 		rank = comm.Get_rank()
 
 		# Broadcast the sample to all MPI processes.
 		if rank == 0:
-		    sample = helpers.draw_from_distribution(self.distribution, complete=True, self.rngs[0])
+			rng = list(self.sams.values())[0].rngs[0]
+			sample = helpers.draw_from_distribution(self.distribution, complete=True, randomiser=rng)
 		else:
 			sample = None
 
@@ -132,3 +145,21 @@ class SAMGraph:
 		"""
 		for ym in self.sams:
 			self.sams[ym].clear_currents()
+
+
+	def set_intrinsic_rate(self, intrinsic_rate):
+		"""
+		Convenience call that forwards the rate request to the 
+		underlying modules.
+		"""
+		for ym in self.sams:
+			self.sams[ym].set_intrinsic_rate(intrinsic_rate)
+
+
+	def set_plasticity_learning_time(self, learning_time):
+		"""
+		Convenience call that forwards the learning time request to the
+		underlying modules.
+		"""
+		for ym in self.sams:
+			self.sams[ym].set_plasticity_learning_time(learning_time)

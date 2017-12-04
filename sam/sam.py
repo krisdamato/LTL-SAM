@@ -312,7 +312,7 @@ class SAMModule:
 			self.created_input_layer = True
 			self.chi = nest.Create(self.params['chi_neuron_type'], n=num_discrete_vals * num_x_vars, params=self.chi_neuron_params)
 		else:
-			self.chi = [] # Needs to be set separately.
+			self.chi = () # Needs to be set separately.
 
 		# Create other layers.
 		self.alpha = nest.Create(self.params['alpha_neuron_type'], n=num_modes * num_discrete_vals, params=self.alpha_neuron_params)
@@ -413,7 +413,7 @@ class SAMModule:
 			nest.SetStatus(new_module.alpha, 'bias', alpha_biases)
 
 		# Copy synapse weights.
-		if self.create_input_layer:
+		if self.created_input_layer:
 			chi_alpha_conns = nest.GetConnections(self.chi, self.alpha)
 			chi_alpha_weights = nest.GetStatus(chi_alpha_conns, 'weight')
 			chi_alpha_conns_new = nest.GetConnections(new_module.chi, new_module.alpha)
@@ -512,7 +512,7 @@ class SAMModule:
 
 		# Broadcast the sample to all MPI processes.
 		if rank == 0:
-		    sample = helpers.draw_from_distribution(self.distribution, complete=True, self.rngs[0])
+		    sample = helpers.draw_from_distribution(self.distribution, complete=True, randomiser=self.rngs[0])
 		else:
 			sample = None
 
@@ -573,7 +573,7 @@ class SAMModule:
 			inhibit = state[var_index] != node_value
 			if locals[i]:
 				current = self.params['nu_current_minus'] if inhibit else self.params['nu_current_plus']
-				nest.SetStatus([nodes[i]], {'I_e':current})
+				nest.SetStatus([self.chi[i]], {'I_e':current})
 
 
 	def set_hidden_currents(self, value):
@@ -589,7 +589,7 @@ class SAMModule:
 			inhibit = value != node_value
 			if locals[i]:
 				current = self.params['alpha_current_minus'] if inhibit else self.params['alpha_current_plus']
-				nest.SetStatus([nodes[i]], {'I_e':current})
+				nest.SetStatus([self.alpha[i]], {'I_e':current})
 
 
 	def set_output_currents(self, value):
@@ -605,7 +605,7 @@ class SAMModule:
 			inhibit = value != node_value
 			if locals[i]:
 				current = self.params['nu_current_minus'] if inhibit else self.params['nu_current_plus']
-				nest.SetStatus([nodes[i]], {'I_e':current})
+				nest.SetStatus([self.zeta[i]], {'I_e':current})
 
 
 	def set_currents(self, state, inhibit_alpha=False):
@@ -713,12 +713,12 @@ class SAMModule:
 		nest.SetStatus(self.all_neurons, {'I_e':0.0})
 
 
-	def connect_multimeter(self, node):
+	def connect_multimeter(self, node, multimeter=None):
 		"""
 		Connects a multimeter to the bias and membrane voltage of the selected node.
 		"""
 		# Create a multimeter.
-		multimeter = nest.Create('multimeter', params={"withtime":True, "record_from":["V_m", "bias"]})
+		multimeter = nest.Create('multimeter', params={"withtime":True, "record_from":["V_m", "bias"]}) if multimeter is None else multimeter
 
 		# Connect to all neurons.
 		nest.Connect(multimeter, [node])
@@ -742,12 +742,12 @@ class SAMModule:
 		pylab.show()
 
 
-	def connect_reader(self, nodes):
+	def connect_reader(self, nodes, spikereader=None):
 		"""
 		Connects a spike reader to the network and returns it.
 		"""
 		# Create a spike reader.
-		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
+		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True}) if spikereader is None else spikereader
 
 		# Connect all neurons to the spike reader.
 		nest.Connect(nodes, spikereader, syn_spec={'delay':self.params['devices_delay']})
@@ -832,8 +832,8 @@ class SAMModule:
 		"""
 		implicit = dict(self.distribution)
 		for t in implicit.keys():
-			xs = [t[i] for i in range(self.num_vars - 1)]
-			z = t[self.num_vars - 1]
+			xs = [t[i] for i in range(self.num_vars) if i is not self.output_index]
+			z = t[self.output_index]
 			p = 0
 			
 			# For each z value, the joint distribution is only concerned with 

@@ -12,7 +12,11 @@ handlers:
     formatter: simple
     filename: output.log
 loggers:
-  ltl-sam:
+  ltl-sam-ga:
+    level: INFO
+    handlers: [file]
+    propagate: no
+  ltl-samgraph-sa:
     level: INFO
     handlers: [file]
     propagate: no
