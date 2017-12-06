@@ -20,7 +20,7 @@ class SAMGraph:
 		self.initialised = False
 
 
-	def create_network(self, dependencies, distribution, num_discrete_vals=2, num_modes=2, params={}):
+	def create_network(self, dependencies, distribution, num_discrete_vals=2, num_modes=2, params={}, special_params={}):
 		"""
 		Generates a graph of SAM modules interconnected according to the supplied
 		dependencies. 
@@ -33,7 +33,11 @@ class SAMGraph:
 			estimate. Supplied as a dictionary of (x1, x2, ..., xk):p pairs, 
 			where the xi are values of the random variables, and p is a 
 			probability.
-		params: A dictionary of parameters to be passed to each SAM module.
+		params: A dictionary of common parameters to be passed to each SAM module.
+		special_params: A dictionary of dictionaries, in the format {"y1":{...}, 
+			...}, containing parameters to be sent specifically to individual 
+			modules. This overwrites parameters in params, even those that are
+			meant to evolve on a module-by-module basis initially.
 		The other parameters are as in SAMModule.
 		"""
 		self.sams = dict()
@@ -42,6 +46,8 @@ class SAMGraph:
 
 		# Create a SAM module for each dependency, ignoring input layers for now.
 		for ym, ys in dependencies.items():
+			module_params = self.filter_repeat_params(params, ym)
+			module_params = {**module_params, **special_params[ym]} if ym in special_params else module_params.copy()
 			module_vars = sorted([ym] + ys)
 			num_dependencies = len(module_vars) - 1
 			self.sams[ym] = SAMModule(randomise_seed=self.randomise_seed)
@@ -49,7 +55,7 @@ class SAMGraph:
 				num_discrete_vals=num_discrete_vals, 
 				num_modes=num_modes, 
 				distribution=helpers.compute_marginal_distribution(distribution, module_vars, num_discrete_vals), 
-				params=params,
+				params=module_params,
 				dep_index=module_vars.index(ym),
 				create_input_layer=False)
 
@@ -85,12 +91,58 @@ class SAMGraph:
 
 
 	@staticmethod
-	def parameter_spec():
+	def parameter_spec(num_modules):
 		"""
 		Returns a dictionary of param_name:(min, max) pairs, which describe the legal
 		limit of the parameters.
 		"""
-		return SAMModule.parameter_spec()
+		# Get the vanilla spec from the underlying module class.
+		spec = SAMModule.parameter_spec()
+
+		# For each variable that appears in the repeat spec, add n variables with the 
+		# name, suffixed by '_1', '_2', etc.
+		repeat_spec = SAMGraph.parameter_repeats()
+		for k in repeat_spec:
+			k_spec = spec[k]
+			spec.pop(k)
+			new_keys = [k + '_' + str(i) for i in range(1, num_modules + 1)]
+			for new_k in new_keys:
+				spec[new_k] = k_spec
+
+		return spec
+
+
+	@staticmethod
+	def parameter_repeats():
+		"""
+		Returns a list of parameters that are to be specialised by each module in the 
+		graph network, i.e. that can evolve separately.
+		"""
+		repeats = ['bias_baseline']
+		return repeats
+
+
+	def filter_repeat_params(self, params, var_name):
+		"""
+		Parses and filters the params dictionary to keep only the variables that are 
+		relevant for the specified variable name.
+		var_name: a string specifying the variable name, e.g. 'y1'.
+		"""
+		filtered = {}
+		repeats = SAMGraph.parameter_repeats()
+		for k in params:
+			repeat_var = None
+			for r in repeats:
+				if r in k: repeat_var = r
+
+			if repeat_var is None: filtered[k] = params[k]
+			else:
+				# Keep only that which has the same suffix.
+				var_suffix = var_name[1:]
+				k_truncated = k.replace(repeat_var + '_', '')
+				if var_suffix in k_truncated: filtered[repeat_var] = params[k]
+
+		return filtered
 
 
 	def draw_random_sample(self):
@@ -163,3 +215,12 @@ class SAMGraph:
 		"""
 		for ym in self.sams:
 			self.sams[ym].set_plasticity_learning_time(learning_time)
+
+
+	def measure_experimental_joint_distribution(self, duration):
+		"""
+		Lets the network generate spontaneous spikes for a long duration
+		and then uses the spike activity to calculate the frequency of network 
+		states.
+		"""
+		pass 

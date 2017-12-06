@@ -94,12 +94,6 @@ class SAMOptimizee(Optimizee):
         params = {k:self.individual[k] for k in SAMModule.parameter_spec().keys()}
 
         # Peg the delay to the time resolution.
-        params = {'relative_bias_spike_rate': 0.43617013484109396, 'second_bias_rate': 0.05612752797427234, 
-        'bias_baseline': -39.548089643280008, 'exp_term_prob': 0.77058265550261074, 
-        'exp_term_prob_scale': 0.89096399490001754, 'T': 0.62012561421148849, 
-        'weight_baseline': -1.7167532906292333, 'initial_stdp_rate': 0.0067436717309361698, 
-        'first_bias_rate': 0.0089637366943277497, 'final_stdp_rate': 0.0007952160388706586, 
-        'max_depress_tau_multiplier': 15.416884435587075}
         params['delay'] = self.time_resolution
 
         # Create a SAM module with the correct parameters.
@@ -107,8 +101,7 @@ class SAMOptimizee(Optimizee):
             num_discrete_vals=num_discrete_vals, 
             num_modes=num_modes,
             distribution=distribution,
-            params=params,
-            dep_index=1)
+            params=params)
 
         logging.info("Creating a SAM network with overridden parameters:\n%s", helpers.get_dictionary_string(params))
 
@@ -132,12 +125,6 @@ class SAMOptimizee(Optimizee):
             (2,2,1):0.21,
             (2,2,2):0.04
         }
-        distribution={(1, 1, 2, 2): 0.0042250000000000005, (2, 1, 2, 1): 0.189225, (1, 1, 1, 2): 0.028275, 
-        (1, 2, 1, 2): 0.028275, (2, 1, 2, 2): 0.028275, (2, 2, 2, 1): 0.0042250000000000005, 
-        (1, 1, 2, 1): 0.028275, (2, 1, 1, 2): 0.0042250000000000005, (2, 1, 1, 1): 0.028275, 
-        (1, 2, 2, 1): 0.028275, (1, 1, 1, 1): 0.189225, (2, 2, 1, 2): 0.189225, 
-        (2, 2, 2, 2): 0.028275, (2, 2, 1, 1): 0.028275, (1, 2, 2, 2): 0.189225, 
-        (1, 2, 1, 1): 0.0042250000000000005}
 
         # Prepare paths for each individual evaluation.
         individual_directory = os.path.join(self.save_directory, str(self.run_number) + "_" + helpers.get_now_string())
@@ -162,7 +149,7 @@ class SAMOptimizee(Optimizee):
 
             # Get the conditional of the module's target distribution.
             distribution = self.sam.distribution
-            conditional = helpers.compute_conditional_distribution(self.sam.distribution, self.sam.num_discrete_vals)
+            conditional = helpers.compute_conditional_distribution(self.sam.distribution, self.sam.num_discrete_vals, self.sam.output_index)
 
             # Train for the learning period set in the parameters.
             t = 0
@@ -187,7 +174,7 @@ class SAMOptimizee(Optimizee):
                 # Compute theoretical distributions and measure KLD.
                 if save_plot and i % skip_kld == 0:
                     implicit = self.sam.compute_implicit_distribution()
-                    implicit_conditional = helpers.compute_conditional_distribution(implicit, 2)
+                    implicit_conditional = helpers.compute_conditional_distribution(implicit, self.sam.num_discrete_vals, self.sam.output_index)
                     kls_joint.append(helpers.get_KL_divergence(implicit, distribution))
                     kls_cond.append(helpers.get_KL_divergence(implicit_conditional, conditional))
 
@@ -279,6 +266,9 @@ class SAMGraphOptimizee(Optimizee):
         self.save_directory = plots_directory
         self.time_resolution = time_resolution
 
+        # Set up exerimental parameters.
+        self.initialise_experiment()
+
         # create_individual can be called because __init__ is complete except for traj initialization
         self.individual = self.create_individual()
         for key, val in self.individual.items():
@@ -288,9 +278,9 @@ class SAMGraphOptimizee(Optimizee):
     def create_individual(self):
         """
         Creates random parameter values within given bounds.
-        Uses an RNG seeded with the main said of the SAM module.
+        Uses an RNG seeded with the main seed of the SAM module.
         """ 
-        param_spec = SAMGraphOptimizee.parameter_spec() # Sort for replicability
+        param_spec = self.parameter_spec() # Sort for replicability
         individual = {k: np.float64(self.rs.uniform(v[0], v[1])) for k, v in param_spec.items()}
         return individual
 
@@ -299,65 +289,21 @@ class SAMGraphOptimizee(Optimizee):
         """
         Bounds the individual within the required bounds via coordinate clipping.
         """
-        param_spec = SAMGraphOptimizee.parameter_spec()
+        param_spec = self.parameter_spec()
         individual = {k: np.float64(np.clip(v, a_min=param_spec[k][0], a_max=param_spec[k][1])) for k, v in individual.items()}
         return individual
 
 
-    @staticmethod
-    def parameter_spec():
+    def initialise_experiment(self):
         """
-        Returns the minima-maxima of each explorable variable.
-        Note: Dictionary is an OrderedDict with items sorted by key, to 
-        ensure that items are interpreted in the same way everywhere.
-        """
-        return OrderedDict(sorted(SAMGraph.parameter_spec().items()))
-
-
-    def prepare_network(self, distribution, dependencies, num_discrete_vals, num_modes):
-        """
-        Generates a recurrent network with the specified distribution and 
-        dependency parameters, but uses the hyperparameters from the individual dictionary.
-        """
-        nest.ResetKernel()
-        self.graph = SAMGraph(randomise_seed=True)
-
-        # Convert the trajectory individual to a dictionary.
-        params = {k:self.individual[k] for k in SAMGraph.parameter_spec().keys()}
-
-        # Peg the delay to the time resolution.
-        params = {'relative_bias_spike_rate': 0.43617013484109396, 'second_bias_rate': 0.05612752797427234, 
-        'bias_baseline': -39.548089643280008, 'exp_term_prob': 0.77058265550261074, 
-        'exp_term_prob_scale': 0.89096399490001754, 'T': 0.62012561421148849, 
-        'weight_baseline': -1.7167532906292333, 'initial_stdp_rate': 0.0067436717309361698, 
-        'first_bias_rate': 0.0089637366943277497, 'final_stdp_rate': 0.0007952160388706586, 
-        'max_depress_tau_multiplier': 15.416884435587075}
-        params['delay'] = self.time_resolution
-
-        # Create a SAM module with the correct parameters.
-        self.graph.create_network(
-            num_discrete_vals=num_discrete_vals, 
-            num_modes=num_modes, 
-            dependencies=dependencies, 
-            distribution=distribution, 
-            params=params)
-
-        logging.info("Creating a recurrent SAM graph network with overridden parameters:\n%s", helpers.get_dictionary_string(params))
-
-
-    def simulate(self, traj, save_plot=True):
-        """
-        Simulates a recurrently connected group of SAM modules, training on a target 
-        distribution; i.e. performing density estimation as in Pecevski et al. 2016,
-        experiment 2. The loss function is the the KL divergence between target and 
-        estimated distributions. 
-        If save_plot == True, this will create a directory for each individual that 
-        contains a text file with individual params and plots for each trial.
+        Sets experimental parameters.
         """
         # Use the distribution from Peceveski et al., experiment 2.
         # Define the joint probability equation in order to use helpers to compute
         # the full probability array.
         joint_equation = "p(y1,y2,y3,y4) = p(y1)*p(y2)*p(y3|y1,y2)*p(y4|y2)"
+
+        # Define distributions.
         p1 = {(1,):0.5, (2,):0.5}
         p2 = {(1,):0.5, (2,):0.5}
         p3 = {
@@ -377,19 +323,73 @@ class SAMGraphOptimizee(Optimizee):
             (2,2):0.87
         }
 
-        distribution = helpers.compute_joint_distribution(
+        # Compute the joint distribution from all the components.
+        self.distribution = helpers.compute_joint_distribution(
             joint_equation, 
             2, 
             p1, p2, p3, p4)
 
         # Define the Markov blanket of each RV.
-        dependencies = {
+        self.dependencies = {
             'y1':['y2', 'y3'],
             'y2':['y1', 'y3', 'y4'],
             'y3':['y1', 'y2'],
-            'y4':['y3']
+            'y4':['y2']
         }
 
+        # Define special parameters for some modules.
+        self.special_params = {
+            'y1':{'max_weight':4.0},
+            'y2':{'max_weight':4.0},
+            'y3':{'max_weight':4.0},
+            'y4':{'max_weight':2.0},
+        }
+
+
+    def parameter_spec(self):
+        """
+        Returns the minima-maxima of each explorable variable.
+        Note: Dictionary is an OrderedDict with items sorted by key, to 
+        ensure that items are interpreted in the same way everywhere.
+        """
+        return OrderedDict(sorted(SAMGraph.parameter_spec(len(self.dependencies)).items()))
+
+
+    def prepare_network(self, distribution, dependencies, num_discrete_vals, num_modes, special_params={}):
+        """
+        Generates a recurrent network with the specified distribution and 
+        dependency parameters, but uses the hyperparameters from the individual dictionary.
+        """
+        nest.ResetKernel()
+        self.graph = SAMGraph(randomise_seed=True)
+
+        # Convert the trajectory individual to a dictionary.
+        params = {k:self.individual[k] for k in SAMGraph.parameter_spec(len(dependencies)).keys()}
+
+        # Peg the delay to the time resolution.
+        params['delay'] = self.time_resolution
+
+        # Create a SAM module with the correct parameters.
+        self.graph.create_network(
+            num_discrete_vals=num_discrete_vals, 
+            num_modes=num_modes, 
+            dependencies=dependencies, 
+            distribution=distribution, 
+            params=params,
+            special_params=special_params)
+
+        logging.info("Creating a recurrent SAM graph network with overridden parameters:\n%s", helpers.get_dictionary_string(params))
+
+
+    def simulate(self, traj, save_plot=True):
+        """
+        Simulates a recurrently connected group of SAM modules, training on a target 
+        distribution; i.e. performing density estimation as in Pecevski et al. 2016,
+        experiment 2. The loss function is the the KL divergence between target and 
+        estimated distributions. 
+        If save_plot == True, this will create a directory for each individual that 
+        contains a text file with individual params and plots for each trial.
+        """
         # Prepare paths for each individual evaluation.
         individual_directory = os.path.join(self.save_directory, str(self.run_number) + "_" + helpers.get_now_string())
         text_path = os.path.join(individual_directory, 'params.txt')
@@ -401,7 +401,12 @@ class SAMGraphOptimizee(Optimizee):
         for trial in range(self.num_fitness_trials):
             nest.ResetKernel()
             self.individual = traj.individual
-            self.prepare_network(distribution=distribution, dependencies=dependencies, num_discrete_vals=2, num_modes=2)
+            self.prepare_network(
+                distribution=self.distribution, 
+                dependencies=self.dependencies, 
+                num_discrete_vals=2, 
+                num_modes=2,
+                special_params=self.special_params)
             
             # Create directory and params file if requested.
             if save_plot:
@@ -419,9 +424,10 @@ class SAMGraphOptimizee(Optimizee):
             last_set_intrinsic_rate = self.graph.params['first_bias_rate']
             skip_kld = 1000
             skip_kld_module = 10
-            kls_joints = [[] for j in range(len(dependencies))]
+            kls_joints = [[] for j in range(len(self.dependencies))]
             set_second_rate = False
             graph_clones = []
+            last_klds = []
 
             while t <= self.graph.params['learning_time']:
                 # Inject a current for some time.
@@ -472,11 +478,13 @@ class SAMGraphOptimizee(Optimizee):
             # experimental_joints = [tests.measure_experimental_joint_distribution(last_clone, duration=20000.0) for i in range(3)]
             # kld_joint_experimental.append(np.sum([helpers.get_KL_divergence(p, distribution) for p in experimental_joints]) / len(experimental_joints))
 
-        logging.info("Mean experimental J. KLd is {} [Loss]".format(np.sum(kld_joint_experimental) / self.num_fitness_trials))
-
         self.run_number += 1
 
-        return (np.sum(kld_joint_experimental) / self.num_fitness_trials, )
+        last_klds = [kls_joints[i][-1] for i in range(len(kls_joints))]
+        
+        logging.info("Mean experimental J. KLd is {} [Loss]".format(np.sum(last_klds) / len(last_klds)))
+
+        return (np.sum(last_klds) / len(last_klds), )
 
 
     def end(self):

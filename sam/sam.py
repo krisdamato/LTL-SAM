@@ -44,7 +44,7 @@ class SAMModule:
 			'exp_term_prob':(0.0, 1.0),
 			'exp_term_prob_scale':(0.0, 5.0),
 			'relative_bias_spike_rate':(1e-5, 1.0),
-			'max_depress_tau_multiplier':(2.0, 20.0)
+			#'max_depress_tau_multiplier':(2.0, 20.0)
 			}
 
 		return param_spec
@@ -63,15 +63,15 @@ class SAMModule:
 		self.params = {
 			'initial_stdp_rate':0.002,
 			'final_stdp_rate':0.0006,
-			'stdp_time_fraction':0.5,
-			'intrinsic_step_time_fraction':0.5,
+			'stdp_time_fraction':1.0,
+			'intrinsic_step_time_fraction':1.0,
 			'initial_weight':3.0,
-			'max_weight':5.0,
+			'max_weight':4.0,
 			'min_weight':0.0,
 			'weight_baseline':2.5 * np.log(0.2),
 			'tau':tau,
 			'delay':delay,
-			'T':0.4,
+			'T':0.58,
 			'use_rect_psp_exc':True,
 			'use_rect_psp_inh':True,
 			'inhibitors_use_rect_psp_exc':True,
@@ -92,7 +92,7 @@ class SAMModule:
 			'linear_term_prob':0.0,
 			'exp_term_prob':0.5/tau,
 			'exp_term_prob_scale':1.0,
-			'weight_chi_alpha_mean':3.0,
+			'weight_chi_alpha_mean':4.0 / 3,
 			'weight_chi_alpha_std':0.1,
 			'weight_alpha_inhibitors':80.0,
 			'weight_alpha_zeta':20.0,
@@ -106,7 +106,7 @@ class SAMModule:
 			'nu_current_minus':-30.0,
 			'alpha_current_minus':-80.0,
 			'alpha_current_plus':0.0,
-			'learning_time':600000,
+			'learning_time':300000,
 			'sample_presentation_time':100.0, # 100 ms.
 			'chi_neuron_type':'srm_pecevski_alpha',
 			'alpha_neuron_type':'srm_pecevski_alpha',
@@ -122,7 +122,7 @@ class SAMModule:
 			'delay_chi_alpha':delay,
 			'delay_alpha_zeta':delay,
 			'devices_delay':delay,
-			'max_depress_tau_multiplier':5.0
+			'max_depress_tau_multiplier':1000.0
 		}
 
 		# Update defaults.
