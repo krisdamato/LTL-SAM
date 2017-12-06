@@ -53,8 +53,8 @@ def main():
     optimizee = SAMGraphOptimizee(traj, n_NEST_threads=1, time_resolution=0.05, plots_directory=paths.output_dir_path, num_fitness_trials=1)
 
     # NOTE: Outerloop optimizer initialization
-    parameters = GeneticAlgorithmParameters(seed=0, popsize=30, CXPB=0.5,
-                                            MUTPB=1.0, NGEN=10, indpb=0.05,
+    parameters = GeneticAlgorithmParameters(seed=0, popsize=100, CXPB=0.5,
+                                            MUTPB=1.0, NGEN=20, indpb=0.05,
                                             tournsize=20, matepar=0.5,
                                             mutpar=1.0, remutate=False
                                             )

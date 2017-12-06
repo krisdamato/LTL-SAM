@@ -217,10 +217,85 @@ class SAMGraph:
 			self.sams[ym].set_plasticity_learning_time(learning_time)
 
 
-	def measure_experimental_joint_distribution(self, duration):
+	def determine_state(self, spikes):
+		"""
+		Given a set of spikes of the network, this determines which of
+		the network states the network is in, or whether it is in an 
+		invalid state or a zero-state, an invalid state being one in 
+		which more than one output neuron is firing at the same time
+		for the same RV.
+		"""
+		state = [0 for i in range(len(self.sams))]
+		for i in range(len(self.sams)):
+			var_name = "y" + str(i + 1)
+			module = self.sams[var_name]
+
+			# Are there any spikes of this module's zeta layer?
+			for j, n in module.zeta:
+				encoded_value = j + 1
+				state[i] += encoded_value if n in spikes else 0
+
+		# If any state value is greater than the maximum encoded value,
+		# the state is invalid. 
+		if any(s > self.num_discrete_vals for s in state):
+			state = [-1 for i in range(len(self.sams))]
+
+		return tuple(state)
+
+
+	def measure_experimental_joint_distribution(self, duration, timestep=1.0):
 		"""
 		Lets the network generate spontaneous spikes for a long duration
 		and then uses the spike activity to calculate the frequency of network 
 		states.
 		"""
-		pass 
+		logging.info("Starting experimental joint distribution measurement on recurrent SAM network.")
+
+		# Attach a spike reader to all population coding layers.
+		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
+		for ym in self.sams:
+			nest.Connect(self.sams[ym].zeta, spikereader, syn_spec={'delay':self.params['devices_delay']})
+
+		# Clear currents.
+		self.clear_currents()
+
+		# Stop all plasticity.
+		self.set_intrinsic_rate(0.0)
+		self.set_plasticity_learning_time(0.0)
+
+		# Get current time.
+		start_time = nest.GetKernelStatus('time')
+
+		# Simulate for duration ms with no input.
+		nest.Simulate(duration)
+
+		# Get spikes.
+		spikes = nest.GetStatus(spikereader, keys='events')[0]
+		senders = spikes['senders']
+		times = spikes['times']
+
+		# Prepare state distribution variables.
+		invalid_state = tuple([-1 for i in range(len(self.sams))])
+		joint = dict.fromkeys(self.distribution.keys(), 0)
+		invalids = 0
+		zeros = 0
+
+		# For every timestep, figure out the network state we are in.
+		tau = self.params['tau']
+		steps = np.arange(start_time, start_time + duration, timestep)
+		for t in steps:
+			spike_indices = [i for i, st in enumerate(times) if t - tau <= st < t]
+			state_spikes = [senders[i] for i in spike_indices]
+			state = self.determine_state(state_spikes)
+			if state in joint: 
+				joint[state] += 1
+			elif state == invalid_state:
+				invalids += 1
+			else:
+				zeros += 1
+
+		# Normalise all values.
+		for k, v in joint.items():
+			joint[k] = v / len(steps)
+		invalids /= len(steps)
+		zeros /= len(steps)
