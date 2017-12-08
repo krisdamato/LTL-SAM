@@ -200,9 +200,9 @@ class SAMOptimizee(Optimizee):
             self.sam.set_plasticity_learning_time(0)
 
             # Measure experimental conditional on para-experiment clones.
-            # if save_plot:
-            #     plot_exp_conditionals = [tests.measure_experimental_cond_distribution(s, duration=2000.0) for s in sam_clones]
-            #     kls_cond_exp = [helpers.get_KL_divergence(p, conditional) for p in plot_exp_conditionals] 
+            if save_plot:
+                plot_exp_conditionals = [tests.measure_experimental_cond_distribution(s, duration=2000.0) for s in sam_clones]
+                kls_cond_exp = [helpers.get_KL_divergence(p, conditional) for p in plot_exp_conditionals] 
 
             # Plot KL divergence plot.
             if save_plot:
@@ -222,7 +222,7 @@ class SAMOptimizee(Optimizee):
 
             # Measure experimental conditional for the last time by averaging on 3 runs.
             last_clone = self.sam.clone()
-            # experimental_conditionals = [tests.measure_experimental_cond_distribution(last_clone, duration=2000.0) for i in range(3)]
+            experimental_conditionals = [tests.measure_experimental_cond_distribution(last_clone, duration=2000.0) for i in range(3)]
             # kld_conditional_experimental.append(np.sum([helpers.get_KL_divergence(p, conditional) for p in experimental_conditionals]) / len(experimental_conditionals))
 
         logging.info("Mean theoretical J. KLd is {} [Loss]".format(np.sum(kld_joint) / self.num_fitness_trials))
@@ -378,10 +378,10 @@ class SAMGraphOptimizee(Optimizee):
             params=params,
             special_params=special_params)
 
-        logging.info("Creating a recurrent SAM graph network with overridden parameters:\n%s", helpers.get_dictionary_string(params))
+        logging.info("Creating a recurrent SAM graph network with overridden parameters:\n%s", self.graph.parameter_string())
 
 
-    def simulate(self, traj, save_plot=True):
+    def simulate(self, traj, run_intermediates=False, save_plot=True):
         """
         Simulates a recurrently connected group of SAM modules, training on a target 
         distribution; i.e. performing density estimation as in Pecevski et al. 2016,
@@ -410,9 +410,8 @@ class SAMGraphOptimizee(Optimizee):
             
             # Create directory and params file if requested.
             if save_plot:
-                params_dict = OrderedDict(sorted(self.graph.params.items()))
                 helpers.create_directory(individual_directory)
-                helpers.save_text(helpers.get_dictionary_string(params_dict), text_path)
+                helpers.save_text(self.graph.parameter_string(), text_path)
 
             # Get the network's target distribution.
             distribution = self.graph.distribution
@@ -443,15 +442,15 @@ class SAMGraphOptimizee(Optimizee):
                         kls_joints[j].append(helpers.get_KL_divergence(implicit, dist))
 
                 # Measure experimental joint distribution from spike activity.
-                # if save_plot and i % skip_exp_cond == 0:
-                #     # Clone module for later tests.
-                #     graph_clone = self.graph.clone()
+                if save_plot and run_intermediates and i % skip_kld == 0:
+                    # Clone network for later tests.
+                    graph_clone = self.graph.clone()
 
-                #     # Stop plasticity on clone for testing.
-                #     graph_clone.set_intrinsic_rate(0.0)
-                #     graph_clone.set_plasticity_learning_time(0)
+                    # Stop plasticity on clone for testing.
+                    graph_clone.set_intrinsic_rate(0.0)
+                    graph_clone.set_plasticity_learning_time(0)
 
-                #     graph_clones.append(sam_clone)
+                    graph_clones.append(graph_clone)
                                     
                 # Set different intrinsic rate.
                 if t >= self.graph.params['learning_time'] * self.graph.params['intrinsic_step_time_fraction'] and set_second_rate == False:
@@ -464,27 +463,36 @@ class SAMGraphOptimizee(Optimizee):
             self.graph.set_intrinsic_rate(0.0)
             self.graph.set_plasticity_learning_time(0)
 
-            # Plot modules' KL divergence plots.
+            # Measure experimental joint distribution on para-experiment clones.
             if save_plot:
-                plt.figure()
+                plot_exp_joints = [g.measure_experimental_joint_distribution(duration=20000.0) for g in graph_clones]
+                plot_joint_klds = [helpers.get_KL_divergence(p, distribution) for p in plot_exp_joints] 
+
+            # Plot modules' KL divergence plots and experimental KL divergence of joint distribution.
+            if save_plot:
+                fig, ax = plt.subplots(nrows=2, ncols=1)
                 for kld, ym in zip(kls_joints, self.graph.sams):
-                    plt.plot(np.array(range(len(kld))) * skip_kld_module * self.graph.params['sample_presentation_time'] * 1e-3, kld, label="KLd {}".format(ym))
-                plt.legend(loc='upper center')
-                plt.savefig(os.path.join(individual_directory, str(trial) + '.png'))
+                    ax[0].plot(np.array(range(len(kld))) * skip_kld_module * self.graph.params['sample_presentation_time'] * 1e-3, kld, label="Analytical KLD {}".format(ym))
+                ax[0].legend(loc='upper center')
+                if run_intermediates:
+                    ax[1].plot(np.array(range(len(plot_joint_klds))) * skip_kld * self.graph.params['sample_presentation_time'] * 1e-3, plot_joint_klds, label="Experimental KLD")
+                fig.savefig(os.path.join(individual_directory, str(trial) + '.png'))
                 plt.close()
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
-            # last_clone = self.graph.clone()
-            # experimental_joints = [tests.measure_experimental_joint_distribution(last_clone, duration=20000.0) for i in range(3)]
-            # kld_joint_experimental.append(np.sum([helpers.get_KL_divergence(p, distribution) for p in experimental_joints]) / len(experimental_joints))
+            last_clone = self.graph.clone()
+            experimental_joints = [self.graph.measure_experimental_joint_distribution(duration=20000.0) for i in range(1)]
+            kld_joint_experimental.append(np.sum([helpers.get_KL_divergence(p, distribution) for p in experimental_joints]) / len(experimental_joints))
 
         self.run_number += 1
 
         last_klds = [kls_joints[i][-1] for i in range(len(kls_joints))]
-        
-        logging.info("Mean experimental J. KLd is {} [Loss]".format(np.sum(last_klds) / len(last_klds)))
+        mean_loss = np.sum(kld_joint_experimental) / len(kld_joint_experimental)
 
-        return (np.sum(last_klds) / len(last_klds), )
+        logging.info("[Loss] Experimental network joint KLD is {}".format(mean_loss))
+        logging.info("Mean analytical module joint KLD is {}".format(np.sum(last_klds) / len(last_klds)))
+
+        return (mean_loss, )
 
 
     def end(self):

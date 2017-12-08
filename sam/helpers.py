@@ -57,16 +57,18 @@ def draw_from_distribution(distribution, complete=True, randomiser=np.random.Ran
 			return key if complete else tuple(key[i] for i in range(len(key) - 1))
 
 
-def get_KL_divergence(estimate, target):
+def get_KL_divergence(estimate, target, min_prob=1e-5):
 	"""
 	Returns the KL divergence KL(estimate||target), where both distributions are
 	a dictionary of tuple:probability pairs.
 	"""
-	tuples = list(estimate.keys())
-	p = [estimate[k] for k in tuples]
-	q = [target[k] for k in tuples]
+	# Take the union of all keys (the estimate distribution may be missing some
+	# possibilities).
+	tuples = list(set().union(estimate.keys(), target.keys()))
+	p = [target[k] if k in target else 0.0 for k in tuples]
+	q = [max(estimate[k], min_prob) if k in estimate else min_prob for k in tuples]
 	
-	return entropy(q, p)
+	return entropy(p, q)
 
 
 def compute_joint_distribution(eqn, num_discrete_values, *dists):

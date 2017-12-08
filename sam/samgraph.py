@@ -1,6 +1,9 @@
 import copy
+import logging
 import nest
+import numpy as np
 import sam.helpers as helpers
+from collections import defaultdict, OrderedDict
 from mpi4py import MPI
 from sam.sam import SAMModule
 
@@ -68,7 +71,13 @@ class SAMGraph:
 		# Set other metainformation flags.
 		self.num_discrete_vals = num_discrete_vals
 		self.num_modes = num_modes
-		self.params = list(self.sams.values())[0].params # Get all params from one module.
+		self.params = params
+		self.special_params = special_params
+
+		# Add generic parameters to parameter list.
+		generics = dict(list(self.sams.values())[0].params)
+		for k in self.parameter_repeats(): generics.pop(k)
+		self.params.update(generics)
 
 		self.initialised = True
 
@@ -83,11 +92,14 @@ class SAMGraph:
 			num_modes=self.num_modes,
 			dependencies=self.dependencies,
 			distribution=self.distribution,
-			params=self.params)
+			params=self.params,
+			special_params=self.special_params)
 
 		# Copy weights and biases of each module.
 		for ym in new_network.sams:
 			new_network.sams[ym].copy_dynamic_properties(self.sams[ym])
+
+		return new_network
 
 
 	@staticmethod
@@ -120,6 +132,18 @@ class SAMGraph:
 		"""
 		repeats = ['bias_baseline']
 		return repeats
+
+
+	def parameter_string(self):
+		"""
+		Returns a string containing all model parameters, combining the params dictionary
+		passed to create_network() with the params obtainable from the underlying SAMModule
+		as well as the special_params dictionary.
+		"""
+		params = OrderedDict(sorted(self.params.items()))
+		special_params = OrderedDict(sorted(self.special_params.items()))
+
+		return "Params:\n{}\nSpecial params:\n{}".format(helpers.get_dictionary_string(params), helpers.get_dictionary_string(special_params))
 
 
 	def filter_repeat_params(self, params, var_name):
@@ -231,7 +255,7 @@ class SAMGraph:
 			module = self.sams[var_name]
 
 			# Are there any spikes of this module's zeta layer?
-			for j, n in module.zeta:
+			for j, n in enumerate(module.zeta):
 				encoded_value = j + 1
 				state[i] += encoded_value if n in spikes else 0
 
@@ -261,7 +285,7 @@ class SAMGraph:
 
 		# Stop all plasticity.
 		self.set_intrinsic_rate(0.0)
-		self.set_plasticity_learning_time(0.0)
+		self.set_plasticity_learning_time(0)
 
 		# Get current time.
 		start_time = nest.GetKernelStatus('time')
@@ -276,7 +300,7 @@ class SAMGraph:
 
 		# Prepare state distribution variables.
 		invalid_state = tuple([-1 for i in range(len(self.sams))])
-		joint = dict.fromkeys(self.distribution.keys(), 0)
+		joint = defaultdict(int)
 		invalids = 0
 		zeros = 0
 
@@ -287,8 +311,9 @@ class SAMGraph:
 			spike_indices = [i for i, st in enumerate(times) if t - tau <= st < t]
 			state_spikes = [senders[i] for i in spike_indices]
 			state = self.determine_state(state_spikes)
-			if state in joint: 
-				joint[state] += 1
+			joint[state] += 1
+			if state in self.distribution: 
+				pass
 			elif state == invalid_state:
 				invalids += 1
 			else:
@@ -299,3 +324,9 @@ class SAMGraph:
 			joint[k] = v / len(steps)
 		invalids /= len(steps)
 		zeros /= len(steps)
+
+		# print("Experimental joint dist.:\n{}".format(joint))
+		# print("Probability of an invalid state:", invalids)
+		# print("Probability of a zero state:", zeros)
+
+		return joint
