@@ -14,6 +14,3 @@ cp -r /home/krisdamato/nest-simulator/sam /home/krisdamato/
 cmake -Dwith-nest=${NEST_INSTALL_DIR}/bin/nest-config ../sam
 make
 make install
-
-cd /home/krisdamato/LTL-SAM/sam
-python3 main.py

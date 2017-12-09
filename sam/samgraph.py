@@ -308,7 +308,7 @@ class SAMGraph:
 		tau = self.params['tau']
 		steps = np.arange(start_time, start_time + duration, timestep)
 		for t in steps:
-			spike_indices = [i for i, st in enumerate(times) if t - tau <= st < t]
+			spike_indices = [i for i, st in enumerate(times) if t - tau < st <= t]
 			state_spikes = [senders[i] for i in spike_indices]
 			state = self.determine_state(state_spikes)
 			joint[state] += 1
@@ -320,13 +320,64 @@ class SAMGraph:
 				zeros += 1
 
 		# Normalise all values.
+		total = np.sum(list(joint.values()))
 		for k, v in joint.items():
-			joint[k] = v / len(steps)
+			joint[k] = v / total
 		invalids /= len(steps)
 		zeros /= len(steps)
 
-		# print("Experimental joint dist.:\n{}".format(joint))
-		# print("Probability of an invalid state:", invalids)
-		# print("Probability of a zero state:", zeros)
+		logging.info("Probability of an invalid state: {}".format(invalids))
+		logging.info("Probability of a zero state: {}".format(zeros))
 
 		return joint
+
+
+	def draw_stationary_state(self, duration, ax=None):
+		"""
+		Lets the network spike without external input, and draws the spikes from
+		the output neurons (zeta layers).
+		"""
+		# Attach a spike reader to all population coding layers.
+		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
+		for ym in self.sams:
+			nest.Connect(self.sams[ym].zeta, spikereader, syn_spec={'delay':self.params['devices_delay']})
+
+		# Clear currents.
+		self.clear_currents()
+
+		# Stop all plasticity.
+		self.set_intrinsic_rate(0.0)
+		self.set_plasticity_learning_time(0)
+
+		# Get current time.
+		start_time = nest.GetKernelStatus('time')
+
+		# Simulate for duration ms with no input.
+		nest.Simulate(duration)
+
+		# Get spikes.
+		spikes = nest.GetStatus(spikereader, keys='events')[0]
+		senders = spikes['senders']
+		times = spikes['times']
+
+		# Map neuron indices to a range starting from 0, for clarity in reproduction.
+		neuron_map = {}
+		index = 0
+		for ym in range(len(self.sams)):
+			var = 'y' + str(ym + 1)
+			module = self.sams[var]
+			zeta = module.zeta
+			for z in zeta:
+				neuron_map[z] = index
+				index += 1
+		senders = [neuron_map[z] for z in senders]
+
+		# Plot
+		if ax is None:
+			pylab.figure()
+			pylab.plot(times, senders, '|')
+			pylab.title('Spontaneous activity after training')
+			pylab.show()
+		else:
+			ax.plot(times, senders, '|')
+			ax.set_title('Spontaneous activity after training')

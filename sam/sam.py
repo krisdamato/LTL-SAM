@@ -122,7 +122,8 @@ class SAMModule:
 			'delay_chi_alpha':delay,
 			'delay_alpha_zeta':delay,
 			'devices_delay':delay,
-			'max_depress_tau_multiplier':1000.0
+			'max_depress_tau_multiplier':100000.0,
+			'use_renewal':True
 		}
 
 		# Update defaults.
@@ -185,7 +186,8 @@ class SAMModule:
 			'c_1':self.params['linear_term_prob'], # Linear part of transfer function.
 			'c_2':self.params['exp_term_prob'], # The coefficient of the exponential term in the transfer function.
 			'c_3':self.params['exp_term_prob_scale'], # Scaling coefficient of effective potential in exponential term.
-			'T':self.params['T']
+			'T':self.params['T'],
+			'use_renewal':self.params['use_renewal']
 			})
 
 		nest.SetDefaults('stdp_synapse', params={
@@ -630,7 +632,6 @@ class SAMModule:
 		Applicable only for SRM Peceveski neurons.
 		"""
 		if self.params['alpha_neuron_type'] == 'srm_pecevski_alpha':
-			logging.info("Setting bias rate to {}".format(intrinsic_rate))
 			nest.SetStatus(self.alpha, {'eta_bias':intrinsic_rate})
 		else:
 			logging.warning("Cannot set a bias rate in neurons that don't support it. Returning with no effect.")

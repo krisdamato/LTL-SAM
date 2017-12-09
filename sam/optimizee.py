@@ -35,20 +35,29 @@ class SAMOptimizee(Optimizee):
 
         # Make SAM module extension available.
         nest.Install('sammodule')
-        nest.SetKernelStatus({
-            'local_num_threads':n_NEST_threads,
-            'resolution':time_resolution})
         
         self.rs = np.random.RandomState(seed=seed)
         self.num_fitness_trials = num_fitness_trials
         self.run_number = 0 # Is this NEST-process safe?
         self.save_directory = plots_directory
         self.time_resolution = time_resolution
+        self.num_threads = n_NEST_threads
+        self.set_kernel_defaults()
 
         # create_individual can be called because __init__ is complete except for traj initialization
         self.individual = self.create_individual()
         for key, val in self.individual.items():
             traj.individual.f_add_parameter(key, val)
+
+
+    def set_kernel_defaults(self):
+        """
+        Sets main NEST parameters.
+        Note: this needs to be called every time the kernel is reset.
+        """
+        nest.SetKernelStatus({
+            'local_num_threads':self.num_threads,
+            'resolution':self.time_resolution})
 
 
     def create_individual(self):
@@ -85,6 +94,7 @@ class SAMOptimizee(Optimizee):
         the hyperparameters from the individual dictionary.
         """
         nest.ResetKernel()
+        self.set_kernel_defaults()
         self.sam = SAMModule(randomise_seed=True)
 
         # Find the number of variables.
@@ -138,6 +148,8 @@ class SAMOptimizee(Optimizee):
         # Run a number of trials to calculate mean fitness of this individual
         for trial in range(self.num_fitness_trials):
             nest.ResetKernel()
+            self.set_kernel_defaults()
+
             self.individual = traj.individual
             self.prepare_network(distribution=distribution, num_discrete_vals=2, num_modes=2)
             
@@ -256,15 +268,14 @@ class SAMGraphOptimizee(Optimizee):
 
         # Make SAM module extension available.
         nest.Install('sammodule')
-        nest.SetKernelStatus({
-            'local_num_threads':n_NEST_threads,
-            'resolution':time_resolution})
         
         self.rs = np.random.RandomState(seed=seed)
         self.num_fitness_trials = num_fitness_trials
         self.run_number = 0 # Is this NEST-process safe?
         self.save_directory = plots_directory
         self.time_resolution = time_resolution
+        self.num_threads = n_NEST_threads
+        self.set_kernel_defaults()
 
         # Set up exerimental parameters.
         self.initialise_experiment()
@@ -273,6 +284,16 @@ class SAMGraphOptimizee(Optimizee):
         self.individual = self.create_individual()
         for key, val in self.individual.items():
             traj.individual.f_add_parameter(key, val)
+
+
+    def set_kernel_defaults(self):
+        """
+        Sets main NEST parameters.
+        Note: this needs to be called every time the kernel is reset.
+        """
+        nest.SetKernelStatus({
+            'local_num_threads':self.num_threads,
+            'resolution':self.time_resolution})
 
 
     def create_individual(self):
@@ -361,6 +382,8 @@ class SAMGraphOptimizee(Optimizee):
         dependency parameters, but uses the hyperparameters from the individual dictionary.
         """
         nest.ResetKernel()
+        self.set_kernel_defaults()
+
         self.graph = SAMGraph(randomise_seed=True)
 
         # Convert the trajectory individual to a dictionary.
@@ -396,10 +419,13 @@ class SAMGraphOptimizee(Optimizee):
         
         # Declare fitness metrics.
         kld_joint_experimental = []
+        kld_joint_experimental_valid = []
 
         # Run a number of trials to calculate mean fitness of this individual
         for trial in range(self.num_fitness_trials):
             nest.ResetKernel()
+            self.set_kernel_defaults()
+
             self.individual = traj.individual
             self.prepare_network(
                 distribution=self.distribution, 
@@ -467,29 +493,42 @@ class SAMGraphOptimizee(Optimizee):
             if save_plot:
                 plot_exp_joints = [g.measure_experimental_joint_distribution(duration=20000.0) for g in graph_clones]
                 plot_joint_klds = [helpers.get_KL_divergence(p, distribution) for p in plot_exp_joints] 
+                plot_joint_klds_valid = [helpers.get_KL_divergence(p, distribution, exclude_invalid_states=True) for p in plot_exp_joints] 
 
             # Plot modules' KL divergence plots and experimental KL divergence of joint distribution.
             if save_plot:
-                fig, ax = plt.subplots(nrows=2, ncols=1)
+                fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(8, 20))
                 for kld, ym in zip(kls_joints, self.graph.sams):
                     ax[0].plot(np.array(range(len(kld))) * skip_kld_module * self.graph.params['sample_presentation_time'] * 1e-3, kld, label="Analytical KLD {}".format(ym))
+                    ax[0].set_title('KL divergence between target and estimated marginal (module) distributions')
                 ax[0].legend(loc='upper center')
                 if run_intermediates:
                     ax[1].plot(np.array(range(len(plot_joint_klds))) * skip_kld * self.graph.params['sample_presentation_time'] * 1e-3, plot_joint_klds, label="Experimental KLD")
-                fig.savefig(os.path.join(individual_directory, str(trial) + '.png'))
-                plt.close()
+                    ax[1].plot(np.array(range(len(plot_joint_klds_valid))) * skip_kld * self.graph.params['sample_presentation_time'] * 1e-3, plot_joint_klds_valid, label="Experimental KLD (valid only)")
+                    ax[1].legend(loc='upper center')
+                    ax[1].set_title('KL Divergence between target and estimated joint distribution')
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
             last_clone = self.graph.clone()
             experimental_joints = [self.graph.measure_experimental_joint_distribution(duration=20000.0) for i in range(1)]
             kld_joint_experimental.append(np.sum([helpers.get_KL_divergence(p, distribution) for p in experimental_joints]) / len(experimental_joints))
+            kld_joint_experimental_valid.append(np.sum([helpers.get_KL_divergence(p, distribution, exclude_invalid_states=True) for p in experimental_joints]) / len(experimental_joints))
+            print("target:\n{}\nestimate:\n{}".format(distribution, experimental_joints[0]))
+
+            # Draw spiking of output neurons.
+            if save_plot:
+                last_clone.draw_stationary_state(duration=500, ax=ax[2])
+                fig.savefig(os.path.join(individual_directory, str(trial) + '.png'))
+                plt.close()
 
         self.run_number += 1
 
         last_klds = [kls_joints[i][-1] for i in range(len(kls_joints))]
         mean_loss = np.sum(kld_joint_experimental) / len(kld_joint_experimental)
+        mean_loss_valid = np.sum(kld_joint_experimental_valid) / len(kld_joint_experimental_valid)
 
         logging.info("[Loss] Experimental network joint KLD is {}".format(mean_loss))
+        logging.info("Experimental network joint KLD (on valid states only) is {}".format(mean_loss_valid))
         logging.info("Mean analytical module joint KLD is {}".format(np.sum(last_klds) / len(last_klds)))
 
         return (mean_loss, )
