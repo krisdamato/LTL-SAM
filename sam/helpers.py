@@ -1,7 +1,10 @@
+import matplotlib.pyplot as plt
 import itertools
 import numpy as np
 import re
 import os
+from collections import OrderedDict
+from mpl_toolkits.mplot3d import Axes3D
 from scipy.stats import entropy
 from time import gmtime, strftime
 
@@ -181,6 +184,87 @@ def compute_marginal_distribution(joint, keep, num_discrete_values):
 		marginal[p] = marginal_array[t]
 
 	return marginal
+
+
+def plot_3d_histogram(target, estimated, num_discrete_values, target_label, estimated_label):
+	"""
+	Assumes that there are three RVs in each distribution that can take
+	values in {1, ..., num_discrete_values} and makes a plot for each 
+	value of the last variable.
+	Note: does not show to screen.
+	"""
+	fig = plt.figure(figsize=(6, 8))
+	ax1 = fig.add_subplot(211, projection='3d')
+	ax2 = fig.add_subplot(212, projection='3d') 
+
+	# Generate grid matrices.
+	_x = np.arange(1, num_discrete_values + 1)
+	_y = np.arange(1, num_discrete_values + 1)
+	_xx, _yy = np.meshgrid(_x, _y)
+	x, y = _xx.ravel(), _yy.ravel()
+
+	top1e = [estimated[(i, j, 1)] for j in _y for i in _x]
+	top2e = [estimated[(i, j, 2)] for j in _y for i in _x]
+	top1t = [target[(i, j, 1)] for j in _y for i in _x]
+	top2t = [target[(i, j, 2)] for j in _y for i in _x]
+
+	bottom = np.zeros_like(top1e)
+	width = depth = 0.15
+
+	green_proxy = plt.Rectangle((0, 0), 1, 1, fc='g')
+	blue_proxy = plt.Rectangle((0, 0), 1, 1, fc='b')
+
+	ax1.bar3d(x - width, y, bottom, width, depth, top1e, shade=True, color='b')
+	ax1.bar3d(x, y, bottom, width, depth, top1t, shade=True, color='g')
+	ax1.view_init(elev=35, azim=-65)
+	ax1.grid(False)
+	ax1.set_xticks(_x)
+	ax1.set_yticks(_y)
+	ax1.set_title('z = 1')
+	ax1.legend([green_proxy, blue_proxy], [target_label, estimated_label])
+
+	ax2.bar3d(x - width, y, bottom, width, depth, top2e, shade=True, color='b')
+	ax2.bar3d(x, y, bottom, width, depth, top2t, shade=True, color='g')
+	ax2.view_init(elev=35, azim=-65)
+	ax2.grid(False)
+	ax2.set_xticks(_x)
+	ax2.set_yticks(_y)
+	ax2.set_title('z = 2')
+	ax2.legend([green_proxy, blue_proxy], [target_label, estimated_label])
+
+	return fig
+
+
+def plot_histogram(target, estimated, num_discrete_values, target_label, estimated_label, renormalise_estimated_states=True):
+	"""
+	Given a distribution in the form of a dictionary, this plots a histogram
+	of states, labeled by state vector.
+	Note: does not show to the screen.
+	"""
+	fig = plt.figure(figsize=(18, 3))
+	ax = fig.add_subplot(111)
+
+	# Renormalise legal states.
+	truncated = {k:estimated[k] for k in target}
+	if renormalise_estimated_states:
+		total = np.sum(list(truncated.values()))
+		for k in truncated:
+			truncated[k] /= total
+
+	# Get the states in order.
+	ordered_target = OrderedDict(sorted(target.items()))
+	ordered_truncated = OrderedDict(sorted(truncated.items()))
+
+	width = 0.3
+	x = np.arange(len(ordered_target))
+	ax.bar(x, ordered_truncated.values(), width, color='g')
+	ax.bar(x + width, ordered_target.values(), width, color='black')
+	ax.set_xticks(x + width / 2)
+	ax.set_xticklabels(ordered_target.keys(), rotation=45)
+	ax.set_ylabel('p')
+	plt.tight_layout()
+
+	return fig
 
 
 def get_dictionary_string(d):

@@ -6,17 +6,12 @@ import pylab
 import sam.helpers as helpers
 import time
 from collections import defaultdict
-from mpi4py import MPI
 
 
-class SAMModule:
+class SPINetwork:
 	"""
-	Encapsulates a Stochastic Association Module (SAM), as described in Pecevski et al, 2016. A SAM is a winner-take-all module
-	that performs unsupervised learning of a target multinomial distribution (density estimation). Although in the sense of 
-	density estimation it is an unsupervised algorithm (during the learning phase samples are simply presented from the 
-	target distribution, with no labelling or splitting into input/output), the module learns the structure of variable 
-	interdependencies, so that withholding one variable and presenting samples from the rest to the module causes it to 
-	estimate the target conditional probability of the withheld variable.
+	Encapsulates a Sparse Probabilistic Inference (SPI) network, which uses sparse connectivity in a spiking
+	network of interconnected excitatory/inhibitory pools of neurons to encode a Bayesian graph.
 	"""
 
 	def __init__(self, randomise_seed=False):
@@ -39,46 +34,48 @@ class SAMModule:
 			'weight_baseline':(-10.0, 0.0),
 			'T':(0.0, 1.0),
 			'first_bias_rate':(0.0, 0.1),
-			'second_bias_rate':(0.0, 0.1),
 			'bias_baseline':(-40.0, 0.0),
 			'exp_term_prob':(0.0, 1.0),
 			'exp_term_prob_scale':(0.0, 5.0),
-			'relative_bias_spike_rate':(1e-5, 1.0)
+			'relative_bias_spike_rate':(1e-5, 1.0),
+			'connectivity_chi_inh':(0.0, 1.0),
+			'connectivity_inh_chi':(0.0, 1.0),
+			'connectivity_inh_self':(0.0, 1.0),
+			'connectivity_chi_chi':(0.0, 1.0),
+			'delay_max':(0.0, 10.0)
 			}
 
 		return param_spec
 
 
-	def set_sam_defaults(self, params={}):
+	def set_spi_defaults(self, params={}):
 		"""
-		Sets SAM defaults to Pecevski et al. 2016 values.
+		Sets SPI defaults.
 		params: dictionary of parameters to set.
 		"""
 		# Set common properties.
-		tau = 15.0 if 'tau' not in params else params['tau']
-		delay = 0.05 if 'delay' not in params else params['delay']
+		tau = 10.0 if 'tau' not in params else params['tau']
+		delay_fixed = 1.0 if 'delay_fixed' not in params else params['delay_fixed']
+		delay_max = 10.0 if 'delay_max' not in params else params['delay_max']
+		delay_min = 0.1 if 'delay_min' not in params else params['delay_min']
 
 		# Set all derived and underived properties.
 		self.params = {
 			'initial_stdp_rate':0.002,
 			'final_stdp_rate':0.0006,
-			'stdp_time_fraction':0.5,
-			'intrinsic_step_time_fraction':0.5,
+			'stdp_time_fraction':1.0
+			'intrinsic_step_time_fraction':1.0,
 			'initial_weight':3.0,
-			'max_weight':4.0,
-			'min_weight':0.0,
 			'weight_baseline':2.5 * np.log(0.2),
 			'tau':tau,
-			'delay':delay,
 			'T':0.58,
-			'use_rect_psp_exc':True,
-			'use_rect_psp_inh':True,
-			'inhibitors_use_rect_psp_exc':True,
+			'use_rect_psp_exc':False,
+			'use_rect_psp_inh':False,
+			'inhibitors_use_rect_psp_exc':False,
 			'amplitude_exc':2.0,
 			'amplitude_inh':2.0,
-			'external_current':0.0,
 			'tau_membrane':delay/100,
-			'tau_alpha':8.5,
+			'tau_alpha':tau,
 			'first_bias_rate':0.01,
 			'second_bias_rate':0.02,
 			'relative_bias_spike_rate':0.02,
@@ -89,40 +86,39 @@ class SAMModule:
 			'initial_bias':5.0,
 			'dead_time_random':False,
 			'linear_term_prob':0.0,
-			'exp_term_prob':0.5/tau,
+			'exp_term_prob':1.0/tau,
 			'exp_term_prob_scale':1.0,
-			'weight_chi_alpha_mean': 4.0 / 3,
-			'weight_chi_alpha_std':0.1,
-			'weight_alpha_inhibitors':80.0,
-			'weight_alpha_zeta':20.0,
-			'weight_inhibitors_alpha':-7.0,
+			'weight_chi_chi_max':1.0,
+			'weight_chi_chi_min':0.0,
+			'weight_chi_chi_std':0.1,
+			'weight_chi_inhibitors':13.57,
+			'weight_inhibitors_chi':1.86,
+			'weight_inhibitors_inhibitors':13.57,
 			'bias_inhibitors':-10.0,
-			'bias_chi':-10.0,
-			'bias_zeta':-10.0,
-			'bias_alpha_mean':5.0,
-			'bias_alpha_std':0.1,
-			'nu_current_plus':30.0,
-			'nu_current_minus':-30.0,
-			'alpha_current_minus':-80.0,
-			'alpha_current_plus':0.0,
-			'learning_time':600000,
-			'sample_presentation_time':100.0, # 100 ms.
+			'bias_chi_mean':5.0,
+			'bias_chi_std':0.1,
+			'learning_time':300000,
+			'sample_presentation_time':200.0, # 100 ms.
 			'chi_neuron_type':'srm_pecevski_alpha',
-			'alpha_neuron_type':'srm_pecevski_alpha',
-			'zeta_neuron_type':'srm_pecevski_alpha',
 			'inhibitors_neuron_type':'srm_pecevski_alpha',
-			'chi_alpha_synapse_type':'stdp_pecevski_synapse',
-			'alpha_zeta_synapse_type':'static_synapse',
-			'alpha_inhibitors_synapse_type':'static_synapse',
-			'inhibitors_alpha_synapse_type':'static_synapse',
-			'num_inhibitors':5,
-			'delay_alpha_inhibitors':delay,
-			'delay_inhibitors_alpha':delay,
-			'delay_chi_alpha':delay,
-			'delay_alpha_zeta':delay,
-			'devices_delay':delay,
+			'chi_chi_synapse_type':'stdp_pecevski_synapse',
+			'chi_inhibitors_synapse_type':'static_synapse',
+			'inhibitors_chi_synapse_type':'static_synapse',
+			'inhibitors_inhibitors_synapse_type':'static_synapse',
+			'excitatory_pool_size':20,
+			'inhibitory_pool_size':10,
+			'delay_chi_inhibitors':delay_fixed,
+			'delay_inhibitors_chi':delay_fixed,
+			'delay_chi_chi_min':delay_min,
+			'delay_chi_chi_max':delay_max,
+			'delay_inhibitors_inhibitors':delay_fixed,
+			'devices_delay':delay_fixed,
 			'max_depress_tau_multiplier':100000.0,
-			'use_renewal':False
+			'use_renewal':False,
+			'connectivity_chi_inh':0.5,
+			'connectivity_inh_chi':0.5,
+			'connectivity_inh_self':0.5,
+			'connectivity_chi_chi':0.5
 		}
 
 		# Update defaults.
@@ -155,8 +151,6 @@ class SAMModule:
 			'eta_0':self.params['initial_stdp_rate'],
 			'eta_final':self.params['final_stdp_rate'], 
 			'learning_time':int(self.params['stdp_time_fraction'] * self.params['learning_time']),
-			'max_weight':self.params['max_weight'],
-			'min_weight':self.params['min_weight'],
 			'weight':self.params['initial_weight'],
 			'w_baseline':self.params['weight_baseline'],
 			'tau':self.params['tau'],
@@ -199,22 +193,10 @@ class SAMModule:
 			})
 
 		# Create layer model specialisations.
-		# Input population model.
+		# Chi population model.
 		if self.params['chi_neuron_type'] == 'srm_pecevski_alpha':
-			self.chi_neuron_params={'bias':self.params['bias_chi']}
-		else:
-			raise NotImplementedError
-
-		# Hidden population model.
-		if self.params['alpha_neuron_type'] == 'srm_pecevski_alpha':
 			# We will set alpha neuron biases during network construction.
-			self.alpha_neuron_params={'eta_bias':self.params['first_bias_rate']}
-		else:
-			raise NotImplementedError
-
-		# Output population model.
-		if self.params['zeta_neuron_type'] == 'srm_pecevski_alpha':
-			self.zeta_neuron_params={'bias':self.params['bias_zeta']}
+			self.chi_neuron_params={'eta_bias':self.params['first_bias_rate']}
 		else:
 			raise NotImplementedError
 
@@ -229,160 +211,184 @@ class SAMModule:
 			raise NotImplementedError
 
 		# Create synapse model specialisations.
-		# Input-alpha synapses.
-		if self.params['chi_alpha_synapse_type'] == 'stdp_pecevski_synapse':
-		 	self.chi_alpha_synapse_params={
+		# Chi-chi synapses.
+		if self.params['chi_chi_synapse_type'] == 'stdp_pecevski_synapse':
+		 	self.chi_chi_synapse_params={
 		 		'model':'stdp_pecevski_synapse',
 				'weight':{
 					'distribution':'normal_clipped',
-					'low':self.params['min_weight'],
-					'high':self.params['max_weight'],
-					'mu':self.params['weight_chi_alpha_mean'],
-					'sigma':self.params['weight_chi_alpha_std']
+					'low':self.params['min_weight_chi_chi'],
+					'high':self.params['max_weight_chi_chi'],
+					'mu':self.params['max_weight_chi_chi'],
+					'sigma':self.params['weight_chi_chi_std']
 					},
-				'delay':self.params['delay_chi_alpha']
-				}
-		elif self.params['chi_alpha_synapse_type'] == 'stdp_synapse':
-			self.chi_alpha_synapse_params={
-		 		'model':'stdp_synapse',
-				'weight':{
-					'distribution':'normal_clipped',
-					'low':self.params['min_weight'],
-					'high':self.params['max_weight'],
-					'mu':self.params['weight_chi_alpha_mean'],
-					'sigma':self.params['weight_chi_alpha_std']
-					},
-				'delay':self.params['delay_chi_alpha']
+				'delay':{
+					'distribution':'uniform_clipped',
+					'low':self.params['delay_chi_chi_min'],
+					'max':self.params['delay_chi_chi_max'],
+					}
 				}
 		else:
 			raise NotImplementedError
 
-		# Alpha-inhibitors synapses.
-		if self.params['alpha_inhibitors_synapse_type'] == 'static_synapse':
-			self.alpha_inhibitors_synapse_params={
+		# Chi-inhibitors synapses.
+		if self.params['chi_inhibitors_synapse_type'] == 'static_synapse':
+			self.chi_inhibitors_synapse_params={
 				'model':'static_synapse',
-				'weight':self.params['weight_alpha_inhibitors'],
-				'delay':self.params['delay_alpha_inhibitors']
+				'weight':self.params['weight_chi_inhibitors'],
+				'delay':self.params['delay_chi_inhibitors']
 				}
 		else:
 			raise NotImplementedError
 
-		# Inhibitors-alpha synapses.
-		if self.params['inhibitors_alpha_synapse_type'] == 'static_synapse':
-			self.inhibitors_alpha_synapse_params={
+		# Inhibitors-chi synapses.
+		if self.params['inhibitors_chi_synapse_type'] == 'static_synapse':
+			self.inhibitors_chi_synapse_params={
 				'model':'static_synapse',
-				'weight':self.params['weight_inhibitors_alpha'],
-				'delay':self.params['delay_inhibitors_alpha']
+				'weight':self.params['weight_inhibitors_chi'],
+				'delay':self.params['delay_inhibitors_chi']
 				}
 		else:
 			raise NotImplementedError
 
-		# Alpha-zeta synapses.
-		if self.params['alpha_zeta_synapse_type'] == 'static_synapse':
-			self.alpha_zeta_synapse_params={
+		# Inhibitors-inhibitors synapses.
+		if self.params['inhibitors_inhibitors_synapse_type'] == 'static_synapse':
+			self.inhibitors_inhibitors_synapse_params={
 				'model':'static_synapse',
-				'weight':self.params['weight_alpha_zeta'],
-				'delay':self.params['delay_alpha_zeta']
+				'weight':self.params['weight_inhibitors_inhibitors'],
+				'delay':self.params['delay_inhibitors_inhibitors']
 				}
 		else:
 			raise NotImplementedError
 
+		self.chi_chi_connectivity_params={
+			'rule':'pairwise_bernoulli',
+			'p':self.params['connectivity_chi_chi']
+		}
 
-	def create_network(self, num_x_vars=2, num_discrete_vals=2, num_modes=2, distribution=None, dep_index=-1, params={}, create_input_layer=True):
+		self.chi_chi_connectivity_params={
+					'rule':'pairwise_bernoulli',
+					'p':self.params['connectivity_chi_chi']
+				}
+
+		self.chi_inh_connectivity_params={
+					'rule':'pairwise_bernoulli',
+					'p':self.params['connectivity_chi_inh']
+				}
+
+		self.inh_chi_connectivity_params={
+					'rule':'pairwise_bernoulli',
+					'p':self.params['connectivity_inh_chi']
+				}
+
+		self.inh_self_connectivity_params={
+					'rule':'pairwise_bernoulli',
+					'p':self.params['connectivity_inh_self']
+				}
+
+	def create_network(self, dependencies, distribution, num_discrete_vals=2, params={}, special_params={}):
 		"""
-		Creates a SAM module with the specified architecture.
-		distribution: Users can specify the distribution themselves, in which case they need to take care that the 
-			other parameters are within the constraints set by this distribution (e.g. num_x_vars).
-		dep_index: Specifies the index (within the distribution tuples) of the output variable (-1 = last).
-		
+		Generates a recurrent SPI network according to the supplied dependencies. 
+		This gives an analog to the SAMGraph structure, but it also uses:
+		1. Sparse connectivity
+		2. Large neuron pools for each variable (no distinction between modes)
+		3. No output layer.
+		4. A rate-based competition on output state.
+		dependencies: A dictionary of ym:[y1, y2, ... , yn] where ym is a string
+			naming the dependent variable and yi are strings naming the Markov
+			blanket variables. Note: it is up to the user to supply correct
+			dependencies. Each string should have the format "yi", e.g. "y1",
+			starting from index 1.
+		distribution: A joint target distribution that the network is supposed to
+			estimate. Supplied as a dictionary of (x1, x2, ..., xk):p pairs, 
+			where the xi are values of the random variables, and p is a 
+			probability.
+		params: A dictionary of common parameters to be passed to all subnetworks.
+		special_params: A dictionary of dictionaries, in the format {"y1":{...}, 
+			...}, containing parameters to be sent specifically to individual 
+			subnetworks. This overwrites parameters in params, even those that are
+			meant to evolve on a module-by-module basis initially.
+		The other parameters are as in SAMModule.
 		"""
 		# Set parameter defaults.
-		self.set_sam_defaults(params)
+		self.set_spi_defaults(params)
 
-		# Set bias baseline if not given externally.
-		if 'bias_baseline' not in params.keys():
-			self.params['bias_baseline'] = helpers.determine_bias_baseline(self.params['T'], [num_discrete_vals for i in range(num_x_vars)])
-			logging.info("Setting bias baseline to {}".format(self.params['bias_baseline']))
+		self.dependencies = dependencies
+		self.distribution = distribution
+		self.chi_pools = dict()
+		self.inhibitory_pools = dict()
+		self.subnetwork_distributions = dict()
+		self.dep_indices = dict()
+		self.subnetwork_params = dict()
 
-		# Set NEST defaults. 
-		# Note: This has to happen after SAM defaults are set.
-		self.set_nest_defaults()
+		# Create multiple excitatory pools for each dependency, ignoring input for now.
+		for ym, ys in dependencies.items():
+			subnetwork_params = self.filter_repeat_params(params, ym)
+			self.subnetwork_params[ym] = {**subnetwork_params, **subnetwork_params[ym]} if ym in special_params else subnetwork_params.copy()
+			subnetwork_vars = sorted([ym] + ys)
 			
-		# Create input layer if the module is standalone.
-		if create_input_layer:
-			self.created_input_layer = True
-			self.chi = nest.Create(self.params['chi_neuron_type'], n=num_discrete_vals * num_x_vars, params=self.chi_neuron_params)
-		else:
-			self.chi = () # Needs to be set separately.
+			# Set defaults
+			self.set_spi_defaults(self.subnetwork_params[ym])
+			self.set_nest_defaults()
+			
+			# Create excitatory and inhibitory pools.
+			self.chi_pools[ym] = nest.Create(self.params['chi_neuron_type'], n=self.params['excitatory_pool_size'] * num_discrete_vals, params=self.chi_neuron_params)
+			self.inhibitory_pools[ym] = nest.Create(self.params['inhibitors_neuron_type'], n=self.params['inhibitory_pool_size'], params=self.inhibitors_neuron_params)
+			
+			# Connect excitatory and inhibitory pools.
+			nest.Connect(self.chi_pools[ym], 
+				self.inhibitory_pools[ym], 
+				conn_spec=self.chi_inh_connectivity_params, 
+				syn_spec=self.chi_inhibitors_synapse_params)
+			nest.Connect(self.inhibitory_pools[ym], 
+				self.chi_pools[ym], 
+				conn_spec=self.inh_chi_connectivity_params, 
+				syn_spec=self.inhibitors_chi_synapse_params)
 
-		# Create other layers.
-		self.alpha = nest.Create(self.params['alpha_neuron_type'], n=num_modes * num_discrete_vals, params=self.alpha_neuron_params)
-		self.zeta = nest.Create(self.params['zeta_neuron_type'], n=num_discrete_vals, params=self.zeta_neuron_params)
-		self.inhibitors = nest.Create(self.params['inhibitors_neuron_type'], n=self.params['num_inhibitors'], params=self.inhibitors_neuron_params)
+			# Self-connect inhibitory pools (autopses)
+			nest.Connect(self.inhibitory_pools[ym],
+				self.inhibitory_pools[ym],
+				conn_spec=self.inh_self_connectivity_params,
+				syn_spec=self.inhibitors_inhibitors_synapse_params)
+
+			# Chi bias randomisation.
+			self.set_random_biases(self.chi_pools[ym], 
+				self.params['bias_chi_mean'], 
+				self.params['bias_chi_std'],
+				self.params['min_bias'],
+				self.params['max_bias'])
+
+			# If no distribution has been passed, generate one using the passed parameters.
+			self.dep_indices[ym] = subnetwork_vars.index(ym),
+			self.subnetwork_distributions[ym] = helpers.compute_marginal_distribution(distribution, subnetwork_vars, num_discrete_vals)
+		
+		# Specify input pools for each subnetwork, making the right recurrent connections.
+		for ym, ys in dependencies.items():
+			input_vars = sorted(ys)
+			input_neurons = tuple([n for y in input_vars for n in self.chi_pools[y]])
+			
+			# Connect chi pools with each other.
+			nest.Connect(self.input_neurons, 
+				self.chi_pools[ym], 
+				conn_spec=self.chi_chi_connectivity_params,
+				syn_spec=self.chi_chi_synapse_params)
+
+		# Set other metainformation flags.
+		self.num_discrete_vals = num_discrete_vals
+		self.params = params
+		self.special_params = special_params
+
+		# Add generic parameters to parameter list.
+		generics = dict(list(self.sams.values())[0].params)
+		for k in self.parameter_repeats(): generics.pop(k)
+		self.params.update(generics)
+
+		self.initialised = True
 
 		# Track all neurons.
-		self.all_neurons = self.chi + self.alpha + self.zeta + self.inhibitors
-
-		# Connect layers.
-		# Chi-alpha connectivity: all-to-all.
-		if create_input_layer:
-			nest.Connect(self.chi, self.alpha, conn_spec='all_to_all', syn_spec=self.chi_alpha_synapse_params)
-
-		# Alpha-inhibitors connectivity: all-to-all.
-		nest.Connect(self.alpha, self.inhibitors, conn_spec='all_to_all', syn_spec=self.alpha_inhibitors_synapse_params)
-
-		# Inhibitors-alpha connectivity: all-to-all.
-		nest.Connect(self.inhibitors, self.alpha, conn_spec='all_to_all', syn_spec=self.inhibitors_alpha_synapse_params)
-
-		# Alpha bias randomisation.
-		self.set_random_biases(self.alpha, 
-			self.params['bias_alpha_mean'], 
-			self.params['bias_alpha_std'],
-			self.params['min_bias'],
-			self.params['max_bias'])
-
-		# Alpha-zeta connectivity: subpopulation-to-subpopulation-index.
-		for i in range(len(self.alpha)):
-			j = i // num_modes
-			nest.Connect([self.alpha[i]], [self.zeta[j]], syn_spec=self.alpha_zeta_synapse_params)
-
-		# If no distribution has been passed, generate one using the passed parameters.
-		self.output_index = dep_index if dep_index >= 0 else num_x_vars
-		self.distribution = distribution if distribution is not None else self.generate_distribution(num_x_vars + 1, num_discrete_vals)
-		if len(self.distribution) != pow(num_discrete_vals, num_x_vars + 1):
-			raise Exception("The number of variables in the distribution and parameters must match. " + 
-				"Given a distribution of length {} but {} combinations of values and variables.".format(len(self.distribution), pow(num_discrete_vals, num_x_vars + 1)))
-
-		# Set other flags/metainfo.
-		self.num_vars = num_x_vars + 1
-		self.num_discrete_vals = num_discrete_vals
-		self.num_modes = num_modes
-
-		# The network is initialised only if it its fully constructed.
-		self.initialised = True if create_input_layer else False
-
-
-	def set_input_layer(self, nodes):
-		"""
-		If the module uses output from other modules as its input layer, the existing neuron indices can be passed 
-		here. The user must take care to pass the neurons in the right order. Overwrites any existing input neurons
-		if already specified and connects new input layer to alpha layer.
-		"""
-		if len(nodes) != self.num_discrete_vals * (self.num_vars - 1):
-			raise Exception("The number of input neurons must match the network parameters. Provided with an array " +
-				"of pre-existing neurons of length {}".format(len(nodes)))
-		
-		self.uses_preexisting_input = True
-		self.chi = nodes
-
-		# Reset the all_neurons aggregate.
-		self.all_neurons = self.chi + self.alpha + self.zeta + self.inhibitors
-
-		# Connect chi to alpha neurons: all-to-all.
-		nest.Connect(self.chi, self.alpha, conn_spec='all_to_all', syn_spec=self.chi_alpha_synapse_params)
-
-		# Only now is the network fully initialised.
-		self.initialised = True
+		self.all_neurons = tuple()
+		for ym in dependencies.items():
+			self.all_neurons += self.chi_pools[ym] + self.inhibitory_pools[ym]
 
 
 	def clone(self):

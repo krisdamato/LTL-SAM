@@ -255,13 +255,16 @@ class SAMGraph:
 			module = self.sams[var_name]
 
 			# Are there any spikes of this module's zeta layer?
+			spike_found = False
 			for j, n in enumerate(module.zeta):
-				encoded_value = j + 1
-				state[i] += encoded_value if n in spikes else 0
+				encoded_value = (j + 1) if not spike_found else -1
+				if n in spikes:
+					state[i] = encoded_value
+					spike_found = True
 
 		# If any state value is greater than the maximum encoded value,
 		# the state is invalid. 
-		if any(s > self.num_discrete_vals for s in state):
+		if any(s == -1 for s in state):
 			state = [-1 for i in range(len(self.sams))]
 
 		return tuple(state)

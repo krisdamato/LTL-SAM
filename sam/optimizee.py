@@ -104,7 +104,20 @@ class SAMOptimizee(Optimizee):
         params = {k:self.individual[k] for k in SAMModule.parameter_spec().keys()}
 
         # Peg the delay to the time resolution.
+        params = {'relative_bias_spike_rate': 0.43617013484109396, 
+        'second_bias_rate': 0.056127527788007829, 
+        'bias_baseline': -39.547784467498758, 
+        'exp_term_prob': 0.77058265550261074, 
+        'exp_term_prob_scale': 0.89096414394800927, 
+        'T': 0.62012573342077804, 
+        'weight_baseline': -1.7167532906292333, 
+        'initial_stdp_rate': 0.006743674115121996, 
+        'first_bias_rate': 0.008963736694322065, 
+        'final_stdp_rate': 0.00017021603887065919, 
+        'max_depress_tau_multiplier': 15.416884435587075}
+
         params['delay'] = self.time_resolution
+        params['weight_chi_alpha_mean'] = 3.0
 
         # Create a SAM module with the correct parameters.
         self.sam.create_network(num_x_vars=num_vars - 1, 
@@ -232,14 +245,23 @@ class SAMOptimizee(Optimizee):
             kld_joint.append(helpers.get_KL_divergence(implicit, distribution))
             kld_conditional.append(helpers.get_KL_divergence(implicit_conditional, conditional))
 
+            # Print experimental distribution.
+            if save_plot:
+                logging.info("Implicit conditional distribution:\n{}".format(implicit_conditional))
+                fig = helpers.plot_3d_histogram(conditional, implicit_conditional, self.sam.num_discrete_vals, target_label='p*(z|x)', estimated_label='p(z|x;θ)')
+                fig.savefig(os.path.join(individual_directory, str(trial) + '_conditional.png'))
+                fig = helpers.plot_3d_histogram(distribution, implicit, self.sam.num_discrete_vals, target_label='p*(x,z)', estimated_label='p(x,z;θ)')
+                fig.savefig(os.path.join(individual_directory, str(trial) + '_joint.png'))
+                plt.close()
+
             # Measure experimental conditional for the last time by averaging on 3 runs.
             last_clone = self.sam.clone()
             experimental_conditionals = [tests.measure_experimental_cond_distribution(last_clone, duration=2000.0) for i in range(3)]
-            # kld_conditional_experimental.append(np.sum([helpers.get_KL_divergence(p, conditional) for p in experimental_conditionals]) / len(experimental_conditionals))
+            kld_conditional_experimental.append(np.sum([helpers.get_KL_divergence(p, conditional) for p in experimental_conditionals]) / len(experimental_conditionals))
 
         logging.info("Mean theoretical J. KLd is {} [Loss]".format(np.sum(kld_joint) / self.num_fitness_trials))
         logging.info("Mean theoretical C. KLd is {}".format(np.sum(kld_conditional) / self.num_fitness_trials))
-        # logging.info("Mean experimental C. KLd is {}".format(np.sum(kld_conditional_experimental) / self.num_fitness_trials))
+        logging.info("Mean experimental C. KLd is {}".format(np.sum(kld_conditional_experimental) / self.num_fitness_trials))
 
         self.run_number += 1
 
@@ -390,7 +412,22 @@ class SAMGraphOptimizee(Optimizee):
         params = {k:self.individual[k] for k in SAMGraph.parameter_spec(len(dependencies)).keys()}
 
         # Peg the delay to the time resolution.
+        params = {
+            'exp_term_prob': 0.085365673056325822, 
+            'weight_baseline': -2.4638369672245659, 
+            'bias_baseline_4': -38.499203922313313, 
+            'final_stdp_rate': 0.00016492088528220262, 
+            'bias_baseline_3': -15.987917433648654, 
+            'T': 0.58843331110695518, 
+            'exp_term_prob_scale': 1.0074125079414686, 
+            'initial_stdp_rate': 0.0077051862961219691, 
+            'relative_bias_spike_rate': 0.64653433772744096, 
+            'bias_baseline_1': -17.979967727213371, 
+            'bias_baseline_2': -7.0017156012848005, 
+            'second_bias_rate': 0.026281937860456024, 
+            'first_bias_rate': 0.043237426431668925}
         params['delay'] = self.time_resolution
+        params['weight_chi_alpha_mean'] = 4.0 / 3
 
         # Create a SAM module with the correct parameters.
         self.graph.create_network(
@@ -404,7 +441,7 @@ class SAMGraphOptimizee(Optimizee):
         logging.info("Creating a recurrent SAM graph network with overridden parameters:\n%s", self.graph.parameter_string())
 
 
-    def simulate(self, traj, run_intermediates=False, save_plot=True):
+    def simulate(self, traj, run_intermediates=True, save_plot=True):
         """
         Simulates a recurrently connected group of SAM modules, training on a target 
         distribution; i.e. performing density estimation as in Pecevski et al. 2016,
@@ -510,15 +547,21 @@ class SAMGraphOptimizee(Optimizee):
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
             last_clone = self.graph.clone()
-            experimental_joints = [self.graph.measure_experimental_joint_distribution(duration=20000.0) for i in range(1)]
-            kld_joint_experimental.append(np.sum([helpers.get_KL_divergence(p, distribution) for p in experimental_joints]) / len(experimental_joints))
-            kld_joint_experimental_valid.append(np.sum([helpers.get_KL_divergence(p, distribution, exclude_invalid_states=True) for p in experimental_joints]) / len(experimental_joints))
-            print("target:\n{}\nestimate:\n{}".format(distribution, experimental_joints[0]))
+            experimental_joint = self.graph.measure_experimental_joint_distribution(duration=20000.0)
+            kld_joint_experimental.append(helpers.get_KL_divergence(experimental_joint, distribution))
+            kld_joint_experimental_valid.append(helpers.get_KL_divergence(experimental_joint, distribution, exclude_invalid_states=True))
+            print("target:\n{}\nestimate:\n{}".format(distribution, experimental_joint))
 
             # Draw spiking of output neurons.
             if save_plot:
                 last_clone.draw_stationary_state(duration=500, ax=ax[2])
                 fig.savefig(os.path.join(individual_directory, str(trial) + '.png'))
+                plt.close()
+
+            # Draw histogram of states.
+            if save_plot:
+                fig = helpers.plot_histogram(distribution, experimental_joint, self.graph.num_discrete_vals, "p*(y)", "p(y;θ)", renormalise_estimated_states=True)
+                fig.savefig(os.path.join(individual_directory, str(trial) + '_histogram.png'))
                 plt.close()
 
         self.run_number += 1

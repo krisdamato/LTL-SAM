@@ -1,7 +1,7 @@
 import logging.config
 import os
 
-from pypet import Environment
+from pypet import Environment, pypetconstants
 
 from ltl.logging_tools import create_shared_logger_data, configure_loggers
 from ltl.optimizers.evolution import GeneticAlgorithmOptimizer, GeneticAlgorithmParameters
@@ -36,6 +36,9 @@ def main():
                       add_time=True,
                       automatic_storing=True,
                       log_stdout=False,  # Sends stdout to logs
+                      multiproc=True,
+                      use_scoop=True,
+                      wrap_mode=pypetconstants.WRAP_MODE_LOCAL
                       )
 
     create_shared_logger_data(logger_names=['bin', 'optimizers'],
