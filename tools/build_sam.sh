@@ -8,6 +8,7 @@ mkdir /home/krisdamato/sam-build
 cd /home/krisdamato/sam-build
 
 # Build SAM
+source /home/krisdamato/NEST/bin/nest_vars.sh
 rm -r /home/krisdamato/sam
 rm /home/krisdamato/NEST/lib/nest/sammodule.so /home/krisdamato/NEST/lib/nest/libsammodule.so
 cp -r /home/krisdamato/nest-simulator/sam /home/krisdamato/
