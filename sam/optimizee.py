@@ -32,9 +32,6 @@ class SAMOptimizee(Optimizee):
             n_NEST_threads=1, 
             plots_directory='./sam_plots'):
         super(SAMOptimizee, self).__init__(traj)
-
-        # Make SAM module extension available.
-        nest.Install('sammodule')
         
         self.rs = np.random.RandomState(seed=seed)
         self.num_fitness_trials = num_fitness_trials
@@ -59,6 +56,9 @@ class SAMOptimizee(Optimizee):
             'local_num_threads':self.num_threads,
             'resolution':self.time_resolution})
 
+        # Make SAM module extension available.
+        nest.Install('sammodule')
+        
 
     def create_individual(self):
         """
@@ -287,9 +287,6 @@ class SAMGraphOptimizee(Optimizee):
             n_NEST_threads=1, 
             plots_directory='./sam_plots'):
         super(SAMGraphOptimizee, self).__init__(traj)
-
-        # Make SAM module extension available.
-        nest.Install('sammodule')
         
         self.rs = np.random.RandomState(seed=seed)
         self.num_fitness_trials = num_fitness_trials
@@ -316,6 +313,9 @@ class SAMGraphOptimizee(Optimizee):
         nest.SetKernelStatus({
             'local_num_threads':self.num_threads,
             'resolution':self.time_resolution})
+
+        # Make SAM module extension available.
+        nest.Install('sammodule')
 
 
     def create_individual(self):
