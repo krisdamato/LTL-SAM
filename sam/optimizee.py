@@ -56,9 +56,6 @@ class SAMOptimizee(Optimizee):
             'local_num_threads':self.num_threads,
             'resolution':self.time_resolution})
 
-        # Make SAM module extension available.
-        nest.Install('sammodule')
-        
 
     def create_individual(self):
         """
@@ -137,6 +134,9 @@ class SAMOptimizee(Optimizee):
         If save_plot == True, will create a directory for each individual that 
         contains a text file with individual params and plots for each trial.
         """
+        # Make SAM module extension available.
+        nest.Install('sammodule')
+        
         # Use the distribution from Peceveski et al., example 1.
         distribution = {
             (1,1,1):0.04,
@@ -314,9 +314,6 @@ class SAMGraphOptimizee(Optimizee):
             'local_num_threads':self.num_threads,
             'resolution':self.time_resolution})
 
-        # Make SAM module extension available.
-        nest.Install('sammodule')
-
 
     def create_individual(self):
         """
@@ -450,6 +447,9 @@ class SAMGraphOptimizee(Optimizee):
         If save_plot == True, this will create a directory for each individual that 
         contains a text file with individual params and plots for each trial.
         """
+        # Make SAM module extension available.
+        nest.Install('sammodule')
+
         # Prepare paths for each individual evaluation.
         individual_directory = os.path.join(self.save_directory, str(self.run_number) + "_" + helpers.get_now_string())
         text_path = os.path.join(individual_directory, 'params.txt')

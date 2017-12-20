@@ -38,6 +38,7 @@ def main():
                       log_stdout=False,  # Sends stdout to logs
                       multiproc=True,
                       use_scoop=True,
+		      freeze_input=False,
                       wrap_mode=pypetconstants.WRAP_MODE_LOCAL
                       )
 
