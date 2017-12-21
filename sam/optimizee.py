@@ -15,6 +15,7 @@ from sam.samgraph import SAMGraph
 
 logger = logging.getLogger("ltl-sam")
 nest.set_verbosity("M_WARNING")
+nest.Install('sammodule')
 
 
 class SAMOptimizee(Optimizee):
@@ -533,13 +534,15 @@ class SAMGraphOptimizee(Optimizee):
 
         self.run_number += 1
 
-        last_klds = [kls_joints[i][-1] for i in range(len(kls_joints))]
+        if save_plot:
+            last_klds = [kls_joints[i][-1] for i in range(len(kls_joints))]
         mean_loss = np.sum(kld_joint_experimental) / len(kld_joint_experimental)
         mean_loss_valid = np.sum(kld_joint_experimental_valid) / len(kld_joint_experimental_valid)
 
         logging.info("[Loss] Experimental network joint KLD is {}".format(mean_loss))
         logging.info("Experimental network joint KLD (on valid states only) is {}".format(mean_loss_valid))
-        logging.info("Mean analytical module joint KLD is {}".format(np.sum(last_klds) / len(last_klds)))
+        if save_plot:
+            logging.info("Mean analytical module joint KLD is {}".format(np.sum(last_klds) / len(last_klds)))
 
         return (mean_loss, )
 

@@ -1,5 +1,4 @@
 import logging.config
-import nest
 import os
 
 from pypet import Environment, pypetconstants
@@ -11,9 +10,6 @@ from ltl.recorder import Recorder
 from sam.optimizee import SAMGraphOptimizee
 
 logger = logging.getLogger('bin.ltl-samgraph-ga')
-
-# Make SAM module extension available to all processes.
-nest.Install('sammodule')
 
 
 def main():
