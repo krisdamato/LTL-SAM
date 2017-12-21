@@ -104,18 +104,6 @@ class SAMOptimizee(Optimizee):
         params = {k:self.individual[k] for k in SAMModule.parameter_spec().keys()}
 
         # Peg the delay to the time resolution.
-        params = {'relative_bias_spike_rate': 0.43617013484109396, 
-        'second_bias_rate': 0.056127527788007829, 
-        'bias_baseline': -39.547784467498758, 
-        'exp_term_prob': 0.77058265550261074, 
-        'exp_term_prob_scale': 0.89096414394800927, 
-        'T': 0.62012573342077804, 
-        'weight_baseline': -1.7167532906292333, 
-        'initial_stdp_rate': 0.006743674115121996, 
-        'first_bias_rate': 0.008963736694322065, 
-        'final_stdp_rate': 0.00017021603887065919, 
-        'max_depress_tau_multiplier': 15.416884435587075}
-
         params['delay'] = self.time_resolution
         params['weight_chi_alpha_mean'] = 3.0
 
@@ -412,20 +400,6 @@ class SAMGraphOptimizee(Optimizee):
         params = {k:self.individual[k] for k in SAMGraph.parameter_spec(len(dependencies)).keys()}
 
         # Peg the delay to the time resolution.
-        params = {
-            'exp_term_prob': 0.085365673056325822, 
-            'weight_baseline': -2.4638369672245659, 
-            'bias_baseline_4': -38.499203922313313, 
-            'final_stdp_rate': 0.00016492088528220262, 
-            'bias_baseline_3': -15.987917433648654, 
-            'T': 0.58843331110695518, 
-            'exp_term_prob_scale': 1.0074125079414686, 
-            'initial_stdp_rate': 0.0077051862961219691, 
-            'relative_bias_spike_rate': 0.64653433772744096, 
-            'bias_baseline_1': -17.979967727213371, 
-            'bias_baseline_2': -7.0017156012848005, 
-            'second_bias_rate': 0.026281937860456024, 
-            'first_bias_rate': 0.043237426431668925}
         params['delay'] = self.time_resolution
         params['weight_chi_alpha_mean'] = 4.0 / 3
 
@@ -441,7 +415,7 @@ class SAMGraphOptimizee(Optimizee):
         logging.info("Creating a recurrent SAM graph network with overridden parameters:\n%s", self.graph.parameter_string())
 
 
-    def simulate(self, traj, run_intermediates=True, save_plot=True):
+    def simulate(self, traj, run_intermediates=False, save_plot=False):
         """
         Simulates a recurrently connected group of SAM modules, training on a target 
         distribution; i.e. performing density estimation as in Pecevski et al. 2016,
@@ -550,7 +524,6 @@ class SAMGraphOptimizee(Optimizee):
             experimental_joint = self.graph.measure_experimental_joint_distribution(duration=20000.0)
             kld_joint_experimental.append(helpers.get_KL_divergence(experimental_joint, distribution))
             kld_joint_experimental_valid.append(helpers.get_KL_divergence(experimental_joint, distribution, exclude_invalid_states=True))
-            print("target:\n{}\nestimate:\n{}".format(distribution, experimental_joint))
 
             # Draw spiking of output neurons.
             if save_plot:
