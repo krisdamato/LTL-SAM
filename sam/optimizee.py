@@ -734,16 +734,26 @@ class SPINetworkOptimizee(Optimizee):
             i = 0
             set_second_rate = False
             last_set_intrinsic_rate = self.network.params['bias_rate_1']
-            skip_kld = 1000
+            skip_kld = 500
             set_second_rate = False
             clones = []
             last_klds = []
+            debug = False
 
-            while t <= self.network.params['learning_time']:
+            if debug:
+                sr = self.network.connect_reader(self.network.all_neurons)
+
+            while t <= 20000:#self.network.params['learning_time']:
+                if i % 10 == 0: print("Time: {}".format(t))
+
                 # Inject a current for some time.
                 self.network.present_random_sample() 
                 self.network.clear_currents()
                 t += self.network.params['sample_presentation_time']
+
+                # Draw debug spikes.
+                if debug:
+                    helpers.plot_spikes(sr)
 
                 # Measure experimental joint distribution from spike activity.
                 if save_plot and run_intermediates and i % skip_kld == 0:

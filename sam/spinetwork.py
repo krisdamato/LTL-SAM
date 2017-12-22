@@ -42,9 +42,13 @@ class SPINetwork:
 			'connectivity_chi_inh':(0.0, 1.0),
 			'connectivity_inh_chi':(0.0, 1.0),
 			'connectivity_inh_self':(0.0, 1.0),
-			'connectivity_chi_chi':(0.0, 1.0),
-			'delay_max':(0.0, 10.0),
-			'delay_min_ratio':(0.0, 1.0)
+			'connectivity_chi_chi':(0.01, 1.0),
+			'delay_max':(0.1, 10.0),
+			'delay_min_ratio':(0.0, 1.0),
+			'weight_chi_inhibitors':(0.0, 20.0),
+			#'weight_chi_self':(0.0, 20.0),
+			'weight_inhibitors_chi':(-20.0, 0.0),
+			'weight_inhibitors_self':(0.0, 20.0),
 			}
 
 		return param_spec
@@ -58,8 +62,8 @@ class SPINetwork:
 		# Set common properties.
 		tau = 10.0 if 'tau' not in override_params else override_params['tau']
 		delay_fixed = 1.0 if 'delay_fixed' not in override_params else override_params['delay_fixed']
-		delay_max = 10.0 if 'delay_max' not in override_params else override_params['delay_max']
-		delay_min = 0.1 if 'delay_min_ratio' not in override_params else max(override_params['delay_min_ratio'] * delay_max, 0.1)
+		delay_max = 10.0 if 'delay_max' not in override_params else round(override_params['delay_max'], 1)
+		delay_min = 0.1 if 'delay_min_ratio' not in override_params else round(max(override_params['delay_min_ratio'] * delay_max, 0.1), 1)
 
 		# Set all derived and underived properties.
 		params = {
@@ -80,11 +84,13 @@ class SPINetwork:
 			'connectivity_inh_chi':0.5,
 			'connectivity_inh_self':0.5,
 			'connectivity_chi_chi':0.5,
-			'current_plus_chi':5.0,
-			'current_minus_chi':-5.0,
+			'connectivity_chi_self':0.0,
+			'current_plus_chi':50.0,
+			'current_minus_chi':-50.0,
 			'dead_time_inhibitors':3.0,
 			'delay_chi_inhibitors':delay_fixed,
 			'delay_inhibitors_chi':delay_fixed,
+			'delay_chi_self':delay_fixed,
 			'delay_chi_chi_min':delay_min,
 			'delay_chi_chi_max':delay_max,
 			'delay_inhibitors_inhibitors':delay_fixed,
@@ -97,14 +103,15 @@ class SPINetwork:
 			'prob_exp_term_scale':1.0,
 			'neuron_type_chi':'srm_pecevski_alpha',
 			'neuron_type_inhibitors':'srm_pecevski_alpha',
-			'sample_presentation_time':200.0, # 100 ms.
+			'sample_presentation_time':200.0,
 			'stdp_rate_initial':0.002,
 			'stdp_rate_final':0.0006,
 			'stdp_time_fraction':1.0,
 			'synapse_type_chi_chi':'stdp_pecevski_synapse',
 			'synapse_type_chi_inhibitors':'static_synapse',
+			'synapse_type_chi_self':'static_synapse',
 			'synapse_type_inhibitors_chi':'static_synapse',
-			'synapse_type_inhibitors_inhibitors':'static_synapse',
+			'synapse_type_inhibitors_self':'static_synapse',
 			'T':0.58,
 			'tau':tau,
 			'tau_membrane':delay_min/100,
@@ -118,8 +125,9 @@ class SPINetwork:
 			'weight_chi_chi_min':0.0,
 			'weight_chi_chi_std':0.1,
 			'weight_chi_inhibitors':13.57,
+			'weight_chi_self':13.57,
 			'weight_inhibitors_chi':-1.86,
-			'weight_inhibitors_inhibitors':13.57,
+			'weight_inhibitors_self':13.57,
 			'weight_initial':3.0,		
 			'weight_baseline':2.5 * np.log(0.2)
 		}
@@ -254,11 +262,21 @@ class SPINetwork:
 			raise NotImplementedError
 
 		# Inhibitors-inhibitors synapses.
-		if params['synapse_type_inhibitors_inhibitors'] == 'static_synapse':
+		if params['synapse_type_inhibitors_self'] == 'static_synapse':
 			self.inhibitors_inhibitors_synapse_params={
 				'model':'static_synapse',
-				'weight':params['weight_inhibitors_inhibitors'],
+				'weight':params['weight_inhibitors_self'],
 				'delay':params['delay_inhibitors_inhibitors']
+				}
+		else:
+			raise NotImplementedError
+
+		# Chi-self synapses.
+		if params['synapse_type_chi_self'] == 'static_synapse':
+			self.chi_self_synapse_params={
+				'model':'static_synapse',
+				'weight':params['weight_chi_self'],
+				'delay':params['delay_chi_self']
 				}
 		else:
 			raise NotImplementedError
@@ -281,6 +299,11 @@ class SPINetwork:
 		self.inh_self_connectivity_params={
 				'rule':'pairwise_bernoulli',
 				'p':params['connectivity_inh_self']
+			}
+
+		self.chi_self_connectivity_params={
+				'rule':'pairwise_bernoulli',
+				'p':params['connectivity_chi_self']
 			}
 
 
@@ -351,6 +374,14 @@ class SPINetwork:
 				self.inhibitory_pools[ym],
 				conn_spec=self.inh_self_connectivity_params,
 				syn_spec=self.inhibitors_inhibitors_synapse_params)
+
+			# Self-connect excitatory pools.
+			value_pool = [self.get_variable_neurons(ym, x) for x in range(1, num_discrete_vals + 1)]
+			if self.subnetwork_params[ym]['connectivity_chi_self'] > 0:
+				for pool in value_pool:
+					nest.Connect(pool, pool, 
+						conn_spec=self.chi_self_connectivity_params,
+						syn_spec=self.chi_self_synapse_params)
 
 			# Chi bias randomisation.
 			self.set_random_biases(self.chi_pools[ym], 

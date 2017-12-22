@@ -1,8 +1,9 @@
-import matplotlib.pyplot as plt
 import itertools
+import matplotlib.pyplot as plt
+import nest
 import numpy as np
-import re
 import os
+import re
 from collections import OrderedDict
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.stats import entropy
@@ -287,7 +288,7 @@ def plot_all(multimeter, spikereader):
 	plt.show()
 
 
-def plot_spikes(self, spikereader):
+def plot_spikes(spikereader):
 	"""
 	Plots the spike trace from all neurons the spikereader was connected to during
 	the simulation.
