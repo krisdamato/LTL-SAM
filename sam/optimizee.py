@@ -659,14 +659,6 @@ class SPINetworkOptimizee(Optimizee):
             'y4':['y2']
         }
 
-        # Define special parameters for some modules.
-        self.special_params = {
-            'y1':{'max_weight':4.0},
-            'y2':{'max_weight':4.0},
-            'y3':{'max_weight':4.0},
-            'y4':{'max_weight':2.0},
-        }
-
 
     def parameter_spec(self):
         """
@@ -701,7 +693,7 @@ class SPINetworkOptimizee(Optimizee):
         logging.info("Creating a recurrent SPI network with overridden parameters:\n%s", self.network.parameter_string())
 
 
-    def simulate(self, traj, run_intermediates=False, save_plot=False):
+    def simulate(self, traj, run_intermediates=True, save_plot=True):
         """
         Simulates a recurrently connected network of neuron pools, training on a target 
         distribution; i.e. performing density estimation as in Pecevski et al. 2016,
@@ -727,8 +719,7 @@ class SPINetworkOptimizee(Optimizee):
             self.prepare_network(
                 distribution=self.distribution, 
                 dependencies=self.dependencies, 
-                num_discrete_vals=2, 
-                special_params=self.special_params)
+                num_discrete_vals=2)
             
             # Create directory and params file if requested.
             if save_plot:
@@ -742,7 +733,7 @@ class SPINetworkOptimizee(Optimizee):
             t = 0
             i = 0
             set_second_rate = False
-            last_set_intrinsic_rate = self.network.params['first_bias_rate']
+            last_set_intrinsic_rate = self.network.params['bias_rate_1']
             skip_kld = 1000
             set_second_rate = False
             clones = []
@@ -766,9 +757,9 @@ class SPINetworkOptimizee(Optimizee):
                     clones.append(clone)
                                     
                 # Set different intrinsic rate.
-                if t >= self.network.params['learning_time'] * self.network.params['intrinsic_step_time_fraction'] and set_second_rate == False:
+                if t >= self.network.params['learning_time'] * self.network.params['bias_change_time_fraction'] and set_second_rate == False:
                     set_second_rate = True
-                    last_set_intrinsic_rate = self.network.params['second_bias_rate']
+                    last_set_intrinsic_rate = self.network.params['bias_rate_2']
                     self.network.set_intrinsic_rate(last_set_intrinsic_rate)
             
                 i += 1
@@ -850,7 +841,7 @@ def main():
         logging.config.dictConfig(l_dict)
 
     fake_traj = DummyTrajectory()
-    optimizee = SAMOptimizee(fake_traj, n_NEST_threads=1)
+    optimizee = SPINetworkOptimizee(fake_traj, n_NEST_threads=1, plots_directory='./spi_test_run')
 
     fake_traj.individual = sdict(optimizee.create_individual())
 

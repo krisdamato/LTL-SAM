@@ -20,6 +20,10 @@ loggers:
     level: INFO
     handlers: [file]
     propagate: no
+  ltl-spinetwork-sa:
+    level: INFO
+    handlers: [file]
+    propagate: no
   ltl-lsm:
     level: INFO
     handlers: [file]

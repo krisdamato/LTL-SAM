@@ -3,9 +3,10 @@ import logging
 import nest
 import numpy as np
 import pylab
+import random
 import sam.helpers as helpers
 import time
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 
 class SPINetwork:
@@ -29,15 +30,15 @@ class SPINetwork:
 		limit of the parameters.
 		"""
 		param_spec = {
-			'initial_stdp_rate':(0.0, 0.01),
-			'final_stdp_rate':(0.0, 0.01),
+			'stdp_rate_initial':(0.0, 0.01),
+			'stdp_rate_final':(0.0, 0.01),
 			'weight_baseline':(-10.0, 0.0),
 			'T':(0.0, 1.0),
-			'first_bias_rate':(0.0, 0.1),
+			'bias_rate_1':(0.0, 0.1),
 			'bias_baseline':(-40.0, 0.0),
-			'exp_term_prob':(0.0, 1.0),
-			'exp_term_prob_scale':(0.0, 5.0),
-			'relative_bias_spike_rate':(1e-5, 1.0),
+			'prob_exp_term':(0.0, 1.0),
+			'prob_exp_term_scale':(0.0, 5.0),
+			'bias_relative_spike_rate':(1e-5, 1.0),
 			'connectivity_chi_inh':(0.0, 1.0),
 			'connectivity_inh_chi':(0.0, 1.0),
 			'connectivity_inh_self':(0.0, 1.0),
@@ -58,71 +59,69 @@ class SPINetwork:
 		tau = 10.0 if 'tau' not in override_params else override_params['tau']
 		delay_fixed = 1.0 if 'delay_fixed' not in override_params else override_params['delay_fixed']
 		delay_max = 10.0 if 'delay_max' not in override_params else override_params['delay_max']
-		delay_min = 0.1 if 'delay_min_ratio' not in override_params else max(override_params['delay_min_ratio'] * delay_max, 0.05)
+		delay_min = 0.1 if 'delay_min_ratio' not in override_params else max(override_params['delay_min_ratio'] * delay_max, 0.1)
 
 		# Set all derived and underived properties.
 		params = {
-			'initial_stdp_rate':0.002,
-			'final_stdp_rate':0.0006,
-			'stdp_time_fraction':1.0
-			'intrinsic_step_time_fraction':1.0,
-			'initial_weight':3.0,
-			'weight_baseline':2.5 * np.log(0.2),
-			'tau':tau,
-			'T':0.58,
-			'use_rect_psp_exc':True,
-			'use_rect_psp_inh':True,
-			'inhibitors_use_rect_psp_exc':True,
 			'amplitude_exc':2.0,
 			'amplitude_inh':2.0,
-			'tau_membrane':delay/100,
-			'tau_alpha':tau,
-			'first_bias_rate':0.01,
-			'second_bias_rate':0.02,
-			'relative_bias_spike_rate':0.02,
+			'bias_change_time_fraction':1.0,
+			'bias_rate_1':0.01,
+			'bias_rate_2':0.02,
+			'bias_relative_spike_rate':0.02,
 			'bias_baseline':0.0,
-			'max_bias':5.0,
-			'min_bias':-30.0,
-			'default_random_bias':True,
-			'initial_bias':5.0,
-			'dead_time_random':False,
-			'linear_term_prob':0.0,
-			'exp_term_prob':1.0/tau,
-			'exp_term_prob_scale':1.0,
+			'bias_max':5.0,
+			'bias_min':-30.0,
+			'bias_initial':5.0,
+			'bias_inhibitors':-10.0,
+			'bias_chi_mean':5.0,
+			'bias_chi_std':0.1,
+			'connectivity_chi_inh':0.5,
+			'connectivity_inh_chi':0.5,
+			'connectivity_inh_self':0.5,
+			'connectivity_chi_chi':0.5,
+			'current_plus_chi':5.0,
+			'current_minus_chi':-5.0,
+			'dead_time_inhibitors':3.0,
+			'delay_chi_inhibitors':delay_fixed,
+			'delay_inhibitors_chi':delay_fixed,
+			'delay_chi_chi_min':delay_min,
+			'delay_chi_chi_max':delay_max,
+			'delay_inhibitors_inhibitors':delay_fixed,
+			'delay_devices':delay_min,
+			'learning_time':300000,
+			'pool_size_excitatory':20,
+			'pool_size_inhibitory':10,
+			'prob_linear_term':0.0,
+			'prob_exp_term':1.0/tau,
+			'prob_exp_term_scale':1.0,
+			'neuron_type_chi':'srm_pecevski_alpha',
+			'neuron_type_inhibitors':'srm_pecevski_alpha',
+			'sample_presentation_time':200.0, # 100 ms.
+			'stdp_rate_initial':0.002,
+			'stdp_rate_final':0.0006,
+			'stdp_time_fraction':1.0,
+			'synapse_type_chi_chi':'stdp_pecevski_synapse',
+			'synapse_type_chi_inhibitors':'static_synapse',
+			'synapse_type_inhibitors_chi':'static_synapse',
+			'synapse_type_inhibitors_inhibitors':'static_synapse',
+			'T':0.58,
+			'tau':tau,
+			'tau_membrane':delay_min/100,
+			'tau_alpha':tau,
+			'tau_multiplier_max':100000.0,
+			'use_rect_psp_exc':True,
+			'use_rect_psp_inh':True,
+			'use_rect_psp_exc_inhibitors':True,
+			'use_renewal':False,
 			'weight_chi_chi_max':1.0,
 			'weight_chi_chi_min':0.0,
 			'weight_chi_chi_std':0.1,
 			'weight_chi_inhibitors':13.57,
 			'weight_inhibitors_chi':-1.86,
 			'weight_inhibitors_inhibitors':13.57,
-			'bias_inhibitors':-10.0,
-			'bias_chi_mean':5.0,
-			'bias_chi_std':0.1,
-			'learning_time':300000,
-			'sample_presentation_time':200.0, # 100 ms.
-			'chi_neuron_type':'srm_pecevski_alpha',
-			'inhibitors_neuron_type':'srm_pecevski_alpha',
-			'chi_chi_synapse_type':'stdp_pecevski_synapse',
-			'chi_inhibitors_synapse_type':'static_synapse',
-			'inhibitors_chi_synapse_type':'static_synapse',
-			'inhibitors_inhibitors_synapse_type':'static_synapse',
-			'inhibitors_dead_time':3.0,
-			'excitatory_pool_size':20,
-			'inhibitory_pool_size':10,
-			'delay_chi_inhibitors':delay_fixed,
-			'delay_inhibitors_chi':delay_fixed,
-			'delay_chi_chi_min':delay_min,
-			'delay_chi_chi_max':delay_max,
-			'delay_inhibitors_inhibitors':delay_fixed,
-			'devices_delay':delay_fixed,
-			'max_depress_tau_multiplier':100000.0,
-			'use_renewal':False,
-			'connectivity_chi_inh':0.5,
-			'connectivity_inh_chi':0.5,
-			'connectivity_inh_self':0.5,
-			'connectivity_chi_chi':0.5,
-			'chi_current_plus':5.0,
-			'chi_current_minus':-5.0
+			'weight_initial':3.0,		
+			'weight_baseline':2.5 * np.log(0.2)
 		}
 
 		# Update defaults.
@@ -150,17 +149,17 @@ class SPINetwork:
 
 		# Reduce NEST verbosity.
 		nest.set_verbosity('M_ERROR')
-		nest.SetDefaults('static_synapse', params={'weight':params['initial_weight']})
+		nest.SetDefaults('static_synapse', params={'weight':params['weight_initial']})
 
 		nest.SetDefaults('stdp_pecevski_synapse', params={
-			'eta_0':params['initial_stdp_rate'],
-			'eta_final':params['final_stdp_rate'], 
+			'eta_0':params['stdp_rate_initial'],
+			'eta_final':params['stdp_rate_final'], 
 			'learning_time':int(params['stdp_time_fraction'] * params['learning_time']),
-			'weight':params['initial_weight'],
+			'weight':params['weight_initial'],
 			'w_baseline':params['weight_baseline'],
 			'tau':params['tau'],
 			'T':params['T'],
-			'depress_multiplier':params['max_depress_tau_multiplier']
+			'depress_multiplier':params['tau_multiplier_max']
 			})
 
 		nest.SetDefaults('srm_pecevski_alpha', params={
@@ -168,74 +167,74 @@ class SPINetwork:
 			'rect_inh':params['use_rect_psp_inh'],
 			'e_0_exc':params['amplitude_exc'], 
 			'e_0_inh':params['amplitude_inh'],
-			'I_e':params['external_current'],
+			'I_e':0.0,
 			'tau_m':params['tau_membrane'], # Membrane time constant (only affects current injections). Is this relevant?
 			'tau_exc':params['tau'],
 			'tau_inh':params['tau'], 
 			'tau_bias':params['tau'],
 			'eta_bias':0.0, # eta_bias is set manually.
-			'rel_eta':params['relative_bias_spike_rate'],
+			'rel_eta':params['bias_relative_spike_rate'],
 			'b_baseline':params['bias_baseline'],
-			'max_bias':params['max_bias'],
-			'min_bias':params['min_bias'],
-			'bias':params['initial_bias'],
+			'max_bias':params['bias_max'],
+			'min_bias':params['bias_min'],
+			'bias':params['bias_initial'],
 			'dead_time':params['tau'], # Abs. refractory period.
-			'dead_time_random':params['dead_time_random'],
-			'c_1':params['linear_term_prob'], # Linear part of transfer function.
-			'c_2':params['exp_term_prob'], # The coefficient of the exponential term in the transfer function.
-			'c_3':params['exp_term_prob_scale'], # Scaling coefficient of effective potential in exponential term.
+			'dead_time_random':False,
+			'c_1':params['prob_linear_term'], # Linear part of transfer function.
+			'c_2':params['prob_exp_term'], # The coefficient of the exponential term in the transfer function.
+			'c_3':params['prob_exp_term_scale'], # Scaling coefficient of effective potential in exponential term.
 			'T':params['T'],
 			'use_renewal':params['use_renewal']
 			})
 
 		nest.SetDefaults('stdp_synapse', params={
 			'tau_plus':params['tau_alpha'],
-			'Wmax':params['max_weight'],
+			'Wmax':params['weight_chi_chi_max'],
 			'mu_plus':0.0,
 			'mu_minus':0.0,
-			'lambda':params['final_stdp_rate'],
-			'weight':params['initial_weight']
+			'lambda':params['stdp_rate_final'],
+			'weight':params['weight_initial']
 			})
 
 		# Create layer model specialisations.
 		# Chi population model.
-		if params['chi_neuron_type'] == 'srm_pecevski_alpha':
-			self.chi_neuron_params={'eta_bias':params['first_bias_rate']}
+		if params['neuron_type_chi'] == 'srm_pecevski_alpha':
+			self.chi_neuron_params={'eta_bias':params['bias_rate_1']}
 		else:
 			raise NotImplementedError
 
 		# Inhibitor population model.
-		if params['inhibitors_neuron_type'] == 'srm_pecevski_alpha':
+		if params['neuron_type_inhibitors'] == 'srm_pecevski_alpha':
 			self.inhibitors_neuron_params={
 				'bias':params['bias_inhibitors'],
-				'dead_time':params['inhibitors_dead_time']
-				'rect_exc':params['inhibitors_use_rect_psp_exc']				}
+				'dead_time':params['dead_time_inhibitors'],
+				'rect_exc':params['use_rect_psp_exc_inhibitors']				}
 		else:
 			raise NotImplementedError
 
 		# Create synapse model specialisations.
 		# Chi-chi synapses.
-		if params['chi_chi_synapse_type'] == 'stdp_pecevski_synapse':
+		if params['synapse_type_chi_chi'] == 'stdp_pecevski_synapse':
 		 	self.chi_chi_synapse_params={
 		 		'model':'stdp_pecevski_synapse',
 				'weight':{
 					'distribution':'normal_clipped',
-					'low':params['min_weight_chi_chi'],
-					'high':params['max_weight_chi_chi'],
-					'mu':params['max_weight_chi_chi'],
+					'low':params['weight_chi_chi_min'],
+					'high':params['weight_chi_chi_max'],
+					'mu':params['weight_chi_chi_max'],
 					'sigma':params['weight_chi_chi_std']
 					},
 				'delay':{
-					'distribution':'uniform_clipped',
+					'distribution':'uniform',
 					'low':params['delay_chi_chi_min'],
-					'max':params['delay_chi_chi_max'],
+					'high':params['delay_chi_chi_max'],
 					}
 				}
 		else:
 			raise NotImplementedError
 
 		# Chi-inhibitors synapses.
-		if params['chi_inhibitors_synapse_type'] == 'static_synapse':
+		if params['synapse_type_chi_inhibitors'] == 'static_synapse':
 			self.chi_inhibitors_synapse_params={
 				'model':'static_synapse',
 				'weight':params['weight_chi_inhibitors'],
@@ -245,7 +244,7 @@ class SPINetwork:
 			raise NotImplementedError
 
 		# Inhibitors-chi synapses.
-		if params['inhibitors_chi_synapse_type'] == 'static_synapse':
+		if params['synapse_type_inhibitors_chi'] == 'static_synapse':
 			self.inhibitors_chi_synapse_params={
 				'model':'static_synapse',
 				'weight':params['weight_inhibitors_chi'],
@@ -255,7 +254,7 @@ class SPINetwork:
 			raise NotImplementedError
 
 		# Inhibitors-inhibitors synapses.
-		if params['inhibitors_inhibitors_synapse_type'] == 'static_synapse':
+		if params['synapse_type_inhibitors_inhibitors'] == 'static_synapse':
 			self.inhibitors_inhibitors_synapse_params={
 				'model':'static_synapse',
 				'weight':params['weight_inhibitors_inhibitors'],
@@ -334,8 +333,8 @@ class SPINetwork:
 			self.set_nest_defaults(self.subnetwork_params[ym])
 			
 			# Create excitatory and inhibitory pools.
-			self.chi_pools[ym] = nest.Create(self.subnetwork_params[ym]['chi_neuron_type'], n=self.subnetwork_params[ym]['excitatory_pool_size'] * num_discrete_vals, params=self.chi_neuron_params)
-			self.inhibitory_pools[ym] = nest.Create(self.subnetwork_params[ym]['inhibitors_neuron_type'], n=self.subnetwork_params[ym]['inhibitory_pool_size'], params=self.inhibitors_neuron_params)
+			self.chi_pools[ym] = nest.Create(self.subnetwork_params[ym]['neuron_type_chi'], n=self.subnetwork_params[ym]['pool_size_excitatory'] * num_discrete_vals, params=self.chi_neuron_params)
+			self.inhibitory_pools[ym] = nest.Create(self.subnetwork_params[ym]['neuron_type_inhibitors'], n=self.subnetwork_params[ym]['pool_size_inhibitory'], params=self.inhibitors_neuron_params)
 			
 			# Connect excitatory and inhibitory pools.
 			nest.Connect(self.chi_pools[ym], 
@@ -355,10 +354,10 @@ class SPINetwork:
 
 			# Chi bias randomisation.
 			self.set_random_biases(self.chi_pools[ym], 
-				params['bias_chi_mean'], 
-				params['bias_chi_std'],
-				params['min_bias'],
-				params['max_bias'])
+				self.subnetwork_params[ym]['bias_chi_mean'], 
+				self.subnetwork_params[ym]['bias_chi_std'],
+				self.subnetwork_params[ym]['bias_min'],
+				self.subnetwork_params[ym]['bias_max'])
 
 			# Set marginal distribution of this layer and this variable's index in the distribution.
 			self.dep_indices[ym] = subnetwork_vars.index(ym),
@@ -370,7 +369,7 @@ class SPINetwork:
 			input_neurons = tuple([n for y in input_vars for n in self.chi_pools[y]])
 			
 			# Connect chi pools with each other.
-			nest.Connect(self.input_neurons, 
+			nest.Connect(input_neurons, 
 				self.chi_pools[ym], 
 				conn_spec=self.chi_chi_connectivity_params,
 				syn_spec=self.chi_chi_synapse_params)
@@ -381,7 +380,7 @@ class SPINetwork:
 
 		# Track all neurons.
 		self.all_neurons = tuple()
-		for ym in dependencies.items():
+		for ym in dependencies:
 			self.all_neurons += self.chi_pools[ym] + self.inhibitory_pools[ym]
 
 		self.initialised = True
@@ -470,9 +469,9 @@ class SPINetwork:
 		
 		# Copy bias values.
 		for ym in new_network.dependencies:
-			if new_network.subnetwork_params[ym]['chi_neuron_type'] == 'srm_pecevski_alpha':
-			chi_biases = nest.GetStatus(self.chi_pools[ym], 'bias')
-			nest.SetStatus(new_network.chi_pools[ym], 'bias', chi_biases)
+			if new_network.subnetwork_params[ym]['neuron_type_chi'] == 'srm_pecevski_alpha':
+				chi_biases = nest.GetStatus(self.chi_pools[ym], 'bias')
+				nest.SetStatus(new_network.chi_pools[ym], 'bias', chi_biases)
 
 		# Copy synapse weights.
 		# NOTE: This only makes sense if the connections are the same, which should
@@ -545,8 +544,8 @@ class SPINetwork:
 		Returns the neuron population that rate codes for this particular variable
 		and value combination.
 		"""
-		excitatory_pool_size = self.subnetwork_params[var_name]['excitatory_pool_size']
-		return self.chi_pools[var_name][(var_value - 1) * excitatory_pool_size:var_value * excitatory_pool_size]
+		pool_size_excitatory = self.subnetwork_params[var_name]['pool_size_excitatory']
+		return self.chi_pools[var_name][(var_value - 1) * pool_size_excitatory:var_value * pool_size_excitatory]
 
 
 	def set_chi_currents(self, state):
@@ -560,7 +559,7 @@ class SPINetwork:
 			for x in range(1, self.num_discrete_vals + 1):
 				nodes = self.get_variable_neurons(ym, x)
 				inhibit = state[var_index] != x
-				current = self.params['chi_current_minus'] if inhibit else self.params['chi_current_plus']
+				current = self.params['current_minus_chi'] if inhibit else self.params['current_plus_chi']
 				nest.SetStatus(nodes, {'I_e':current})
 			
 
@@ -579,7 +578,7 @@ class SPINetwork:
 		Applicable only for SRM Peceveski neurons.
 		"""
 		for ym in self.chi_pools:
-			if self.subnetwork_params[ym]['chi_neuron_type'] == 'srm_pecevski_alpha':
+			if self.subnetwork_params[ym]['neuron_type_chi'] == 'srm_pecevski_alpha':
 				nest.SetStatus(self.chi_pools[ym], {'eta_bias':intrinsic_rate})
 			else:
 				logging.warning("Cannot set a bias rate in neurons that don't support it. Returning with no effect.")
@@ -595,7 +594,8 @@ class SPINetwork:
 
 		# Update all connections between neurons in these pools.
 		synapses = nest.GetConnections(chi_neurons, chi_neurons)
-		nest.SetStatus(synapses, {'learning_time':learning_time})
+		if len(synapses) > 0:
+			nest.SetStatus(synapses, {'learning_time':learning_time})
 		
 
 	def set_plasticity_learning_rate(self, rate):
@@ -608,7 +608,8 @@ class SPINetwork:
 
 		# Update all connections between neurons in these pools.
 		synapses = nest.GetConnections(chi_neurons, chi_neurons)
-		nest.SetStatus(synapses, {'lambda':rate})
+		if len(synapses) > 0:
+			nest.SetStatus(synapses, {'lambda':rate})
 
 
 	def simulate_without_input(self, duration):
@@ -671,7 +672,7 @@ class SPINetwork:
 		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True}) if spikereader is None else spikereader
 
 		# Connect all neurons to the spike reader.
-		nest.Connect(nodes, spikereader, syn_spec={'delay':self.params['devices_delay']})
+		nest.Connect(nodes, spikereader, syn_spec={'delay':self.params['delay_devices']})
 
 		return spikereader
 
@@ -732,8 +733,8 @@ class SPINetwork:
 
 		# Attach a spike reader to all population coding layers.
 		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
-		for ym in self.sams:
-			nest.Connect(self.chi_pools[ym], spikereader, syn_spec={'delay':self.params['devices_delay']})
+		for ym in self.dependencies:
+			nest.Connect(self.chi_pools[ym], spikereader, syn_spec={'delay':self.params['delay_devices']})
 
 		# Clear currents.
 		self.clear_currents()
@@ -789,7 +790,7 @@ class SPINetwork:
 		# Attach a spike reader to all rate coding pools.
 		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
 		for ym in self.dependencies:
-			nest.Connect(self.chi_pools[ym], spikereader, syn_spec={'delay':self.params['devices_delay']})
+			nest.Connect(self.chi_pools[ym], spikereader, syn_spec={'delay':self.params['delay_devices']})
 
 		# Clear currents.
 		self.clear_currents()
