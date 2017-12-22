@@ -693,7 +693,7 @@ class SPINetworkOptimizee(Optimizee):
         logging.info("Creating a recurrent SPI network with overridden parameters:\n%s", self.network.parameter_string())
 
 
-    def simulate(self, traj, run_intermediates=True, save_plot=True):
+    def simulate(self, traj, run_intermediates=False, save_plot=False):
         """
         Simulates a recurrently connected network of neuron pools, training on a target 
         distribution; i.e. performing density estimation as in Pecevski et al. 2016,
