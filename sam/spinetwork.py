@@ -23,7 +23,7 @@ class SPINetwork:
 
 
 	@staticmethod
-	def parameter_spec():
+	def basic_parameter_spec():
 		"""
 		Returns a dictionary of param_name:(min, max) pairs, which describe the legal
 		limit of the parameters.
@@ -42,25 +42,26 @@ class SPINetwork:
 			'connectivity_inh_chi':(0.0, 1.0),
 			'connectivity_inh_self':(0.0, 1.0),
 			'connectivity_chi_chi':(0.0, 1.0),
-			'delay_max':(0.0, 10.0)
+			'delay_max':(0.0, 10.0),
+			'delay_min_ratio':(0.0, 1.0)
 			}
 
 		return param_spec
 
 
-	def set_spi_defaults(self, params={}):
+	def get_spi_defaults(self, override_params={}):
 		"""
-		Sets SPI defaults.
-		params: dictionary of parameters to set.
+		Combines passed SPI parameter overrides with defaults.
+		override_params: dictionary of parameters to set.
 		"""
 		# Set common properties.
-		tau = 10.0 if 'tau' not in params else params['tau']
-		delay_fixed = 1.0 if 'delay_fixed' not in params else params['delay_fixed']
-		delay_max = 10.0 if 'delay_max' not in params else params['delay_max']
-		delay_min = 0.1 if 'delay_min' not in params else params['delay_min']
+		tau = 10.0 if 'tau' not in override_params else override_params['tau']
+		delay_fixed = 1.0 if 'delay_fixed' not in override_params else override_params['delay_fixed']
+		delay_max = 10.0 if 'delay_max' not in override_params else override_params['delay_max']
+		delay_min = 0.1 if 'delay_min_ratio' not in override_params else max(override_params['delay_min_ratio'] * delay_max, 0.05)
 
 		# Set all derived and underived properties.
-		self.params = {
+		params = {
 			'initial_stdp_rate':0.002,
 			'final_stdp_rate':0.0006,
 			'stdp_time_fraction':1.0
@@ -69,9 +70,9 @@ class SPINetwork:
 			'weight_baseline':2.5 * np.log(0.2),
 			'tau':tau,
 			'T':0.58,
-			'use_rect_psp_exc':False,
-			'use_rect_psp_inh':False,
-			'inhibitors_use_rect_psp_exc':False,
+			'use_rect_psp_exc':True,
+			'use_rect_psp_inh':True,
+			'inhibitors_use_rect_psp_exc':True,
 			'amplitude_exc':2.0,
 			'amplitude_inh':2.0,
 			'tau_membrane':delay/100,
@@ -92,7 +93,7 @@ class SPINetwork:
 			'weight_chi_chi_min':0.0,
 			'weight_chi_chi_std':0.1,
 			'weight_chi_inhibitors':13.57,
-			'weight_inhibitors_chi':1.86,
+			'weight_inhibitors_chi':-1.86,
 			'weight_inhibitors_inhibitors':13.57,
 			'bias_inhibitors':-10.0,
 			'bias_chi_mean':5.0,
@@ -105,6 +106,7 @@ class SPINetwork:
 			'chi_inhibitors_synapse_type':'static_synapse',
 			'inhibitors_chi_synapse_type':'static_synapse',
 			'inhibitors_inhibitors_synapse_type':'static_synapse',
+			'inhibitors_dead_time':3.0,
 			'excitatory_pool_size':20,
 			'inhibitory_pool_size':10,
 			'delay_chi_inhibitors':delay_fixed,
@@ -118,14 +120,17 @@ class SPINetwork:
 			'connectivity_chi_inh':0.5,
 			'connectivity_inh_chi':0.5,
 			'connectivity_inh_self':0.5,
-			'connectivity_chi_chi':0.5
+			'connectivity_chi_chi':0.5,
+			'chi_current_plus':5.0,
+			'chi_current_minus':-5.0
 		}
 
 		# Update defaults.
-		self.params.update(params)
+		params.update(override_params)
+		return params
 
 
-	def set_nest_defaults(self):
+	def set_nest_defaults(self, params):
 		"""
 		Clears and sets the NEST defaults from the parameters.
 		NOTE: Any change of the network parameters needs a corresponding call to
@@ -145,148 +150,142 @@ class SPINetwork:
 
 		# Reduce NEST verbosity.
 		nest.set_verbosity('M_ERROR')
-		nest.SetDefaults('static_synapse', params={'weight':self.params['initial_weight']})
+		nest.SetDefaults('static_synapse', params={'weight':params['initial_weight']})
 
 		nest.SetDefaults('stdp_pecevski_synapse', params={
-			'eta_0':self.params['initial_stdp_rate'],
-			'eta_final':self.params['final_stdp_rate'], 
-			'learning_time':int(self.params['stdp_time_fraction'] * self.params['learning_time']),
-			'weight':self.params['initial_weight'],
-			'w_baseline':self.params['weight_baseline'],
-			'tau':self.params['tau'],
-			'T':self.params['T'],
-			'depress_multiplier':self.params['max_depress_tau_multiplier']
+			'eta_0':params['initial_stdp_rate'],
+			'eta_final':params['final_stdp_rate'], 
+			'learning_time':int(params['stdp_time_fraction'] * params['learning_time']),
+			'weight':params['initial_weight'],
+			'w_baseline':params['weight_baseline'],
+			'tau':params['tau'],
+			'T':params['T'],
+			'depress_multiplier':params['max_depress_tau_multiplier']
 			})
 
 		nest.SetDefaults('srm_pecevski_alpha', params={
-			'rect_exc':self.params['use_rect_psp_exc'], 
-			'rect_inh':self.params['use_rect_psp_inh'],
-			'e_0_exc':self.params['amplitude_exc'], 
-			'e_0_inh':self.params['amplitude_inh'],
-			'I_e':self.params['external_current'],
-			'tau_m':self.params['tau_membrane'], # Membrane time constant (only affects current injections). Is this relevant?
-			'tau_exc':self.params['tau'],
-			'tau_inh':self.params['tau'], 
-			'tau_bias':self.params['tau'],
+			'rect_exc':params['use_rect_psp_exc'], 
+			'rect_inh':params['use_rect_psp_inh'],
+			'e_0_exc':params['amplitude_exc'], 
+			'e_0_inh':params['amplitude_inh'],
+			'I_e':params['external_current'],
+			'tau_m':params['tau_membrane'], # Membrane time constant (only affects current injections). Is this relevant?
+			'tau_exc':params['tau'],
+			'tau_inh':params['tau'], 
+			'tau_bias':params['tau'],
 			'eta_bias':0.0, # eta_bias is set manually.
-			'rel_eta':self.params['relative_bias_spike_rate'],
-			'b_baseline':self.params['bias_baseline'],
-			'max_bias':self.params['max_bias'],
-			'min_bias':self.params['min_bias'],
-			'bias':self.params['initial_bias'],
-			'dead_time':self.params['tau'], # Abs. refractory period.
-			'dead_time_random':self.params['dead_time_random'],
-			'c_1':self.params['linear_term_prob'], # Linear part of transfer function.
-			'c_2':self.params['exp_term_prob'], # The coefficient of the exponential term in the transfer function.
-			'c_3':self.params['exp_term_prob_scale'], # Scaling coefficient of effective potential in exponential term.
-			'T':self.params['T'],
-			'use_renewal':self.params['use_renewal']
+			'rel_eta':params['relative_bias_spike_rate'],
+			'b_baseline':params['bias_baseline'],
+			'max_bias':params['max_bias'],
+			'min_bias':params['min_bias'],
+			'bias':params['initial_bias'],
+			'dead_time':params['tau'], # Abs. refractory period.
+			'dead_time_random':params['dead_time_random'],
+			'c_1':params['linear_term_prob'], # Linear part of transfer function.
+			'c_2':params['exp_term_prob'], # The coefficient of the exponential term in the transfer function.
+			'c_3':params['exp_term_prob_scale'], # Scaling coefficient of effective potential in exponential term.
+			'T':params['T'],
+			'use_renewal':params['use_renewal']
 			})
 
 		nest.SetDefaults('stdp_synapse', params={
-			'tau_plus':self.params['tau_alpha'],
-			'Wmax':self.params['max_weight'],
+			'tau_plus':params['tau_alpha'],
+			'Wmax':params['max_weight'],
 			'mu_plus':0.0,
 			'mu_minus':0.0,
-			'lambda':self.params['final_stdp_rate'],
-			'weight':self.params['initial_weight']
+			'lambda':params['final_stdp_rate'],
+			'weight':params['initial_weight']
 			})
 
 		# Create layer model specialisations.
 		# Chi population model.
-		if self.params['chi_neuron_type'] == 'srm_pecevski_alpha':
-			# We will set alpha neuron biases during network construction.
-			self.chi_neuron_params={'eta_bias':self.params['first_bias_rate']}
+		if params['chi_neuron_type'] == 'srm_pecevski_alpha':
+			self.chi_neuron_params={'eta_bias':params['first_bias_rate']}
 		else:
 			raise NotImplementedError
 
 		# Inhibitor population model.
-		if self.params['inhibitors_neuron_type'] == 'srm_pecevski_alpha':
+		if params['inhibitors_neuron_type'] == 'srm_pecevski_alpha':
 			self.inhibitors_neuron_params={
-				'bias':self.params['bias_inhibitors'],
-				'rect_exc':self.params['inhibitors_use_rect_psp_exc'],
-				'tau_exc':self.params['tau']
-				}
+				'bias':params['bias_inhibitors'],
+				'dead_time':params['inhibitors_dead_time']
+				'rect_exc':params['inhibitors_use_rect_psp_exc']				}
 		else:
 			raise NotImplementedError
 
 		# Create synapse model specialisations.
 		# Chi-chi synapses.
-		if self.params['chi_chi_synapse_type'] == 'stdp_pecevski_synapse':
+		if params['chi_chi_synapse_type'] == 'stdp_pecevski_synapse':
 		 	self.chi_chi_synapse_params={
 		 		'model':'stdp_pecevski_synapse',
 				'weight':{
 					'distribution':'normal_clipped',
-					'low':self.params['min_weight_chi_chi'],
-					'high':self.params['max_weight_chi_chi'],
-					'mu':self.params['max_weight_chi_chi'],
-					'sigma':self.params['weight_chi_chi_std']
+					'low':params['min_weight_chi_chi'],
+					'high':params['max_weight_chi_chi'],
+					'mu':params['max_weight_chi_chi'],
+					'sigma':params['weight_chi_chi_std']
 					},
 				'delay':{
 					'distribution':'uniform_clipped',
-					'low':self.params['delay_chi_chi_min'],
-					'max':self.params['delay_chi_chi_max'],
+					'low':params['delay_chi_chi_min'],
+					'max':params['delay_chi_chi_max'],
 					}
 				}
 		else:
 			raise NotImplementedError
 
 		# Chi-inhibitors synapses.
-		if self.params['chi_inhibitors_synapse_type'] == 'static_synapse':
+		if params['chi_inhibitors_synapse_type'] == 'static_synapse':
 			self.chi_inhibitors_synapse_params={
 				'model':'static_synapse',
-				'weight':self.params['weight_chi_inhibitors'],
-				'delay':self.params['delay_chi_inhibitors']
+				'weight':params['weight_chi_inhibitors'],
+				'delay':params['delay_chi_inhibitors']
 				}
 		else:
 			raise NotImplementedError
 
 		# Inhibitors-chi synapses.
-		if self.params['inhibitors_chi_synapse_type'] == 'static_synapse':
+		if params['inhibitors_chi_synapse_type'] == 'static_synapse':
 			self.inhibitors_chi_synapse_params={
 				'model':'static_synapse',
-				'weight':self.params['weight_inhibitors_chi'],
-				'delay':self.params['delay_inhibitors_chi']
+				'weight':params['weight_inhibitors_chi'],
+				'delay':params['delay_inhibitors_chi']
 				}
 		else:
 			raise NotImplementedError
 
 		# Inhibitors-inhibitors synapses.
-		if self.params['inhibitors_inhibitors_synapse_type'] == 'static_synapse':
+		if params['inhibitors_inhibitors_synapse_type'] == 'static_synapse':
 			self.inhibitors_inhibitors_synapse_params={
 				'model':'static_synapse',
-				'weight':self.params['weight_inhibitors_inhibitors'],
-				'delay':self.params['delay_inhibitors_inhibitors']
+				'weight':params['weight_inhibitors_inhibitors'],
+				'delay':params['delay_inhibitors_inhibitors']
 				}
 		else:
 			raise NotImplementedError
 
 		self.chi_chi_connectivity_params={
-			'rule':'pairwise_bernoulli',
-			'p':self.params['connectivity_chi_chi']
-		}
-
-		self.chi_chi_connectivity_params={
-					'rule':'pairwise_bernoulli',
-					'p':self.params['connectivity_chi_chi']
-				}
+				'rule':'pairwise_bernoulli',
+				'p':params['connectivity_chi_chi']
+			}
 
 		self.chi_inh_connectivity_params={
-					'rule':'pairwise_bernoulli',
-					'p':self.params['connectivity_chi_inh']
-				}
+				'rule':'pairwise_bernoulli',
+				'p':params['connectivity_chi_inh']
+			}
 
 		self.inh_chi_connectivity_params={
-					'rule':'pairwise_bernoulli',
-					'p':self.params['connectivity_inh_chi']
-				}
+				'rule':'pairwise_bernoulli',
+				'p':params['connectivity_inh_chi']
+			}
 
 		self.inh_self_connectivity_params={
-					'rule':'pairwise_bernoulli',
-					'p':self.params['connectivity_inh_self']
-				}
+				'rule':'pairwise_bernoulli',
+				'p':params['connectivity_inh_self']
+			}
 
-	def create_network(self, dependencies, distribution, num_discrete_vals=2, params={}, special_params={}):
+
+	def create_network(self, dependencies, distribution, num_discrete_vals=2, override_params={}, special_params={}):
 		"""
 		Generates a recurrent SPI network according to the supplied dependencies. 
 		This gives an analog to the SAMGraph structure, but it also uses:
@@ -303,15 +302,18 @@ class SPINetwork:
 			estimate. Supplied as a dictionary of (x1, x2, ..., xk):p pairs, 
 			where the xi are values of the random variables, and p is a 
 			probability.
-		params: A dictionary of common parameters to be passed to all subnetworks.
+		override_params: A dictionary of overriden parameters to be passed to all subnetworks.
 		special_params: A dictionary of dictionaries, in the format {"y1":{...}, 
 			...}, containing parameters to be sent specifically to individual 
-			subnetworks. This overwrites parameters in params, even those that are
+			subnetworks. This overwrites parameters in override_params, even those that are
 			meant to evolve on a module-by-module basis initially.
 		The other parameters are as in SAMModule.
 		"""
 		# Set parameter defaults.
-		self.set_spi_defaults(params)
+		self.params = self.get_spi_defaults(override_params)
+
+		# Remove generic parameters from parameter list.
+		for k in self.parameter_repeats(): self.params.pop(k)
 
 		self.dependencies = dependencies
 		self.distribution = distribution
@@ -323,17 +325,17 @@ class SPINetwork:
 
 		# Create multiple excitatory pools for each dependency, ignoring input for now.
 		for ym, ys in dependencies.items():
-			subnetwork_params = self.filter_repeat_params(params, ym)
-			self.subnetwork_params[ym] = {**subnetwork_params, **subnetwork_params[ym]} if ym in special_params else subnetwork_params.copy()
+			subnetwork_params = self.filter_repeat_params(override_params, ym)
+			self.subnetwork_params[ym] = {**subnetwork_params, **special_params[ym]} if ym in special_params else subnetwork_params.copy()
 			subnetwork_vars = sorted([ym] + ys)
 			
-			# Set defaults
-			self.set_spi_defaults(self.subnetwork_params[ym])
-			self.set_nest_defaults()
+			# Set subnetwork parameters.
+			self.subnetwork_params[ym] = self.get_spi_defaults(self.subnetwork_params[ym])
+			self.set_nest_defaults(self.subnetwork_params[ym])
 			
 			# Create excitatory and inhibitory pools.
-			self.chi_pools[ym] = nest.Create(self.params['chi_neuron_type'], n=self.params['excitatory_pool_size'] * num_discrete_vals, params=self.chi_neuron_params)
-			self.inhibitory_pools[ym] = nest.Create(self.params['inhibitors_neuron_type'], n=self.params['inhibitory_pool_size'], params=self.inhibitors_neuron_params)
+			self.chi_pools[ym] = nest.Create(self.subnetwork_params[ym]['chi_neuron_type'], n=self.subnetwork_params[ym]['excitatory_pool_size'] * num_discrete_vals, params=self.chi_neuron_params)
+			self.inhibitory_pools[ym] = nest.Create(self.subnetwork_params[ym]['inhibitors_neuron_type'], n=self.subnetwork_params[ym]['inhibitory_pool_size'], params=self.inhibitors_neuron_params)
 			
 			# Connect excitatory and inhibitory pools.
 			nest.Connect(self.chi_pools[ym], 
@@ -353,12 +355,12 @@ class SPINetwork:
 
 			# Chi bias randomisation.
 			self.set_random_biases(self.chi_pools[ym], 
-				self.params['bias_chi_mean'], 
-				self.params['bias_chi_std'],
-				self.params['min_bias'],
-				self.params['max_bias'])
+				params['bias_chi_mean'], 
+				params['bias_chi_std'],
+				params['min_bias'],
+				params['max_bias'])
 
-			# If no distribution has been passed, generate one using the passed parameters.
+			# Set marginal distribution of this layer and this variable's index in the distribution.
 			self.dep_indices[ym] = subnetwork_vars.index(ym),
 			self.subnetwork_distributions[ym] = helpers.compute_marginal_distribution(distribution, subnetwork_vars, num_discrete_vals)
 		
@@ -375,99 +377,113 @@ class SPINetwork:
 
 		# Set other metainformation flags.
 		self.num_discrete_vals = num_discrete_vals
-		self.params = params
 		self.special_params = special_params
-
-		# Add generic parameters to parameter list.
-		generics = dict(list(self.sams.values())[0].params)
-		for k in self.parameter_repeats(): generics.pop(k)
-		self.params.update(generics)
-
-		self.initialised = True
 
 		# Track all neurons.
 		self.all_neurons = tuple()
 		for ym in dependencies.items():
 			self.all_neurons += self.chi_pools[ym] + self.inhibitory_pools[ym]
 
+		self.initialised = True
+
+
+	@staticmethod
+	def parameter_spec(num_modules):
+		"""
+		Returns a dictionary of param_name:(min, max) pairs, which describe the legal
+		limit of the parameters.
+		"""
+		# Get the vanilla spec.
+		spec = SPINetwork.basic_parameter_spec()
+
+		# For each variable that appears in the repeat spec, add n variables with the 
+		# name, suffixed by '_1', '_2', etc.
+		repeat_spec = SPINetwork.parameter_repeats()
+		for k in repeat_spec:
+			k_spec = spec[k]
+			spec.pop(k)
+			new_keys = [k + '_' + str(i) for i in range(1, num_modules + 1)]
+			for new_k in new_keys:
+				spec[new_k] = k_spec
+
+		return spec
+
+
+	@staticmethod
+	def parameter_repeats():
+		"""
+		Returns a list of parameters that are to be specialised by each subnetwork in the 
+		graph network, i.e. that can evolve separately.
+		"""
+		repeats = ['bias_baseline']
+		return repeats
+
+
+	def parameter_string(self):
+		"""
+		Returns a string containing all model parameters, combining the params dictionary
+		passed to create_network() as well as the special_params dictionary.
+		"""
+		params = OrderedDict(sorted(self.params.items()))
+		special_params = OrderedDict(sorted(self.special_params.items()))
+
+		return "Params:\n{}\nSpecial params:\n{}".format(helpers.get_dictionary_string(params), helpers.get_dictionary_string(special_params))
+
+
+	def filter_repeat_params(self, params, var_name):
+		"""
+		Parses and filters the params dictionary to keep only the variables that are 
+		relevant for the specified variable name.
+		var_name: a string specifying the variable name, e.g. 'y1'.
+		"""
+		filtered = {}
+		repeats = SPINetwork.parameter_repeats()
+		for k in params:
+			repeat_var = None
+			for r in repeats:
+				if r in k: repeat_var = r
+
+			if repeat_var is None: filtered[k] = params[k]
+			else:
+				# Keep only that which has the same suffix.
+				var_suffix = var_name[1:]
+				k_truncated = k.replace(repeat_var + '_', '')
+				if var_suffix in k_truncated: filtered[repeat_var] = params[k]
+
+		return filtered
+
 
 	def clone(self):
 		"""
 		Returns a network with the same architecture and equal weights and biases.
 		Note: We pass the params to create_network because the function overwrites 
-		the bias baseline unless the bias baseline is passed. Also, note that
-		if the network was built using pre-existing inputs, it will not clone
-		the input layer, but will instead leave the input layer undefined and
-		unconnected.
+		the bias baseline unless the bias baseline is passed.
 		"""
-		new_module = copy.deepcopy(self)
-		new_module.create_network(
-			num_x_vars=self.num_vars - 1,
+		new_network = SPINetwork()
+		new_network.seed = self.seed
+		new_network.create_network(
+			dependencies=self.dependencies,
 			num_discrete_vals=self.num_discrete_vals,
-			num_modes=self.num_modes,
 			distribution=self.distribution,
-			dep_index=self.output_index,
-			params=self.params,
-			create_input_layer=self.created_input_layer)
-
-		# Flag the module uninitialised if the input layer was provided externally.
-		if not self.created_input_layer:
-			new_module.initialised = False
+			override_params=self.params,
+			special_params=self.special_params)
 		
 		# Copy bias values.
-		if new_module.params['alpha_neuron_type'] == 'srm_pecevski_alpha':
-			alpha_biases = nest.GetStatus(self.alpha, 'bias')
-			nest.SetStatus(new_module.alpha, 'bias', alpha_biases)
+		for ym in new_network.dependencies:
+			if new_network.subnetwork_params[ym]['chi_neuron_type'] == 'srm_pecevski_alpha':
+			chi_biases = nest.GetStatus(self.chi_pools[ym], 'bias')
+			nest.SetStatus(new_network.chi_pools[ym], 'bias', chi_biases)
 
 		# Copy synapse weights.
-		if self.created_input_layer:
-			chi_alpha_conns = nest.GetConnections(self.chi, self.alpha)
-			chi_alpha_weights = nest.GetStatus(chi_alpha_conns, 'weight')
-			chi_alpha_conns_new = nest.GetConnections(new_module.chi, new_module.alpha)
-			nest.SetStatus(chi_alpha_conns_new, 'weight', chi_alpha_weights)
-
-		return new_module
-
-
-	def copy_dynamic_properties(self, module):
-		"""
-		Copies the dynamic properties such as weights and biases from the
-		specified module. 
-		Note: Assumes both modules are fully constructed and initialised.
-		"""
-		# Copy all biases.
-		if module.params['chi_neuron_type'] == 'srm_pecevski_alpha':
-			biases = nest.GetStatus(module.chi, 'bias')
-			nest.SetStatus(self.chi, 'bias', biases)
-
-		if module.params['alpha_neuron_type'] == 'srm_pecevski_alpha':
-			biases = nest.GetStatus(module.alpha, 'bias')
-			nest.SetStatus(self.alpha, 'bias', biases)
-
-		if module.params['zeta_neuron_type'] == 'srm_pecevski_alpha':
-			biases = nest.GetStatus(module.zeta, 'bias')
-			nest.SetStatus(self.zeta, 'bias', biases)
-
-		# Copy all weights.
-		conns = nest.GetConnections(module.all_neurons, module.all_neurons)
+		# NOTE: This only makes sense if the connections are the same, which should
+		# be guaranteed because clones have the same seed and should therefore
+		# create the same connections.
+		conns = nest.GetConnections(self.all_neurons, self.all_neurons)
 		weights = nest.GetStatus(conns, 'weight')
-		conns_new = nest.GetConnections(self.all_neurons, self.all_neurons)
+		conns_new = nest.GetConnections(new_network.all_neurons, new_network.all_neurons)
 		nest.SetStatus(conns_new, 'weight', weights)
 
-
-	def set_bias_baseline(self, baseline):
-		"""
-		Sets the alpha layer bias baseline.
-		"""
-		if not self.initialised:
-			raise Exception("SAM module not initialised yet.")
-
-		# Update alpha layer baselines.
-		if self.params['alpha_neuron_type'] == 'srm_pecevski_alpha':
-			logging.info("Setting bias baseline to {}".format(self.params['bias_baseline']))
-			nest.SetStatus(self.alpha, {'b_baseline':baseline})
-		else:
-			logging.warning("Cannot set a bias baseline in neurons that don't support it. Returning with no effect.")
+		return new_network
 
 
 	def get_local_nodes(self, neurons):
@@ -488,67 +504,26 @@ class SPINetwork:
 		return [ni['local'] for ni in node_info]
 
 
-	def generate_distribution(self, num_vars, num_discrete_vals):
-		"""
-		Generates a distribution randomly (see helpers documentation). This uses
-		the rank 0 process RNG to generate the random numbers.
-		"""
-		comm = MPI.COMM_WORLD
-		rank = comm.Get_rank()
-
-		# Broadcast the distribution to all MPI processes.
-		if rank == 0:
-		    dist = helpers.generate_distribution(num_vars, num_discrete_vals, self.rngs[0])
-		    logging.info("Process 0 generated distribution: %s", dist)
-		else:
-			dist = None
-			logging.info("Process {} receiving distribution.".format(rank))
-
-		comm.bcast(dist, root=0)
-
-		return dist
-
-
 	def draw_random_sample(self):
 		"""
-		Uses the rank 0 process to draw a random sample from the target distribution.
+		Draws a random sample from the target distribution.
 		See the documentation in helpers for more details on how this works.
 		"""
-		comm = MPI.COMM_WORLD
-		rank = comm.Get_rank()
-
-		# Broadcast the sample to all MPI processes.
-		if rank == 0:
-		    sample = helpers.draw_from_distribution(self.distribution, complete=True, randomiser=self.rngs[0])
-		else:
-			sample = None
-
-		comm.bcast(sample, root=0)
-
-		return sample
-
+		return helpers.draw_from_distribution(self.distribution, complete=True, randomiser=self.rngs[0])
+		
 
 	def draw_normal_values(self, n, mu, sigma, min, max):
 		"""
-		Uses the rank 0 process to draw a random sequence of numbers from a normal
+		Draws a random sequence of numbers from a normal
 		distribution with the specified parameters. 
 		"""
-		comm = MPI.COMM_WORLD
-		rank = comm.Get_rank()
-
-		# Broadcast the sample to all MPI processes.
-		if rank == 0:
-			# Do this element by element, since numpy does not offer trunc norm.
-			sample = []
-			while len(sample) < n:
-				r = self.rngs[0].normal(mu, sigma)
-				if r >= min and r <= max:
-					sample.append(r)
-		else:
-			sample = None
-
-		comm.bcast(sample, root=0)
-
+		# Do this element by element, since numpy does not offer trunc norm.
+		sample = []
+		while len(sample) < n:
+			r = self.rngs[0].normal(mu, sigma)
+			if r >= min and r <= max:
+				sample.append(r)
+	
 		return sample
 
 
@@ -565,103 +540,75 @@ class SPINetwork:
 				nest.SetStatus([nodes[i]], {'bias':normal_biases[i]})
 
 
-	def set_input_currents(self, state):
+	def get_variable_neurons(self, var_name, var_value):
 		"""
-		Inhibits/forces the input layer neurons according to the provided state.
-		state: a tuple containing the values to be encoded by the input population
-		code, one value for each subpopulation of chi neurons.
-		Note: This function is not abstracted away because SAMGraph needs access
-		to currents layer-by-layer.
+		Returns the neuron population that rate codes for this particular variable
+		and value combination.
 		"""
-		locals = self.are_nodes_local(self.chi)
-		for i in range(len(self.chi)):
-			var_index = i // self.num_discrete_vals
-			node_value = (i % self.num_discrete_vals) + 1 # The + 1 is necessary since the neuron values are 1-offset.
-			inhibit = state[var_index] != node_value
-			if locals[i]:
-				current = self.params['nu_current_minus'] if inhibit else self.params['nu_current_plus']
-				nest.SetStatus([self.chi[i]], {'I_e':current})
+		excitatory_pool_size = self.subnetwork_params[var_name]['excitatory_pool_size']
+		return self.chi_pools[var_name][(var_value - 1) * excitatory_pool_size:var_value * excitatory_pool_size]
 
 
-	def set_hidden_currents(self, value):
+	def set_chi_currents(self, state):
 		"""
-		Inhibits/forces the alpha layer neurons according to the provided value.
-		value: a value to be encoded by the output population.
-		Note: This function is not abstracted away because SAMGraph needs access
-		to currents layer-by-layer.
+		Inhibits/forces the chi neurons according to the provided state.
+		state: a tuple containing the values to be encoded by the chi populations,
+		one value for each subnetwork of chi neurons.
 		"""
-		locals = self.are_nodes_local(self.alpha)
-		for i in range(len(self.alpha)):
-			node_value = (i // self.num_modes) + 1 # The + 1 is necessary since the neuron values are 1-offset.
-			inhibit = value != node_value
-			if locals[i]:
-				current = self.params['alpha_current_minus'] if inhibit else self.params['alpha_current_plus']
-				nest.SetStatus([self.alpha[i]], {'I_e':current})
+		for ym in self.chi_pools:
+			var_index = int(ym[1:]) - 1
+			for x in range(1, self.num_discrete_vals + 1):
+				nodes = self.get_variable_neurons(ym, x)
+				inhibit = state[var_index] != x
+				current = self.params['chi_current_minus'] if inhibit else self.params['chi_current_plus']
+				nest.SetStatus(nodes, {'I_e':current})
+			
 
-
-	def set_output_currents(self, value):
-		"""
-		Inhibits/forces the output layer neurons according to the provided value.
-		value: a value to be encoded by the output population.
-		Note: This function is not abstracted away because SAMGraph needs access
-		to currents layer-by-layer.
-		"""
-		locals = self.are_nodes_local(self.zeta)
-		for i in range(len(self.zeta)):
-			node_value = i + 1 # The + 1 is necessary since the neuron values are 1-offset.
-			inhibit = value != node_value
-			if locals[i]:
-				current = self.params['nu_current_minus'] if inhibit else self.params['nu_current_plus']
-				nest.SetStatus([self.zeta[i]], {'I_e':current})
-
-
-	def set_currents(self, state, inhibit_alpha=False):
+	def set_currents(self, state):
 		"""
 		Sets excitatory/inhibitory currents to the network for the given state.
 		This does not simulate the network.
 		"""		
-		# Extract input values.
-		input_values = [state[i] for i in range(len(state)) if i is not self.output_index]
-
-		# Set input layer neurons.
-		self.set_input_currents(input_values)
-
-		# Set alpha layer neurons.
-		if inhibit_alpha:
-			self.set_hidden_currents(state[self.output_index])
+		# Set chi pool neurons.
+		self.set_chi_currents(state)
 
 
 	def set_intrinsic_rate(self, intrinsic_rate):
 		"""
-		Sets the learning rate of intrinsic plasticity in the alpha layer.
+		Sets the learning rate of intrinsic plasticity in all chi subnetworks.
 		Applicable only for SRM Peceveski neurons.
 		"""
-		if self.params['alpha_neuron_type'] == 'srm_pecevski_alpha':
-			nest.SetStatus(self.alpha, {'eta_bias':intrinsic_rate})
-		else:
-			logging.warning("Cannot set a bias rate in neurons that don't support it. Returning with no effect.")
+		for ym in self.chi_pools:
+			if self.subnetwork_params[ym]['chi_neuron_type'] == 'srm_pecevski_alpha':
+				nest.SetStatus(self.chi_pools[ym], {'eta_bias':intrinsic_rate})
+			else:
+				logging.warning("Cannot set a bias rate in neurons that don't support it. Returning with no effect.")
 
 
 	def set_plasticity_learning_time(self, learning_time):
 		"""
 		Sets the STDP learning time in the STDP connections (in ms).
+		Note: raises an error if the neurons don't support learning time.
 		"""
-		if self.params['chi_alpha_synapse_type'] == 'stdp_pecevski_synapse':
-			synapses = nest.GetConnections(self.chi, self.alpha)
-			nest.SetStatus(synapses, {'learning_time':learning_time}) # We stop learning by setting the learning time to 0.
-		else:
-			logging.warning("Cannot set a learning time in synapses that don't support it. Returning with no effect.")
+		# Get connections between chi pools.
+		chi_neurons = [n for ym in self.dependencies for n in self.chi_pools[ym]]
 
+		# Update all connections between neurons in these pools.
+		synapses = nest.GetConnections(chi_neurons, chi_neurons)
+		nest.SetStatus(synapses, {'learning_time':learning_time})
+		
 
 	def set_plasticity_learning_rate(self, rate):
 		"""
-		Toggles vanilla STDP on or off. Has no effect on Pecevski STDP synapses.
+		Toggles vanilla STDP on or off. 
+		Note: raises an error if the neurons don't support lambda.
 		"""
-		if self.params['chi_alpha_synapse_type'] == 'stdp_synapse':
-			synapses = nest.GetConnections(self.chi, self.alpha)
-			nest.SetStatus(synapses, {'lambda':rate})
-		else:
-			logging.warning("Cannot set a learning rate in synapses that don't support it. Returning with no effect.")
+		# Get connections between chi pools.
+		chi_neurons = [n for ym in self.dependencies for n in self.chi_pools[ym]]
+
+		# Update all connections between neurons in these pools.
+		synapses = nest.GetConnections(chi_neurons, chi_neurons)
+		nest.SetStatus(synapses, {'lambda':rate})
 
 
 	def simulate_without_input(self, duration):
@@ -672,41 +619,25 @@ class SPINetwork:
 		nest.Simulate(duration)
 
 
-	def present_random_sample(self, duration=None):
+	def present_random_sample(self, use_currents = True, duration=None):
 		"""
 		Simulates the network for the given duration while a constant external current
-		is presented to each population coding neuron in the network, chosen randomly 
+		is presented to each rate coding neuron in the network, chosen randomly 
 		to be excitatory or inhibitory from a valid state of the distribution.
-		Alpha neurons are inhibited if the value they represent does not match the 
-		sample value.
+		use_currents: True to use external forcing currents, False to use Poisson spike
+			generators instead of current.
 		"""
 		if not self.initialised:
-			raise Exception("SAM module not initialised yet.")
+			raise Exception("SPI network not initialised yet.")
 
 		# Get a random state from the distribution.
 		state = self.draw_random_sample()
 
 		# Set currents in input and output layers.
-		self.set_currents(state, inhibit_alpha=True)
-
-		# Simulate.
-		nest.Simulate(duration if duration is not None else self.params['sample_presentation_time'])
-
-
-	def present_input_evidence(self, duration=None, sample=None):
-		"""
-		Presents the given sample state or a random one drawn from the set distribution
-		and simulates for the given period. This only activates/inhibits the input 
-		layer. 
-		"""
-		if not self.initialised:
-			raise Exception("SAM module not initialised yet.")
-
-		# Get a random state from the distribution if one is not given.
-		state = sample if sample is not None else self.draw_random_sample()
-
-		# Set currents in input layer.
-		self.set_currents(state, inhibit_alpha=False)
+		if use_currents:
+			self.set_currents(state)
+		else:
+			raise NotImplementedError("Poisson input generation not yet implemented.")
 
 		# Simulate.
 		nest.Simulate(duration if duration is not None else self.params['sample_presentation_time'])
@@ -732,25 +663,9 @@ class SPINetwork:
 		return multimeter
 
 
-	def plot_potential_and_bias(self, multimeter):
-		"""
-		Plots the voltage traces of the cell membrane and bias from all neurons that were
-		connected during the simulation.
-		"""
-		dmm = nest.GetStatus(multimeter)[0]
-		Vms = dmm["events"]["V_m"]
-		bias = dmm["events"]["bias"]
-		ts = dmm["events"]["times"]
-
-		pylab.figure()
-		pylab.plot(ts, Vms)
-		pylab.plot(ts, bias)
-		pylab.show()
-
-
 	def connect_reader(self, nodes, spikereader=None):
 		"""
-		Connects a spike reader to the network and returns it.
+		Connects a spike reader to the nodes passed and returns it.
 		"""
 		# Create a spike reader.
 		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True}) if spikereader is None else spikereader
@@ -759,57 +674,6 @@ class SPINetwork:
 		nest.Connect(nodes, spikereader, syn_spec={'delay':self.params['devices_delay']})
 
 		return spikereader
-
-
-	def plot_all(self, multimeter, spikereader):
-		"""
-		Plots the spike trace and voltage traces of a single neuron on the same figure.
-		"""
-		# Get spikes and plot.
-		spikes = nest.GetStatus(spikereader, keys='events')[0]
-		senders = spikes['senders']
-		times = spikes['times']
-		dmm = nest.GetStatus(multimeter)[0]
-		Vms = dmm["events"]["V_m"]
-		bias = dmm["events"]["bias"]
-		ts = dmm["events"]["times"]
-
-		pylab.figure()
-		pylab.plot(ts, Vms)
-		pylab.plot(ts, bias)
-		pylab.plot(times, senders, '|')
-		pylab.show()
-
-
-	def plot_spikes(self, spikereader):
-		"""
-		Plots the spike trace from all neurons the spikereader was connected to during
-		the simulation.
-		"""
-		# Get spikes and plot.
-		spikes = nest.GetStatus(spikereader, keys='events')[0]
-		senders = spikes['senders']
-		times = spikes['times']
-
-		# Count spikes per output neuron.
-		counts = defaultdict(int)
-		for node in senders:
-			counts[node] += 1 if node in self.zeta else 0
-		for i in self.zeta:
-			logging.info("Neuron {} spiked {} times".format(i, counts[i]))
-
-		# Plot
-		pylab.figure()
-		pylab.plot(times, senders, '|')
-		pylab.show()
-
-
-	def print_network_info(self):
-		"""
-		Prints network architecture info.
-		"""
-		logging.info("baseline = {}".format(self.params['bias_baseline']))
-		logging.info("%s",self.all_neurons)
 
 
 	def get_neuron_biases(self, neurons):
@@ -828,49 +692,140 @@ class SPINetwork:
 		return nest.GetStatus(nest.GetConnections([source], [target]), 'weight')[0]
 
 
-	def compute_implicit_distribution(self):
+	def determine_state(self, spikes):
 		"""
-		Returns the distribution encoded by the network's weights and biases
-		at this point in time.
-		Note: This does not look at spontaneous network activity, but the 
-		analytical distribution implicitly encoded by the network architecture,
-		as described by Eqn. 5 in Peceveski et. al. 
+		Given a set of spikes of the network, this determines which of
+		the network states the network is in, or whether it is in an 
+		a zero-state, a zero-state being one in which the rate of both
+		variable-value encoding populations is zero.
 		"""
-		implicit = dict(self.distribution)
-		for t in implicit.keys():
-			xs = [t[i] for i in range(self.num_vars) if i is not self.output_index]
-			z = t[self.output_index]
-			p = 0
-			
-			# For each z value, the joint distribution is only concerned with 
-			# alphas that encode for that particular value (i.e. each alpha 
-			# neuron in the subpop that codes for that z value), since
-			# p(z|a) = 0 for other alphas.
-			for i in range(len(self.alpha)):
-				if i // self.num_modes != (z - 1): continue
-				subtotal = 0
-				alpha_neuron = self.alpha[i]
+		state = [0 for i in range(len(self.dependencies))]
+		for i in range(len(self.dependencies)):
+			var_name = "y" + str(i + 1)
+			variable_neurons = [self.get_variable_neurons(var_name, x) for x in range(1, 1 + self.num_discrete_vals)]
 
-				# Find sum of weights going into this alpha neuron.
-				for j in range(len(xs)):
-					chi_index = j * self.num_discrete_vals + xs[j] - 1
-					chi_neuron = self.chi[chi_index]
-					w_hat = self.get_connection_weight(chi_neuron, alpha_neuron) + self.params['weight_baseline']
-					subtotal += w_hat
+			# Count the number of spikes of each subpool.
+			counts = [sum(spike in spikes for spike in value_neurons) for value_neurons in variable_neurons]
 
-				# Find the bias of this alpha neuron.
-				b_hat = self.get_neuron_biases([alpha_neuron])[0] + self.params['bias_baseline']
-				subtotal += b_hat
+			# If both are zero, we have a zero state.
+			if all(c == 0 for c in counts): break
 
-				# Add the exponential of the subtotal to the probability of this 
-				# combination of variables.
-				p += np.exp(subtotal)			
+			# Otherwise, find the variable value with the highest
+			# number of spikes (or if equal, choose randomly).
+			max_count = np.amax(counts)
+			if counts.count(max_count) == 1: 
+				state[i] = counts.index(max_count) + 1 # +1 is necessary because the 0-state is not coded for.
+			else:
+				indices = [j for j, x in enumerate(counts) if x == max_count]
+				state[i] = random.choice(indices) + 1
 
-			implicit[t] = p
+		return tuple(state)
 
-		# Normalise distribution.
-		total = np.sum(list(implicit.values()))
-		for k, v in implicit.items():
-			implicit[k] /= total
 
-		return implicit
+	def measure_experimental_joint_distribution(self, duration, timestep=1.0):
+		"""
+		Lets the network generate spontaneous spikes for a long duration
+		and then uses the spike activity to calculate the frequency of network 
+		states.
+		"""
+		logging.info("Starting experimental joint distribution measurement on SPI network.")
+
+		# Attach a spike reader to all population coding layers.
+		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
+		for ym in self.sams:
+			nest.Connect(self.chi_pools[ym], spikereader, syn_spec={'delay':self.params['devices_delay']})
+
+		# Clear currents.
+		self.clear_currents()
+
+		# Stop all plasticity.
+		self.set_intrinsic_rate(0.0)
+		self.set_plasticity_learning_time(0)
+
+		# Get current time.
+		start_time = nest.GetKernelStatus('time')
+
+		# Simulate for duration ms with no input.
+		nest.Simulate(duration)
+
+		# Get spikes.
+		spikes = nest.GetStatus(spikereader, keys='events')[0]
+		senders = spikes['senders']
+		times = spikes['times']
+
+		# Prepare state distribution variables.
+		joint = defaultdict(int)
+		zeros = 0
+
+		# For every timestep, figure out the network state we are in.
+		tau = self.params['tau']
+		steps = np.arange(start_time, start_time + duration, timestep)
+		for t in steps:
+			spike_indices = [i for i, st in enumerate(times) if t - tau < st <= t]
+			state_spikes = [senders[i] for i in spike_indices]
+			state = self.determine_state(state_spikes)
+			joint[state] += 1
+			if state in self.distribution: 
+				pass
+			else:
+				zeros += 1
+
+		# Normalise all values.
+		total = np.sum(list(joint.values()))
+		for k, v in joint.items():
+			joint[k] = v / total
+		zeros /= len(steps)
+
+		logging.info("Probability of a zero state: {}".format(zeros))
+
+		return joint
+
+
+	def draw_stationary_state(self, duration, ax=None):
+		"""
+		Lets the network spike without external input, and draws the spikes from
+		the chi pool neurons.
+		"""
+		# Attach a spike reader to all rate coding pools.
+		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
+		for ym in self.dependencies:
+			nest.Connect(self.chi_pools[ym], spikereader, syn_spec={'delay':self.params['devices_delay']})
+
+		# Clear currents.
+		self.clear_currents()
+
+		# Stop all plasticity.
+		self.set_intrinsic_rate(0.0)
+		self.set_plasticity_learning_time(0)
+
+		# Get current time.
+		start_time = nest.GetKernelStatus('time')
+
+		# Simulate for duration ms with no input.
+		nest.Simulate(duration)
+
+		# Get spikes.
+		spikes = nest.GetStatus(spikereader, keys='events')[0]
+		senders = spikes['senders']
+		times = spikes['times']
+
+		# Map neuron indices to a range starting from 0, for clarity in reproduction.
+		neuron_map = {}
+		index = 0
+		for ym in range(len(self.chi_pools)):
+			var = 'y' + str(ym + 1)
+			subnetwork = self.chi_pools[var]
+			for z in subnetwork:
+				neuron_map[z] = index
+				index += 1
+		senders = [neuron_map[z] for z in senders]
+
+		# Plot
+		if ax is None:
+			pylab.figure()
+			pylab.plot(times, senders, '|')
+			pylab.title('Spontaneous activity after training')
+			pylab.show()
+		else:
+			ax.plot(times, senders, '|')
+			ax.set_title('Spontaneous activity after training')

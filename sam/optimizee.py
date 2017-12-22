@@ -12,6 +12,8 @@ from ltl import sdict
 from ltl.optimizees.optimizee import Optimizee
 from sam.sam import SAMModule
 from sam.samgraph import SAMGraph
+from sam.spinetwork import SPINetwork
+
 
 logger = logging.getLogger("ltl-sam")
 nest.set_verbosity("M_WARNING")
@@ -543,6 +545,277 @@ class SAMGraphOptimizee(Optimizee):
         logging.info("Experimental network joint KLD (on valid states only) is {}".format(mean_loss_valid))
         if save_plot:
             logging.info("Mean analytical module joint KLD is {}".format(np.sum(last_klds) / len(last_klds)))
+
+        return (mean_loss, )
+
+
+    def end(self):
+        logger.info("End of experiment. Cleaning up...")
+
+
+class SPINetworkOptimizee(Optimizee):
+    """
+    Provides the interface between the LTL API and the SPINetwork class. See SPINetwork and
+    SAMGraph for details on the SPI neural network (which is analogous to a SAMGraph in terms
+    of intended operation).
+    """
+
+    def __init__(
+            self, 
+            traj, 
+            time_resolution=0.1, 
+            num_fitness_trials=3, 
+            seed=0, 
+            n_NEST_threads=1, 
+            plots_directory='./sam_plots'):
+        super(SPINetworkOptimizee, self).__init__(traj)
+        
+        self.rs = np.random.RandomState(seed=seed)
+        self.num_fitness_trials = num_fitness_trials
+        self.run_number = 0
+        self.save_directory = plots_directory
+        self.time_resolution = time_resolution
+        self.num_threads = n_NEST_threads
+        self.set_kernel_defaults()
+
+        # Set up exerimental parameters.
+        self.initialise_experiment()
+
+        # create_individual can be called because __init__ is complete except for traj initialization
+        self.individual = self.create_individual()
+        for key, val in self.individual.items():
+            traj.individual.f_add_parameter(key, val)
+
+
+    def set_kernel_defaults(self):
+        """
+        Sets main NEST parameters.
+        Note: this needs to be called every time the kernel is reset.
+        """
+        nest.SetKernelStatus({
+            'local_num_threads':self.num_threads,
+            'resolution':self.time_resolution})
+
+
+    def create_individual(self):
+        """
+        Creates random parameter values within given bounds.
+        Uses an RNG seeded with the main seed of the SAM module.
+        """ 
+        param_spec = self.parameter_spec() # Sort for replicability
+        individual = {k: np.float64(self.rs.uniform(v[0], v[1])) for k, v in param_spec.items()}
+        return individual
+
+
+    def bounding_func(self, individual):
+        """
+        Bounds the individual within the required bounds via coordinate clipping.
+        """
+        param_spec = self.parameter_spec()
+        individual = {k: np.float64(np.clip(v, a_min=param_spec[k][0], a_max=param_spec[k][1])) for k, v in individual.items()}
+        return individual
+
+
+    def initialise_experiment(self):
+        """
+        Sets experimental parameters.
+        """
+        # Use the distribution from Peceveski et al., experiment 2.
+        # Define the joint probability equation in order to use helpers to compute
+        # the full probability array.
+        joint_equation = "p(y1,y2,y3,y4) = p(y1)*p(y2)*p(y3|y1,y2)*p(y4|y2)"
+
+        # Define distributions.
+        p1 = {(1,):0.5, (2,):0.5}
+        p2 = {(1,):0.5, (2,):0.5}
+        p3 = {
+            (1,1,1):0.87,
+            (1,1,2):0.13,
+            (1,2,1):0.13,
+            (1,2,2):0.87,
+            (2,1,1):0.13,
+            (2,1,2):0.87,
+            (2,2,1):0.87,
+            (2,2,2):0.13
+        }
+        p4 = {
+            (1,1):0.87,
+            (1,2):0.13,
+            (2,1):0.13,
+            (2,2):0.87
+        }
+
+        # Compute the joint distribution from all the components.
+        self.distribution = helpers.compute_joint_distribution(
+            joint_equation, 
+            2, 
+            p1, p2, p3, p4)
+
+        # Define the Markov blanket of each RV.
+        self.dependencies = {
+            'y1':['y2', 'y3'],
+            'y2':['y1', 'y3', 'y4'],
+            'y3':['y1', 'y2'],
+            'y4':['y2']
+        }
+
+        # Define special parameters for some modules.
+        self.special_params = {
+            'y1':{'max_weight':4.0},
+            'y2':{'max_weight':4.0},
+            'y3':{'max_weight':4.0},
+            'y4':{'max_weight':2.0},
+        }
+
+
+    def parameter_spec(self):
+        """
+        Returns the minima-maxima of each explorable variable.
+        Note: Dictionary is an OrderedDict with items sorted by key, to 
+        ensure that items are interpreted in the same way everywhere.
+        """
+        return OrderedDict(sorted(SPINetwork.parameter_spec(len(self.dependencies)).items()))
+
+
+    def prepare_network(self, distribution, dependencies, num_discrete_vals, special_params={}):
+        """
+        Generates a recurrent network with the specified distribution and 
+        dependency parameters, but uses the hyperparameters from the individual dictionary.
+        """
+        nest.ResetKernel()
+        self.set_kernel_defaults()
+
+        self.network = SPINetwork(randomise_seed=True)
+
+        # Convert the trajectory individual to a dictionary.
+        params = {k:self.individual[k] for k in SPINetwork.parameter_spec(len(dependencies)).keys()}
+
+        # Create a SPI network with the correct parameters.
+        self.network.create_network(
+            num_discrete_vals=num_discrete_vals, 
+            dependencies=dependencies, 
+            distribution=distribution, 
+            override_params=params,
+            special_params=special_params)
+
+        logging.info("Creating a recurrent SPI network with overridden parameters:\n%s", self.network.parameter_string())
+
+
+    def simulate(self, traj, run_intermediates=False, save_plot=False):
+        """
+        Simulates a recurrently connected network of neuron pools, training on a target 
+        distribution; i.e. performing density estimation as in Pecevski et al. 2016,
+        experiment 2. The loss function is the the KL divergence between target and 
+        estimated distributions. 
+        If save_plot == True, this will create a directory for each individual that 
+        contains a text file with individual params and plots for each trial.
+        """
+        # Prepare paths for each individual evaluation.
+        individual_directory = os.path.join(self.save_directory, str(self.run_number) + "_" + helpers.get_now_string())
+        text_path = os.path.join(individual_directory, 'params.txt')
+        
+        # Declare fitness metrics.
+        kld_joint_experimental = []
+        kld_joint_experimental_valid = []
+
+        # Run a number of trials to calculate mean fitness of this individual
+        for trial in range(self.num_fitness_trials):
+            nest.ResetKernel()
+            self.set_kernel_defaults()
+
+            self.individual = traj.individual
+            self.prepare_network(
+                distribution=self.distribution, 
+                dependencies=self.dependencies, 
+                num_discrete_vals=2, 
+                special_params=self.special_params)
+            
+            # Create directory and params file if requested.
+            if save_plot:
+                helpers.create_directory(individual_directory)
+                helpers.save_text(self.network.parameter_string(), text_path)
+
+            # Get the network's target distribution.
+            distribution = self.network.distribution
+
+            # Train for the learning period set in the parameters.
+            t = 0
+            i = 0
+            set_second_rate = False
+            last_set_intrinsic_rate = self.network.params['first_bias_rate']
+            skip_kld = 1000
+            set_second_rate = False
+            clones = []
+            last_klds = []
+
+            while t <= self.network.params['learning_time']:
+                # Inject a current for some time.
+                self.network.present_random_sample() 
+                self.network.clear_currents()
+                t += self.network.params['sample_presentation_time']
+
+                # Measure experimental joint distribution from spike activity.
+                if save_plot and run_intermediates and i % skip_kld == 0:
+                    # Clone network for later tests.
+                    clone = self.network.clone()
+
+                    # Stop plasticity on clone for testing.
+                    clone.set_intrinsic_rate(0.0)
+                    clone.set_plasticity_learning_time(0)
+
+                    clones.append(clone)
+                                    
+                # Set different intrinsic rate.
+                if t >= self.network.params['learning_time'] * self.network.params['intrinsic_step_time_fraction'] and set_second_rate == False:
+                    set_second_rate = True
+                    last_set_intrinsic_rate = self.network.params['second_bias_rate']
+                    self.network.set_intrinsic_rate(last_set_intrinsic_rate)
+            
+                i += 1
+
+            self.network.set_intrinsic_rate(0.0)
+            self.network.set_plasticity_learning_time(0)
+
+            # Measure experimental joint distribution on para-experiment clones.
+            if save_plot:
+                plot_exp_joints = [g.measure_experimental_joint_distribution(duration=20000.0) for g in clones]
+                plot_joint_klds = [helpers.get_KL_divergence(p, distribution) for p in plot_exp_joints] 
+                plot_joint_klds_valid = [helpers.get_KL_divergence(p, distribution, exclude_invalid_states=True) for p in plot_exp_joints] 
+
+            # Plot experimental KL divergence of joint distribution.
+            if save_plot:
+                fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(8, 20))
+                if run_intermediates:
+                    ax[0].plot(np.array(range(len(plot_joint_klds))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_joint_klds, label="Experimental KLD")
+                    ax[0].plot(np.array(range(len(plot_joint_klds_valid))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_joint_klds_valid, label="Experimental KLD (valid only)")
+                    ax[0].legend(loc='upper center')
+                    ax[0].set_title('KL Divergence between target and estimated joint distribution')
+
+            # Measure experimental KL divergence of entire network by averaging on a few runs.
+            last_clone = self.network.clone()
+            experimental_joint = self.network.measure_experimental_joint_distribution(duration=20000.0)
+            kld_joint_experimental.append(helpers.get_KL_divergence(experimental_joint, distribution))
+            kld_joint_experimental_valid.append(helpers.get_KL_divergence(experimental_joint, distribution, exclude_invalid_states=True))
+
+            # Draw spiking of output neurons.
+            if save_plot:
+                last_clone.draw_stationary_state(duration=500, ax=ax[1])
+                fig.savefig(os.path.join(individual_directory, str(trial) + '.png'))
+                plt.close()
+
+            # Draw histogram of states.
+            if save_plot:
+                fig = helpers.plot_histogram(distribution, experimental_joint, self.network.num_discrete_vals, "p*(y)", "p(y;θ)", renormalise_estimated_states=True)
+                fig.savefig(os.path.join(individual_directory, str(trial) + '_histogram.png'))
+                plt.close()
+
+        self.run_number += 1
+
+        mean_loss = np.sum(kld_joint_experimental) / len(kld_joint_experimental)
+        mean_loss_valid = np.sum(kld_joint_experimental_valid) / len(kld_joint_experimental_valid)
+
+        logging.info("[Loss] Experimental network joint KLD is {}".format(mean_loss))
+        logging.info("Experimental network joint KLD (on valid states only) is {}".format(mean_loss_valid))
 
         return (mean_loss, )
 

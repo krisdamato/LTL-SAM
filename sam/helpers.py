@@ -267,6 +267,42 @@ def plot_histogram(target, estimated, num_discrete_values, target_label, estimat
 	return fig
 
 
+def plot_all(multimeter, spikereader):
+	"""
+	Plots the spike trace and voltage traces of a single neuron on the same figure.
+	"""
+	# Get spikes and plot.
+	spikes = nest.GetStatus(spikereader, keys='events')[0]
+	senders = spikes['senders']
+	times = spikes['times']
+	dmm = nest.GetStatus(multimeter)[0]
+	Vms = dmm["events"]["V_m"]
+	bias = dmm["events"]["bias"]
+	ts = dmm["events"]["times"]
+
+	plt.figure()
+	plt.plot(ts, Vms)
+	plt.plot(ts, bias)
+	plt.plot(times, senders, '|')
+	plt.show()
+
+
+def plot_spikes(self, spikereader):
+	"""
+	Plots the spike trace from all neurons the spikereader was connected to during
+	the simulation.
+	"""
+	# Get spikes and plot.
+	spikes = nest.GetStatus(spikereader, keys='events')[0]
+	senders = spikes['senders']
+	times = spikes['times']
+
+	# Plot
+	plt.figure()
+	plt.plot(times, senders, '|')
+	plt.show()
+
+
 def get_dictionary_string(d):
 	"""
 	Outputs a nicely formatted string with a dictionary's content.
