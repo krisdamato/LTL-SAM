@@ -744,7 +744,7 @@ class SPINetworkOptimizee(Optimizee):
                 sr = self.network.connect_reader(self.network.all_neurons)
 
             while t <= 20000:#self.network.params['learning_time']:
-                if i % 10 == 0: print("Time: {}".format(t))
+                if i % 50 == 0: print("Time: {}".format(t))
 
                 # Inject a current for some time.
                 self.network.present_random_sample() 

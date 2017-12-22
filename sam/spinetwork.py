@@ -32,10 +32,10 @@ class SPINetwork:
 		param_spec = {
 			'stdp_rate_initial':(0.0, 0.01),
 			'stdp_rate_final':(0.0, 0.01),
-			'weight_baseline':(-10.0, 0.0),
+			'weight_baseline':(-1.0, 0.0),
 			'T':(0.0, 1.0),
 			'bias_rate_1':(0.0, 0.1),
-			'bias_baseline':(-40.0, 0.0),
+			'bias_baseline':(-10.0, 0.0),
 			'prob_exp_term':(0.0, 1.0),
 			'prob_exp_term_scale':(0.0, 5.0),
 			'bias_relative_spike_rate':(1e-5, 1.0),
@@ -45,10 +45,10 @@ class SPINetwork:
 			'connectivity_chi_chi':(0.01, 1.0),
 			'delay_max':(0.1, 10.0),
 			'delay_min_ratio':(0.0, 1.0),
-			'weight_chi_inhibitors':(0.0, 20.0),
-			#'weight_chi_self':(0.0, 20.0),
-			'weight_inhibitors_chi':(-20.0, 0.0),
-			'weight_inhibitors_self':(0.0, 20.0),
+			'weight_chi_inhibitors':(0.0, 10.0),
+			#'weight_chi_self':(0.0, 10.0),
+			'weight_inhibitors_chi':(-10.0, 0.0),
+			'weight_inhibitors_self':(0.0, 10.0),
 			}
 
 		return param_spec
@@ -414,6 +414,7 @@ class SPINetwork:
 		for ym in dependencies:
 			self.all_neurons += self.chi_pools[ym] + self.inhibitory_pools[ym]
 
+		logging.info("Created {} neurons.".format(len(self.all_neurons)))
 		self.initialised = True
 
 
