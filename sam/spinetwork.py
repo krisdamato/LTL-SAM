@@ -39,12 +39,12 @@ class SPINetwork:
 			'prob_exp_term':(0.0, 1.0),
 			'prob_exp_term_scale':(0.0, 5.0),
 			'bias_relative_spike_rate':(1e-5, 1.0),
-			'connectivity_chi_inh':(0.0, 1.0),
-			'connectivity_inh_chi':(0.0, 1.0),
-			'connectivity_inh_self':(0.0, 1.0),
-			'connectivity_chi_chi':(0.01, 1.0),
-			'delay_max':(0.1, 10.0),
-			'delay_min_ratio':(0.0, 1.0),
+			#'connectivity_chi_inh':(0.0, 1.0),
+			#'connectivity_inh_chi':(0.0, 1.0),
+			#'connectivity_inh_self':(0.0, 1.0),
+			#'connectivity_chi_chi':(0.01, 1.0),
+			#'delay_max':(0.1, 10.0),
+			#'delay_min_ratio':(0.0, 1.0),
 			'weight_chi_inhibitors':(0.0, 10.0),
 			#'weight_chi_self':(0.0, 10.0),
 			'weight_inhibitors_chi':(-10.0, 0.0),
@@ -62,8 +62,8 @@ class SPINetwork:
 		# Set common properties.
 		tau = 10.0 if 'tau' not in override_params else override_params['tau']
 		delay_fixed = 1.0 if 'delay_fixed' not in override_params else override_params['delay_fixed']
-		delay_max = 10.0 if 'delay_max' not in override_params else round(override_params['delay_max'], 1)
-		delay_min = 0.1 if 'delay_min_ratio' not in override_params else round(max(override_params['delay_min_ratio'] * delay_max, 0.1), 1)
+		delay_max = 4.0 if 'delay_max' not in override_params else round(override_params['delay_max'], 1)
+		delay_min = 1.0 if 'delay_min_ratio' not in override_params else round(max(override_params['delay_min_ratio'] * delay_max, 0.1), 1)
 
 		# Set all derived and underived properties.
 		params = {
@@ -80,13 +80,13 @@ class SPINetwork:
 			'bias_inhibitors':-10.0,
 			'bias_chi_mean':5.0,
 			'bias_chi_std':0.1,
-			'connectivity_chi_inh':0.5,
-			'connectivity_inh_chi':0.5,
-			'connectivity_inh_self':0.5,
-			'connectivity_chi_chi':0.5,
+			'connectivity_chi_inh':0.575,
+			'connectivity_inh_chi':0.6,
+			'connectivity_inh_self':0.55,
+			'connectivity_chi_chi':1.0,
 			'connectivity_chi_self':0.0,
-			'current_plus_chi':50.0,
-			'current_minus_chi':-50.0,
+			'current_plus_chi':20.0,
+			'current_minus_chi':-20.0,
 			'dead_time_inhibitors':3.0,
 			'delay_chi_inhibitors':delay_fixed,
 			'delay_inhibitors_chi':delay_fixed,
@@ -96,7 +96,7 @@ class SPINetwork:
 			'delay_inhibitors_inhibitors':delay_fixed,
 			'delay_devices':delay_min,
 			'learning_time':300000,
-			'pool_size_excitatory':20,
+			'pool_size_excitatory':5,
 			'pool_size_inhibitory':10,
 			'prob_linear_term':0.0,
 			'prob_exp_term':1.0/tau,
