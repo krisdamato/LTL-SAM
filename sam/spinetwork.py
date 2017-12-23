@@ -404,6 +404,9 @@ class SPINetwork:
 			input_vars = sorted(ys)
 			input_neurons = tuple([n for y in input_vars for n in self.chi_pools[y]])
 			
+			# Re-assign NEST defaults since each subnetwork overwrites them.
+			self.set_nest_defaults(self.subnetwork_params[ym])
+
 			# Connect chi pools with each other.
 			nest.Connect(input_neurons, 
 				self.chi_pools[ym], 
