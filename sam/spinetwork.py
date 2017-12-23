@@ -645,7 +645,6 @@ class SPINetwork:
 
 		# Update all connections between neurons in these pools.
 		for from_pool, to_pool in zip(chi_neurons_from, chi_neurons_to):
-			print(from_pool, to_pool)
 			synapses = nest.GetConnections(from_pool, to_pool)
 			if len(synapses) > 0:
 				nest.SetStatus(synapses, {'learning_time':learning_time})
