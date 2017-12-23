@@ -641,10 +641,11 @@ class SPINetwork:
 		"""
 		# Get connections between chi pools.
 		chi_neurons_to = [self.chi_pools[ym] for ym in self.__get_variables_ordered()]
-		chi_neurons_from = [n for ym in self.__get_variables_ordered() for ys in self.dependencies[ym] for n in self.chi_pools[ys]]
+		chi_neurons_from = [self.chi_pools[ys] for ym in self.__get_variables_ordered() for ys in self.dependencies[ym]]
 
 		# Update all connections between neurons in these pools.
 		for from_pool, to_pool in zip(chi_neurons_from, chi_neurons_to):
+			print(from_pool, to_pool)
 			synapses = nest.GetConnections(from_pool, to_pool)
 			if len(synapses) > 0:
 				nest.SetStatus(synapses, {'learning_time':learning_time})
