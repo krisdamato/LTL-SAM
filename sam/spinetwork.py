@@ -523,8 +523,6 @@ class SPINetwork:
 		conns = nest.GetConnections(self.all_neurons, self.all_neurons)
 		weights = nest.GetStatus(conns, 'weight')
 		conns_new = nest.GetConnections(new_network.all_neurons, new_network.all_neurons)
-		print("Conns old: {}".format(len(conns)))
-		print("Conns new: {}".format(len(conns_new)))
 
 		nest.SetStatus(conns_new, 'weight', weights)
 

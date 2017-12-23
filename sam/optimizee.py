@@ -762,7 +762,7 @@ class SPINetworkOptimizee(Optimizee):
                     nest.Connect(self.network.chi_pools[ym], spikereader, syn_spec={'delay':self.network.params['delay_devices']})
 
             while t <= self.network.params['learning_time']:
-                if i % 1000 == 0: print("Time: {}".format(t))
+                if i % 1000 == 0: logging.info("Time: {}".format(t))
 
                 # Inject a current for some time.
                 self.network.present_random_sample() 
