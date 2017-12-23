@@ -50,6 +50,7 @@ class SPINetwork:
 			'weight_inhibitors_chi':(-5.0, 0.0),
 			'weight_inhibitors_self':(0.0, 5.0),
 			'weight_baseline':(-10.0, 0.0),
+			'weight_chi_chi_max':(0.01, 5.0)
 			}
 
 		return param_spec
@@ -461,7 +462,7 @@ class SPINetwork:
 		Returns a list of parameters that are to be specialised by each subnetwork in the 
 		graph network, i.e. that can evolve separately.
 		"""
-		repeats = ['bias_baseline', 'weight_baseline']
+		repeats = ['bias_baseline', 'weight_chi_chi_max']
 		return repeats
 
 

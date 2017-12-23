@@ -681,21 +681,6 @@ class SPINetworkOptimizee(Optimizee):
 
         # Convert the trajectory individual to a dictionary.
         params = {k:self.individual[k] for k in SPINetwork.parameter_spec(len(dependencies)).keys()}
-        # params = {'stdp_rate_initial': 0.0012709300041790395, 
-        # 'weight_baseline': -0.38695442699260085, 
-        # 'T': 0.43074431008797132, 
-        # 'bias_rate_1': 0.0040282895209330935, 
-        # 'bias_baseline_4': -2.6794520226491532, 
-        # 'weight_inhibitors_self': 7.5026003515940261, 
-        # 'prob_exp_term': 0.25808932639805615, 
-        # 'bias_baseline_1': -9.5185545644801142, 
-        # 'bias_baseline_2': -1.7356442763474558, 
-        # 'weight_chi_inhibitors': 0.65538293513869694, 
-        # 'stdp_rate_final': 0.0092274781194475707, 
-        # 'prob_exp_term_scale': 4.0966934437520557, 
-        # 'weight_inhibitors_chi': -5.8272765968916627, 
-        # 'bias_relative_spike_rate': 0.9040233613388623, 
-        # 'bias_baseline_3': -3.7822811253028767}
 
         # Create a SPI network with the correct parameters.
         self.network.create_network(
