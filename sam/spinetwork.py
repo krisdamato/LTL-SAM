@@ -747,7 +747,7 @@ class SPINetwork:
 		variable-value encoding populations is zero.
 		"""
 		state = [0 for i in range(len(self.dependencies))]
-		for ym in self.__get_variables_ordered():
+		for i, ym in enumerate(self.__get_variables_ordered()):
 			variable_neurons = [self.get_variable_neurons(ym, x) for x in range(1, 1 + self.num_discrete_vals)]
 
 			# Count the number of spikes of each subpool.
