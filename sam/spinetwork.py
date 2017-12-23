@@ -640,12 +640,14 @@ class SPINetwork:
 		Note: raises an error if the neurons don't support learning time.
 		"""
 		# Get connections between chi pools.
-		chi_neurons = [n for ym in self.__get_variables_ordered() for n in self.chi_pools[ym]]
+		chi_neurons_to = [self.chi_pools[ym] for ym in self.__get_variables_ordered()]
+		chi_neurons_from = [n for ym in self.__get_variables_ordered() for ys in self.dependencies[ym] for n in self.chi_pools[ys]]
 
 		# Update all connections between neurons in these pools.
-		synapses = nest.GetConnections(chi_neurons, chi_neurons)
-		if len(synapses) > 0:
-			nest.SetStatus(synapses, {'learning_time':learning_time})
+		for from_pool, to_pool in zip(chi_neurons_from, chi_neurons_to):
+			synapses = nest.GetConnections(from_pool, to_pool)
+			if len(synapses) > 0:
+				nest.SetStatus(synapses, {'learning_time':learning_time})
 		
 
 	def set_plasticity_learning_rate(self, rate):
