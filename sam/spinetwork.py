@@ -35,7 +35,7 @@ class SPINetwork:
 			'weight_baseline':(-1.0, 0.0),
 			'T':(0.0, 1.0),
 			'bias_rate_1':(0.0, 0.1),
-			'bias_baseline':(-10.0, 0.0),
+			'bias_baseline':(-40.0, 0.0),
 			'prob_exp_term':(0.0, 1.0),
 			'prob_exp_term_scale':(0.0, 5.0),
 			'bias_relative_spike_rate':(1e-5, 1.0),
@@ -45,10 +45,11 @@ class SPINetwork:
 			#'connectivity_chi_chi':(0.01, 1.0),
 			#'delay_max':(0.1, 10.0),
 			#'delay_min_ratio':(0.0, 1.0),
-			'weight_chi_inhibitors':(0.0, 10.0),
+			'weight_chi_inhibitors':(0.0, 5.0),
 			#'weight_chi_self':(0.0, 10.0),
-			'weight_inhibitors_chi':(-10.0, 0.0),
-			'weight_inhibitors_self':(0.0, 10.0),
+			'weight_inhibitors_chi':(-5.0, 0.0),
+			'weight_inhibitors_self':(0.0, 5.0),
+			'weight_baseline':(-10.0, 0.0),
 			}
 
 		return param_spec
@@ -457,7 +458,7 @@ class SPINetwork:
 		Returns a list of parameters that are to be specialised by each subnetwork in the 
 		graph network, i.e. that can evolve separately.
 		"""
-		repeats = ['bias_baseline']
+		repeats = ['bias_baseline', 'weight_baseline']
 		return repeats
 
 

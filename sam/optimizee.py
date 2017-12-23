@@ -839,7 +839,7 @@ class SPINetworkOptimizee(Optimizee):
         logging.info("[Loss] Experimental network joint KLD is {}".format(mean_loss))
         logging.info("Experimental network joint KLD (on valid states only) is {}".format(mean_loss_valid))
 
-        return (mean_loss, )
+        return (mean_loss_valid, )
 
 
     def end(self):
