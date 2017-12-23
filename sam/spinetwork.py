@@ -103,7 +103,7 @@ class SPINetwork:
 			'prob_exp_term_scale':1.0,
 			'neuron_type_chi':'srm_pecevski_alpha',
 			'neuron_type_inhibitors':'srm_pecevski_alpha',
-			'sample_presentation_time':200.0,
+			'sample_presentation_time':100.0,
 			'stdp_rate_initial':0.002,
 			'stdp_rate_final':0.0006,
 			'stdp_time_fraction':1.0,
@@ -346,7 +346,10 @@ class SPINetwork:
 		self.subnetwork_params = dict()
 
 		# Create multiple excitatory pools for each dependency, ignoring input for now.
-		for ym, ys in dependencies.items():
+		for ym in self.__get_variables_ordered():
+			# Create the chi pools in order of variable name.
+			ys = dependencies[ym]
+
 			subnetwork_params = self.filter_repeat_params(override_params, ym)
 			self.subnetwork_params[ym] = {**subnetwork_params, **special_params[ym]} if ym in special_params else subnetwork_params.copy()
 			subnetwork_vars = sorted([ym] + ys)
@@ -395,7 +398,8 @@ class SPINetwork:
 			self.subnetwork_distributions[ym] = helpers.compute_marginal_distribution(distribution, subnetwork_vars, num_discrete_vals)
 		
 		# Specify input pools for each subnetwork, making the right recurrent connections.
-		for ym, ys in dependencies.items():
+		for ym in self.__get_variables_ordered():
+			ys = dependencies[ym]
 			input_vars = sorted(ys)
 			input_neurons = tuple([n for y in input_vars for n in self.chi_pools[y]])
 			
@@ -411,11 +415,18 @@ class SPINetwork:
 
 		# Track all neurons.
 		self.all_neurons = tuple()
-		for ym in dependencies:
+		for ym in self.__get_variables_ordered():
 			self.all_neurons += self.chi_pools[ym] + self.inhibitory_pools[ym]
 
 		logging.info("Created {} neurons.".format(len(self.all_neurons)))
 		self.initialised = True
+
+
+	def __get_variables_ordered(self):
+		"""
+		Returns the variables ordered by name in an array, e.g. ['y1', 'y2']
+		"""
+		return ['y' + str(i) for i in range(1, len(self.dependencies) + 1)]
 
 
 	@staticmethod
@@ -500,7 +511,7 @@ class SPINetwork:
 			special_params=self.special_params)
 		
 		# Copy bias values.
-		for ym in new_network.dependencies:
+		for ym in new_network.__get_variables_ordered():
 			if new_network.subnetwork_params[ym]['neuron_type_chi'] == 'srm_pecevski_alpha':
 				chi_biases = nest.GetStatus(self.chi_pools[ym], 'bias')
 				nest.SetStatus(new_network.chi_pools[ym], 'bias', chi_biases)
@@ -512,6 +523,9 @@ class SPINetwork:
 		conns = nest.GetConnections(self.all_neurons, self.all_neurons)
 		weights = nest.GetStatus(conns, 'weight')
 		conns_new = nest.GetConnections(new_network.all_neurons, new_network.all_neurons)
+		print("Conns old: {}".format(len(conns)))
+		print("Conns new: {}".format(len(conns_new)))
+
 		nest.SetStatus(conns_new, 'weight', weights)
 
 		return new_network
@@ -586,7 +600,7 @@ class SPINetwork:
 		state: a tuple containing the values to be encoded by the chi populations,
 		one value for each subnetwork of chi neurons.
 		"""
-		for ym in self.chi_pools:
+		for ym in self.__get_variables_ordered():
 			var_index = int(ym[1:]) - 1
 			for x in range(1, self.num_discrete_vals + 1):
 				nodes = self.get_variable_neurons(ym, x)
@@ -609,7 +623,7 @@ class SPINetwork:
 		Sets the learning rate of intrinsic plasticity in all chi subnetworks.
 		Applicable only for SRM Peceveski neurons.
 		"""
-		for ym in self.chi_pools:
+		for ym in self.__get_variables_ordered():
 			if self.subnetwork_params[ym]['neuron_type_chi'] == 'srm_pecevski_alpha':
 				nest.SetStatus(self.chi_pools[ym], {'eta_bias':intrinsic_rate})
 			else:
@@ -622,7 +636,7 @@ class SPINetwork:
 		Note: raises an error if the neurons don't support learning time.
 		"""
 		# Get connections between chi pools.
-		chi_neurons = [n for ym in self.dependencies for n in self.chi_pools[ym]]
+		chi_neurons = [n for ym in self.__get_variables_ordered() for n in self.chi_pools[ym]]
 
 		# Update all connections between neurons in these pools.
 		synapses = nest.GetConnections(chi_neurons, chi_neurons)
@@ -636,7 +650,7 @@ class SPINetwork:
 		Note: raises an error if the neurons don't support lambda.
 		"""
 		# Get connections between chi pools.
-		chi_neurons = [n for ym in self.dependencies for n in self.chi_pools[ym]]
+		chi_neurons = [n for ym in self.__get_variables_ordered() for n in self.chi_pools[ym]]
 
 		# Update all connections between neurons in these pools.
 		synapses = nest.GetConnections(chi_neurons, chi_neurons)
@@ -725,7 +739,7 @@ class SPINetwork:
 		return nest.GetStatus(nest.GetConnections([source], [target]), 'weight')[0]
 
 
-	def determine_state(self, spikes):
+	def __determine_state(self, spikes):
 		"""
 		Given a set of spikes of the network, this determines which of
 		the network states the network is in, or whether it is in an 
@@ -733,9 +747,8 @@ class SPINetwork:
 		variable-value encoding populations is zero.
 		"""
 		state = [0 for i in range(len(self.dependencies))]
-		for i in range(len(self.dependencies)):
-			var_name = "y" + str(i + 1)
-			variable_neurons = [self.get_variable_neurons(var_name, x) for x in range(1, 1 + self.num_discrete_vals)]
+		for ym in self.__get_variables_ordered():
+			variable_neurons = [self.get_variable_neurons(ym, x) for x in range(1, 1 + self.num_discrete_vals)]
 
 			# Count the number of spikes of each subpool.
 			counts = [sum(spike in spikes for spike in value_neurons) for value_neurons in variable_neurons]
@@ -755,7 +768,7 @@ class SPINetwork:
 		return tuple(state)
 
 
-	def measure_experimental_joint_distribution(self, duration, timestep=1.0):
+	def measure_experimental_joint_distribution(self, duration, timestep=10.0):
 		"""
 		Lets the network generate spontaneous spikes for a long duration
 		and then uses the spike activity to calculate the frequency of network 
@@ -763,17 +776,8 @@ class SPINetwork:
 		"""
 		logging.info("Starting experimental joint distribution measurement on SPI network.")
 
-		# Attach a spike reader to all population coding layers.
-		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
-		for ym in self.dependencies:
-			nest.Connect(self.chi_pools[ym], spikereader, syn_spec={'delay':self.params['delay_devices']})
-
-		# Clear currents.
-		self.clear_currents()
-
-		# Stop all plasticity.
-		self.set_intrinsic_rate(0.0)
-		self.set_plasticity_learning_time(0)
+		# Attach a spike reader.
+		spikereader = self.__stop_activity_attach_reader()
 
 		# Get current time.
 		start_time = nest.GetKernelStatus('time')
@@ -783,6 +787,35 @@ class SPINetwork:
 
 		# Get spikes.
 		spikes = nest.GetStatus(spikereader, keys='events')[0]
+
+		return self.get_distribution_from_spikes(spikes, start_time, start_time + duration, 1.5 * self.params['tau'], timestep)
+
+
+	def __stop_activity_attach_reader(self):
+		"""
+		Stops all plasticity and input and attaches a reader to the excitatory subnetworks, returning it.
+		"""
+		# Attach a spike reader to all population coding layers.
+		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
+		for ym in self.__get_variables_ordered():
+			nest.Connect(self.chi_pools[ym], spikereader, syn_spec={'delay':self.params['delay_devices']})
+
+		# Clear currents.
+		self.clear_currents()
+
+		# Stop all plasticity.
+		self.set_intrinsic_rate(0.0)
+		self.set_plasticity_learning_time(0)
+
+		return spikereader
+
+
+	def get_distribution_from_spikes(self, spikes, start_time, end_time, averaging_window = None, timestep=1.0):
+		"""
+		Helper function that returns the distribution represented by the 
+		spikes passed.
+		"""
+		averaging_window = self.params['tau'] if averaging_window is None else averaging_window
 		senders = spikes['senders']
 		times = spikes['times']
 
@@ -791,12 +824,11 @@ class SPINetwork:
 		zeros = 0
 
 		# For every timestep, figure out the network state we are in.
-		tau = self.params['tau']
-		steps = np.arange(start_time, start_time + duration, timestep)
+		steps = np.arange(start_time, end_time, timestep)
 		for t in steps:
-			spike_indices = [i for i, st in enumerate(times) if t - tau < st <= t]
+			spike_indices = [i for i, st in enumerate(times) if t - averaging_window < st <= t]
 			state_spikes = [senders[i] for i in spike_indices]
-			state = self.determine_state(state_spikes)
+			state = self.__determine_state(state_spikes)
 			joint[state] += 1
 			if state in self.distribution: 
 				pass
@@ -821,7 +853,7 @@ class SPINetwork:
 		"""
 		# Attach a spike reader to all rate coding pools.
 		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
-		for ym in self.dependencies:
+		for ym in self.__get_variables_ordered():
 			nest.Connect(self.chi_pools[ym], spikereader, syn_spec={'delay':self.params['delay_devices']})
 
 		# Clear currents.
@@ -845,9 +877,8 @@ class SPINetwork:
 		# Map neuron indices to a range starting from 0, for clarity in reproduction.
 		neuron_map = {}
 		index = 0
-		for ym in range(len(self.chi_pools)):
-			var = 'y' + str(ym + 1)
-			subnetwork = self.chi_pools[var]
+		for ym in self.__get_variables_ordered():
+			subnetwork = self.chi_pools[ym]
 			for z in subnetwork:
 				neuron_map[z] = index
 				index += 1

@@ -681,6 +681,21 @@ class SPINetworkOptimizee(Optimizee):
 
         # Convert the trajectory individual to a dictionary.
         params = {k:self.individual[k] for k in SPINetwork.parameter_spec(len(dependencies)).keys()}
+        # params = {'stdp_rate_initial': 0.0012709300041790395, 
+        # 'weight_baseline': -0.38695442699260085, 
+        # 'T': 0.43074431008797132, 
+        # 'bias_rate_1': 0.0040282895209330935, 
+        # 'bias_baseline_4': -2.6794520226491532, 
+        # 'weight_inhibitors_self': 7.5026003515940261, 
+        # 'prob_exp_term': 0.25808932639805615, 
+        # 'bias_baseline_1': -9.5185545644801142, 
+        # 'bias_baseline_2': -1.7356442763474558, 
+        # 'weight_chi_inhibitors': 0.65538293513869694, 
+        # 'stdp_rate_final': 0.0092274781194475707, 
+        # 'prob_exp_term_scale': 4.0966934437520557, 
+        # 'weight_inhibitors_chi': -5.8272765968916627, 
+        # 'bias_relative_spike_rate': 0.9040233613388623, 
+        # 'bias_baseline_3': -3.7822811253028767}
 
         # Create a SPI network with the correct parameters.
         self.network.create_network(
@@ -734,17 +749,20 @@ class SPINetworkOptimizee(Optimizee):
             i = 0
             set_second_rate = False
             last_set_intrinsic_rate = self.network.params['bias_rate_1']
-            skip_kld = 500
+            skip_kld = 1000
             set_second_rate = False
             clones = []
             last_klds = []
             debug = False
 
             if debug:
-                sr = self.network.connect_reader(self.network.all_neurons)
+                # Attach a spike reader to all population coding layers.
+                spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
+                for ym in self.dependencies:
+                    nest.Connect(self.network.chi_pools[ym], spikereader, syn_spec={'delay':self.network.params['delay_devices']})
 
             while t <= self.network.params['learning_time']:
-                # if i % 50 == 0: print("Time: {}".format(t))
+                if i % 1000 == 0: print("Time: {}".format(t))
 
                 # Inject a current for some time.
                 self.network.present_random_sample() 
@@ -753,7 +771,10 @@ class SPINetworkOptimizee(Optimizee):
 
                 # Draw debug spikes.
                 if debug:
-                    helpers.plot_spikes(sr)
+                    helpers.plot_spikes(spikereader)
+                    spikes = nest.GetStatus(spikereader, keys='events')[0]
+                    exp_joint = self.network.get_distribution_from_spikes(spikes, t - self.network.params['sample_presentation_time'], t)
+                    print(exp_joint)
 
                 # Measure experimental joint distribution from spike activity.
                 if save_plot and run_intermediates and i % skip_kld == 0:
