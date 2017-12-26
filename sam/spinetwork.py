@@ -39,7 +39,6 @@ class SPINetwork:
 			'prob_exp_term':(0.0, 100.0),
 			'prob_exp_term_scale':(0.0, 5.0),
 			'bias_relative_spike_rate':(1e-5, 1.0),
-			'bias_inhibitors':(-10.0, 10.0),
 			'connectivity_chi_inh':(0.0, 1.0),
 			'connectivity_inh_chi':(0.0, 1.0),
 			'connectivity_inh_self':(0.0, 1.0),
@@ -97,7 +96,7 @@ class SPINetwork:
 			'delay_chi_self':delay_fixed,
 			'delay_chi_chi_min':delay_min,
 			'delay_chi_chi_max':delay_max,
-			'delay_inhibitors_inhibitors':delay_fixed,
+			'delay_inhibitors_self':delay_fixed,
 			'delay_devices':delay_min,
 			'learning_time':300000,
 			'pool_size_excitatory':5,
@@ -267,10 +266,10 @@ class SPINetwork:
 
 		# Inhibitors-inhibitors synapses.
 		if params['synapse_type_inhibitors_self'] == 'static_synapse':
-			self.inhibitors_inhibitors_synapse_params={
+			self.inhibitors_self_synapse_params={
 				'model':'static_synapse',
 				'weight':params['weight_inhibitors_self'],
-				'delay':params['delay_inhibitors_inhibitors']
+				'delay':params['delay_inhibitors_self']
 				}
 		else:
 			raise NotImplementedError
@@ -380,7 +379,7 @@ class SPINetwork:
 			nest.Connect(self.inhibitory_pools[ym],
 				self.inhibitory_pools[ym],
 				conn_spec=self.inh_self_connectivity_params,
-				syn_spec=self.inhibitors_inhibitors_synapse_params)
+				syn_spec=self.inhibitors_self_synapse_params)
 
 			# Self-connect excitatory pools.
 			value_pool = [self.get_variable_neurons(ym, x) for x in range(1, num_discrete_vals + 1)]
