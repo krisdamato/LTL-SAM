@@ -39,6 +39,7 @@ class SPINetwork:
 			'prob_exp_term':(0.0, 100.0),
 			'prob_exp_term_scale':(0.0, 5.0),
 			'bias_relative_spike_rate':(1e-5, 1.0),
+			'bias_inhibitors':(-10.0, 10.0),
 			'connectivity_chi_inh':(0.0, 1.0),
 			'connectivity_inh_chi':(0.0, 1.0),
 			'connectivity_inh_self':(0.0, 1.0),
