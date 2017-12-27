@@ -88,7 +88,7 @@ class SPINetwork:
 			'connectivity_inh_self':0.55,
 			'connectivity_chi_chi':1.0,
 			'connectivity_chi_self':0.0,
-			'current_plus_chi':20.0,
+			'current_plus_chi':0.0,
 			'current_minus_chi':-20.0,
 			'dead_time_inhibitors':3.0,
 			'delay_chi_inhibitors':delay_fixed,
