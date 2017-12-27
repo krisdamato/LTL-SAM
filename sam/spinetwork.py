@@ -245,7 +245,9 @@ class SPINetwork:
 					'distribution':'uniform',
 					'low':params['delay_chi_chi_min'],
 					'high':params['delay_chi_chi_max'],
-					}
+					},
+				'max_weight':params['weight_chi_chi_max'],
+				'min_weight':params['weight_chi_chi_min']
 				}
 		else:
 			raise NotImplementedError
