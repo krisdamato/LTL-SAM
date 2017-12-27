@@ -6,7 +6,7 @@ import pylab
 import random
 import sam.helpers as helpers
 import time
-from collections import defaultdict, OrderedDict
+from collections import Counter, defaultdict, OrderedDict
 
 
 class SPINetwork:
@@ -140,11 +140,9 @@ class SPINetwork:
 		return params
 
 
-	def set_nest_defaults(self, params):
+	def set_kernel_settings(self):
 		"""
-		Clears and sets the NEST defaults from the parameters.
-		NOTE: Any change of the network parameters needs a corresponding call to
-		this function in order to update settings.
+		Sets main NEST kernel settings.
 		"""
 		# Set NEST defaults.
 		n = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
@@ -160,6 +158,14 @@ class SPINetwork:
 
 		# Reduce NEST verbosity.
 		nest.set_verbosity('M_ERROR')
+
+
+	def set_nest_defaults(self, params):
+		"""
+		Clears and sets the NEST defaults from the parameters.
+		NOTE: Any change of the network parameters needs a corresponding call to
+		this function in order to update settings.
+		"""
 		nest.SetDefaults('static_synapse', params={'weight':params['weight_initial']})
 
 		nest.SetDefaults('stdp_pecevski_synapse', params={
@@ -334,6 +340,9 @@ class SPINetwork:
 			meant to evolve on a module-by-module basis initially.
 		The other parameters are as in SAMModule.
 		"""
+		# Set main kernel settings.
+		self.set_kernel_settings()
+
 		# Set parameter defaults.
 		self.params = self.get_spi_defaults(override_params)
 
@@ -745,35 +754,6 @@ class SPINetwork:
 		return nest.GetStatus(nest.GetConnections([source], [target]), 'weight')[0]
 
 
-	def __determine_state(self, spikes):
-		"""
-		Given a set of spikes of the network, this determines which of
-		the network states the network is in, or whether it is in an 
-		a zero-state, a zero-state being one in which the rate of both
-		variable-value encoding populations is zero.
-		"""
-		state = [0 for i in range(len(self.dependencies))]
-		for i, ym in enumerate(self.__get_variables_ordered()):
-			variable_neurons = [self.get_variable_neurons(ym, x) for x in range(1, 1 + self.num_discrete_vals)]
-
-			# Count the number of spikes of each subpool.
-			counts = [sum(spike in spikes for spike in value_neurons) for value_neurons in variable_neurons]
-
-			# If both are zero, we have a zero state.
-			if all(c == 0 for c in counts): break
-
-			# Otherwise, find the variable value with the highest
-			# number of spikes (or if equal, choose randomly).
-			max_count = np.amax(counts)
-			if counts.count(max_count) == 1: 
-				state[i] = counts.index(max_count) + 1 # +1 is necessary because the 0-state is not coded for.
-			else:
-				indices = [j for j, x in enumerate(counts) if x == max_count]
-				state[i] = random.choice(indices) + 1
-
-		return tuple(state)
-
-
 	def measure_experimental_joint_distribution(self, duration, timestep=10.0):
 		"""
 		Lets the network generate spontaneous spikes for a long duration
@@ -814,6 +794,36 @@ class SPINetwork:
 		self.set_plasticity_learning_time(0)
 
 		return spikereader
+
+
+	def __determine_state(self, spikes):
+		"""
+		Given a set of spikes of the network, this determines which of
+		the network states the network is in, or whether it is in an 
+		a zero-state, a zero-state being one in which the rate of both
+		variable-value encoding populations is zero.
+		Note: uses the first RNG to choose between equal-spike windows.
+		"""
+		state = [0 for i in range(len(self.dependencies))]
+		for i, ym in enumerate(self.__get_variables_ordered()):
+			variable_neurons = [self.get_variable_neurons(ym, x) for x in range(1, 1 + self.num_discrete_vals)]
+
+			# Count the number of spikes of each subpool.
+			counts = [sum(spike in spikes for spike in value_neurons) for value_neurons in variable_neurons]
+
+			# If both are zero, we have a zero state.
+			if all(c == 0 for c in counts): break
+
+			# Otherwise, find the variable value with the highest
+			# number of spikes (or if equal, choose randomly).
+			max_count = np.amax(counts)
+			if counts.count(max_count) == 1: 
+				state[i] = counts.index(max_count) + 1 # +1 is necessary because the 0-state is not coded for.
+			else:
+				indices = [j for j, x in enumerate(counts) if x == max_count]
+				state[i] = self.rngs[0].choice(indices) + 1
+
+		return tuple(state)
 
 
 	def get_distribution_from_spikes(self, spikes, start_time, end_time, averaging_window = None, timestep=1.0):

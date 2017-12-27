@@ -741,6 +741,14 @@ class SPINetworkOptimizee(Optimizee):
             debug = False
 
             if debug:
+                # Print biases.
+                print("Biases at start:\n",self.network.get_neuron_biases(self.network.all_neurons))
+
+                # Print weights between first and second chi population.
+                print("y1-y2 weights at start:\n", nest.GetStatus(nest.GetConnections(
+                    self.network.chi_pools['y1'], 
+                    self.network.chi_pools['y2']), 'weight'))
+
                 # Attach a spike reader to all population coding layers.
                 spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
                 for ym in self.dependencies:
@@ -756,6 +764,14 @@ class SPINetworkOptimizee(Optimizee):
 
                 # Draw debug spikes.
                 if debug:
+                    # Print biases.
+                    print("Biases now:\n",self.network.get_neuron_biases(self.network.all_neurons))
+
+                    # Print weights between first and second chi population.
+                    print("y1-y2 weights now:\n", nest.GetStatus(nest.GetConnections(
+                    self.network.chi_pools['y1'], 
+                    self.network.chi_pools['y2']), 'weight'))
+
                     helpers.plot_spikes(spikereader)
                     spikes = nest.GetStatus(spikereader, keys='events')[0]
                     exp_joint = self.network.get_distribution_from_spikes(spikes, t - self.network.params['sample_presentation_time'], t)
@@ -799,13 +815,13 @@ class SPINetworkOptimizee(Optimizee):
                     ax[0].set_title('KL Divergence between target and estimated joint distribution')
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
-            last_clone = self.network.clone()
             experimental_joint = self.network.measure_experimental_joint_distribution(duration=20000.0)
             kld_joint_experimental.append(helpers.get_KL_divergence(experimental_joint, distribution))
             kld_joint_experimental_valid.append(helpers.get_KL_divergence(experimental_joint, distribution, exclude_invalid_states=True))
 
             # Draw spiking of output neurons.
             if save_plot:
+                last_clone = self.network.clone()
                 last_clone.draw_stationary_state(duration=500, ax=ax[1])
                 fig.savefig(os.path.join(individual_directory, str(trial) + '.png'))
                 plt.close()
