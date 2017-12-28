@@ -810,7 +810,8 @@ class SPINetwork:
 			variable_neurons = [self.get_variable_neurons(ym, x) for x in range(1, 1 + self.num_discrete_vals)]
 
 			# Count the number of spikes of each subpool.
-			counts = [sum(spikes.count(spike) for spike in value_neurons) for value_neurons in variable_neurons]
+			spike_counts = Counter(spikes)
+			counts = [sum(spike_counts[spike] for spike in value_neurons) for value_neurons in variable_neurons]
 
 			# If both are zero, we have a zero state.
 			if all(c == 0 for c in counts): break
