@@ -54,13 +54,13 @@ def main():
 
 
     # NOTE: Innerloop simulator
-    optimizee = SPINetworkOptimizee(traj, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path, num_fitness_trials=1)
+    optimizee = SPINetworkOptimizee(traj, n_NEST_threads=1, time_resolution=1.0, plots_directory=paths.output_dir_path, num_fitness_trials=1)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
                                             MUTPB=1.0, NGEN=200, indpb=0.05,
                                             tournsize=20, matepar=0.5,
-                                            mutpar=1.0, remutate=True
+                                            mutpar=1.0, remutate=False
                                             )
 
     optimizer = GeneticAlgorithmOptimizer(traj, optimizee_create_individual=optimizee.create_individual,

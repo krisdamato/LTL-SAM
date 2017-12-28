@@ -681,7 +681,7 @@ class SPINetworkOptimizee(Optimizee):
 
         # Convert the trajectory individual to a dictionary.
         params = {k:self.individual[k] for k in SPINetwork.parameter_spec(len(dependencies)).keys()}
-
+        
         # Create a SPI network with the correct parameters.
         self.network.create_network(
             num_discrete_vals=num_discrete_vals, 
@@ -741,18 +741,15 @@ class SPINetworkOptimizee(Optimizee):
             debug = False
 
             if debug:
-                # Print biases.
-                print("Biases at start:\n",self.network.get_neuron_biases(self.network.all_neurons))
+                # Print connections between first and second chi pools.
+                conn = nest.GetConnections(self.network.chi_pools['y2'], self.network.chi_pools['y4'])
+                print("some connections:\n", conn)
 
-                # Print weights between first and second chi population.
-                print("y1-y2 weights at start:\n", nest.GetStatus(nest.GetConnections(
-                    self.network.chi_pools['y1'], 
-                    self.network.chi_pools['y2']), 'weight'))
+                # nest.SetStatus([conn[10]], {'debug':True})
 
                 # Attach a spike reader to all population coding layers.
                 spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
-                for ym in self.dependencies:
-                    nest.Connect(self.network.chi_pools[ym], spikereader, syn_spec={'delay':self.network.params['delay_devices']})
+                nest.Connect(self.network.all_neurons, spikereader, syn_spec={'delay':self.network.params['delay_devices']})
 
             while t <= self.network.params['learning_time']:
                 if i % 1000 == 0: logging.info("Time: {}".format(t))
@@ -764,14 +761,6 @@ class SPINetworkOptimizee(Optimizee):
 
                 # Draw debug spikes.
                 if debug:
-                    # Print biases.
-                    print("Biases now:\n",self.network.get_neuron_biases(self.network.all_neurons))
-
-                    # Print weights between first and second chi population.
-                    print("y1-y2 weights now:\n", nest.GetStatus(nest.GetConnections(
-                    self.network.chi_pools['y1'], 
-                    self.network.chi_pools['y2']), 'weight'))
-
                     helpers.plot_spikes(spikereader)
                     spikes = nest.GetStatus(spikereader, keys='events')[0]
                     exp_joint = self.network.get_distribution_from_spikes(spikes, t - self.network.params['sample_presentation_time'], t)
