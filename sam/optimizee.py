@@ -681,7 +681,7 @@ class SPINetworkOptimizee(Optimizee):
 
         # Convert the trajectory individual to a dictionary.
         params = {k:self.individual[k] for k in SPINetwork.parameter_spec(len(dependencies)).keys()}
-        
+
         # Create a SPI network with the correct parameters.
         self.network.create_network(
             num_discrete_vals=num_discrete_vals, 
@@ -805,8 +805,10 @@ class SPINetworkOptimizee(Optimizee):
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
             experimental_joint = self.network.measure_experimental_joint_distribution(duration=20000.0)
-            kld_joint_experimental.append(helpers.get_KL_divergence(experimental_joint, distribution))
-            kld_joint_experimental_valid.append(helpers.get_KL_divergence(experimental_joint, distribution, exclude_invalid_states=True))
+            this_kld = helpers.get_KL_divergence(experimental_joint, distribution)
+            this_kld_valid = helpers.get_KL_divergence(experimental_joint, distribution, exclude_invalid_states=True)
+            kld_joint_experimental.append(this_kld)
+            kld_joint_experimental_valid.append(this_kld_valid)
 
             # Draw spiking of output neurons.
             if save_plot:
@@ -820,6 +822,9 @@ class SPINetworkOptimizee(Optimizee):
                 fig = helpers.plot_histogram(distribution, experimental_joint, self.network.num_discrete_vals, "p*(y)", "p(y;θ)", renormalise_estimated_states=True)
                 fig.savefig(os.path.join(individual_directory, str(trial) + '_histogram.png'))
                 plt.close()
+
+            # Pre-emptively end the fitness trials if the fitness is too bad.
+            if this_kld >= 0.5: break
 
         self.run_number += 1
 
