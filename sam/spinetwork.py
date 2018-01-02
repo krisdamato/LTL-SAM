@@ -1,4 +1,5 @@
 import copy
+import itertools
 import logging
 import nest
 import numpy as np
@@ -80,6 +81,7 @@ class SPINetwork:
 			'bias_min':-30.0,
 			'bias_initial':5.0,
 			'bias_inhibitors':-10.0,
+			'bias_input':-10.0,
 			'bias_chi_mean':5.0,
 			'bias_chi_std':0.1,
 			'connectivity_chi_inh':0.575,
@@ -89,6 +91,8 @@ class SPINetwork:
 			'connectivity_chi_self':0.0,
 			'current_plus_chi':0.0,
 			'current_minus_chi':-20.0,
+			'current_minus_input':-30.0,
+			'current_plus_input':30.0,
 			'dead_time_inhibitors':tau,
 			'delay_chi_inhibitors':delay_fixed,
 			'delay_inhibitors_chi':delay_fixed,
@@ -105,6 +109,7 @@ class SPINetwork:
 			'prob_exp_term_scale':1.0,
 			'neuron_type_chi':'srm_pecevski_alpha',
 			'neuron_type_inhibitors':'srm_pecevski_alpha',
+			'neuron_type_input':'srm_pecevski_alpha',
 			'sample_presentation_time':100.0,
 			'stdp_rate_initial':0.002,
 			'stdp_rate_final':0.0006,
@@ -227,7 +232,13 @@ class SPINetwork:
 				'rect_exc':params['use_rect_psp_exc_inhibitors']				}
 		else:
 			raise NotImplementedError
-
+			
+		# Input population model (for conditional networks only).
+		if params['neuron_type_input'] == 'srm_pecevski_alpha':
+			self.input_neuron_params={'bias':params['bias_input']}
+		else:
+			raise NotImplementedError
+					
 		# Create synapse model specialisations.
 		# Chi-chi synapses.
 		if params['synapse_type_chi_chi'] == 'stdp_pecevski_synapse':
@@ -316,6 +327,118 @@ class SPINetwork:
 				'p':params['connectivity_chi_self']
 			}
 
+	
+	def create_conditional_network(self, dependencies, distribution, num_discrete_vals=2, override_params={}):
+		"""
+		Creates a recurrent SPI network which codes the conditional distribution passed, 
+		assuming only a single dependency.
+		"""
+		if len(dependencies) > 1:
+			raise Exception("There are more than one dependency in the passed dictionary.")
+			
+		# Set main kernel settings.
+		self.set_kernel_settings()
+
+		# Set parameter defaults.
+		self.params = self.get_spi_defaults(override_params)
+		self.network_type = 'conditional'
+
+		# Remove generic parameters from parameter list.
+		for k in self.parameter_repeats(): self.params.pop(k)
+
+		self.dependencies = dependencies
+		self.distribution = distribution
+		self.chi_pools = dict()
+		self.inhibitory_pools = dict()
+		self.subnetwork_distributions = dict()
+		self.dep_indices = dict()
+		self.subnetwork_params = dict()
+		self.inputs = dict()
+
+		# Create multiple excitatory pools for the dependency, ignoring input for now.
+		for ym in self.__get_variables_ordered():
+			# Create the chi pools in order of variable name.
+			ys = dependencies[ym]
+
+			subnetwork_params = self.filter_repeat_params(override_params, ym)
+			self.subnetwork_params[ym] = subnetwork_params.copy()
+			subnetwork_vars = sorted([ym] + ys)
+			
+			# Set subnetwork parameters.
+			self.subnetwork_params[ym] = self.get_spi_defaults(self.subnetwork_params[ym])
+			self.set_nest_defaults(self.subnetwork_params[ym])
+			
+			# Create excitatory and inhibitory pools.
+			self.chi_pools[ym] = nest.Create(self.subnetwork_params[ym]['neuron_type_chi'], n=self.subnetwork_params[ym]['pool_size_excitatory'] * num_discrete_vals, params=self.chi_neuron_params)
+			self.inhibitory_pools[ym] = nest.Create(self.subnetwork_params[ym]['neuron_type_inhibitors'], n=self.subnetwork_params[ym]['pool_size_inhibitory'], params=self.inhibitors_neuron_params)
+			
+			# Connect excitatory and inhibitory pools.
+			nest.Connect(self.chi_pools[ym], 
+				self.inhibitory_pools[ym], 
+				conn_spec=self.chi_inh_connectivity_params, 
+				syn_spec=self.chi_inhibitors_synapse_params)
+			nest.Connect(self.inhibitory_pools[ym], 
+				self.chi_pools[ym], 
+				conn_spec=self.inh_chi_connectivity_params, 
+				syn_spec=self.inhibitors_chi_synapse_params)
+
+			# Self-connect inhibitory pools (autopses)
+			nest.Connect(self.inhibitory_pools[ym],
+				self.inhibitory_pools[ym],
+				conn_spec=self.inh_self_connectivity_params,
+				syn_spec=self.inhibitors_self_synapse_params)
+
+			# Self-connect excitatory pools.
+			value_pool = [self.get_variable_neurons(ym, x) for x in range(1, num_discrete_vals + 1)]
+			if self.subnetwork_params[ym]['connectivity_chi_self'] > 0:
+				for pool in value_pool:
+					nest.Connect(pool, pool, 
+						conn_spec=self.chi_self_connectivity_params,
+						syn_spec=self.chi_self_synapse_params)
+
+			# Chi bias randomisation.
+			self.set_random_biases(self.chi_pools[ym], 
+				self.subnetwork_params[ym]['bias_chi_mean'], 
+				self.subnetwork_params[ym]['bias_chi_std'],
+				self.subnetwork_params[ym]['bias_min'],
+				self.subnetwork_params[ym]['bias_max'])
+
+			# Set marginal distribution of this layer and this variable's index in the distribution.
+			self.dep_indices[ym] = subnetwork_vars.index(ym),
+			self.subnetwork_distributions[ym] = helpers.compute_marginal_distribution(distribution, subnetwork_vars, num_discrete_vals)
+		
+		# Specify input pools, making the right recurrent connections.
+		for ym in self.__get_variables_ordered():
+			ys = dependencies[ym]
+			input_vars = sorted(ys)
+			print(input_vars)
+			for y in input_vars:
+				self.inputs[y] = nest.Create(self.subnetwork_params[ym]['neuron_type_chi'], n=self.subnetwork_params[ym]['pool_size_excitatory'] * num_discrete_vals, params=self.input_neuron_params)
+			
+			# Re-assign NEST defaults since each subnetwork overwrites them.
+			self.set_nest_defaults(self.subnetwork_params[ym])
+
+			# Connect chi pools with each other.
+			for y in ys:
+				nest.Connect(self.inputs[y], 
+					self.chi_pools[ym], 
+					conn_spec=self.chi_chi_connectivity_params,
+					syn_spec=self.chi_chi_synapse_params)
+
+		# Set other metainformation flags.
+		self.num_discrete_vals = num_discrete_vals
+		self.special_params = {}
+
+		# Track all neurons.
+		self.all_neurons = tuple()
+		for y in self.inputs:
+			self.all_neurons += self.inputs[y]
+		for ym in self.__get_variables_ordered():
+			self.all_neurons += self.chi_pools[ym] + self.inhibitory_pools[ym]
+
+		logging.info("Created {} neurons.".format(len(self.all_neurons)))
+		self.initialised = True
+		
 
 	def create_network(self, dependencies, distribution, num_discrete_vals=2, override_params={}, special_params={}):
 		"""
@@ -346,6 +469,7 @@ class SPINetwork:
 
 		# Set parameter defaults.
 		self.params = self.get_spi_defaults(override_params)
+		self.network_type = 'joint'
 
 		# Remove generic parameters from parameter list.
 		for k in self.parameter_repeats(): self.params.pop(k)
@@ -442,11 +566,14 @@ class SPINetwork:
 		"""
 		Returns the variables ordered by name in an array, e.g. ['y1', 'y2']
 		"""
-		return ['y' + str(i) for i in range(1, len(self.dependencies) + 1)]
+		if self.network_type == 'joint':
+			return ['y' + str(i) for i in range(1, len(self.dependencies) + 1)]
+		else:
+			return [list(self.dependencies.keys())[0]]
 
 
 	@staticmethod
-	def parameter_spec(num_modules):
+	def parameter_spec(num_modules, network_type='joint'):
 		"""
 		Returns a dictionary of param_name:(min, max) pairs, which describe the legal
 		limit of the parameters.
@@ -456,7 +583,7 @@ class SPINetwork:
 
 		# For each variable that appears in the repeat spec, add n variables with the 
 		# name, suffixed by '_1', '_2', etc.
-		repeat_spec = SPINetwork.parameter_repeats()
+		repeat_spec = SPINetwork.parameter_repeats(network_type)
 		for k in repeat_spec:
 			k_spec = spec[k]
 			spec.pop(k)
@@ -468,12 +595,12 @@ class SPINetwork:
 
 
 	@staticmethod
-	def parameter_repeats():
+	def parameter_repeats(network_type='joint'):
 		"""
 		Returns a list of parameters that are to be specialised by each subnetwork in the 
 		graph network, i.e. that can evolve separately.
 		"""
-		repeats = ['bias_baseline', 'weight_chi_chi_max']
+		repeats = ['bias_baseline', 'weight_chi_chi_max'] if network_type == "joint" else []
 		return repeats
 
 
@@ -519,13 +646,21 @@ class SPINetwork:
 		"""
 		new_network = SPINetwork()
 		new_network.seed = self.seed
-		new_network.create_network(
-			dependencies=self.dependencies,
-			num_discrete_vals=self.num_discrete_vals,
-			distribution=self.distribution,
-			override_params=self.params,
-			special_params=self.special_params)
-		
+		new_network.network_type = self.network_type
+		if new_network.network_type == 'joint':
+			new_network.create_network(
+				dependencies=self.dependencies,
+				num_discrete_vals=self.num_discrete_vals,
+				distribution=self.distribution,
+				override_params=self.params,
+				special_params=self.special_params)
+		elif new_network.network_type == 'conditional':
+			new_network.create_conditional_network(
+				dependencies=self.dependencies,
+				num_discrete_vals=self.num_discrete_vals,
+				distribution=self.distribution,
+				override_params=self.params)
+				
 		# Copy bias values.
 		for ym in new_network.__get_variables_ordered():
 			if new_network.subnetwork_params[ym]['neuron_type_chi'] == 'srm_pecevski_alpha':
@@ -607,7 +742,30 @@ class SPINetwork:
 		pool_size_excitatory = self.subnetwork_params[var_name]['pool_size_excitatory']
 		return self.chi_pools[var_name][(var_value - 1) * pool_size_excitatory:var_value * pool_size_excitatory]
 
+		
+	def get_input_neurons(self, var_name, var_value):
+		"""
+		Returns the input neuron population that rate codes for this particular variable
+		and value combination.
+		"""
+		ym = list(self.dependencies.keys())[0]
+		pool_size_excitatory = self.subnetwork_params[ym]['pool_size_excitatory']
+		return self.inputs[var_name][(var_value - 1) * pool_size_excitatory:var_value * pool_size_excitatory]
 
+		
+	def set_input_currents(self, state):
+		"""
+		Inhibits/forces input neurons (for conditional-type networks only).
+		"""
+		for y in self.inputs:
+			var_index = int(y[1:]) - 1
+			for x in range(1, self.num_discrete_vals + 1):
+				nodes = self.get_input_neurons(y, x)
+				inhibit = state[var_index] != x
+				current = self.params['current_minus_input'] if inhibit else self.params['current_plus_input']
+				nest.SetStatus(nodes, {'I_e':current})
+		
+		
 	def set_chi_currents(self, state):
 		"""
 		Inhibits/forces the chi neurons according to the provided state.
@@ -630,6 +788,9 @@ class SPINetwork:
 		"""		
 		# Set chi pool neurons.
 		self.set_chi_currents(state)
+		
+		if self.network_type == 'conditional':
+			self.set_input_currents(state)
 
 
 	def set_intrinsic_rate(self, intrinsic_rate):
@@ -649,29 +810,53 @@ class SPINetwork:
 		Sets the STDP learning time in the STDP connections (in ms).
 		Note: raises an error if the neurons don't support learning time.
 		"""
-		# Get connections between chi pools.
-		chi_neurons_to = [self.chi_pools[ym] for ym in self.__get_variables_ordered()]
-		chi_neurons_from = [self.chi_pools[ys] for ym in self.__get_variables_ordered() for ys in self.dependencies[ym]]
+		if self.network_type == 'joint':
+			# Get connections between chi pools.
+			for ym in self.__get_variables_ordered():
+				neurons_to = chi_pools[ym]
+				neurons_from = tuple(n for ys in self.dependencies[ym] for n in chi_pools[ys])
 
-		# Update all connections between neurons in these pools.
-		for from_pool, to_pool in zip(chi_neurons_from, chi_neurons_to):
-			synapses = nest.GetConnections(from_pool, to_pool)
-			if len(synapses) > 0:
-				nest.SetStatus(synapses, {'learning_time':learning_time})
-		
+				# Update all connections between neurons in these pools.
+				synapses = nest.GetConnections(neurons_from, neurons_to)
+				if len(synapses) > 0:
+					nest.SetStatus(synapses, {'learning_time':learning_time})
+		elif self.network_type == 'conditional':
+			# Get connections between input and chi pools.
+			for ym in self.__get_variables_ordered():
+				neurons_to = self.chi_pools[ym]
+				neurons_from = tuple(n for ys in self.dependencies[ym] for n in self.inputs[ys])
+
+				# Update all connections between neurons in these pools.
+				synapses = nest.GetConnections(neurons_from, neurons_to)
+				if len(synapses) > 0:
+					nest.SetStatus(synapses, {'learning_time':learning_time})
+
 
 	def set_plasticity_learning_rate(self, rate):
 		"""
 		Toggles vanilla STDP on or off. 
 		Note: raises an error if the neurons don't support lambda.
 		"""
-		# Get connections between chi pools.
-		chi_neurons = [n for ym in self.__get_variables_ordered() for n in self.chi_pools[ym]]
+		if self.network_type == 'joint':
+			# Get connections between chi pools.
+			for ym in self.__get_variables_ordered():
+				neurons_to = chi_pools[ym]
+				neurons_from = tuple(n for ys in self.dependencies[ym] for n in chi_pools[ys])
 
-		# Update all connections between neurons in these pools.
-		synapses = nest.GetConnections(chi_neurons, chi_neurons)
-		if len(synapses) > 0:
-			nest.SetStatus(synapses, {'lambda':rate})
+				# Update all connections between neurons in these pools.
+				synapses = nest.GetConnections(neurons_from, neurons_to)
+				if len(synapses) > 0:
+					nest.SetStatus(synapses, {'lambda':rate})
+		elif self.network_type == 'conditional':
+			# Get connections between input and chi pools.
+			for ym in self.__get_variables_ordered():
+				neurons_to = self.chi_pools[ym]
+				neurons_from = tuple(n for ys in self.dependencies[ym] for n in self.inputs[ys])
+
+				# Update all connections between neurons in these pools.
+				synapses = nest.GetConnections(neurons_from, neurons_to)
+				if len(synapses) > 0:
+					nest.SetStatus(synapses, {'lambda':rate})
 
 
 	def simulate_without_input(self, duration):
@@ -778,6 +963,66 @@ class SPINetwork:
 		return self.get_distribution_from_spikes(spikes, start_time, start_time + duration, 1.5 * self.params['tau'], timestep)
 
 
+	def measure_experimental_cond_distribution(self, duration):
+		"""
+		Measures the conditional distribution of this network
+		experimentally, i.e. by counting output spikes directly.
+		Note: For best results, stop all plasticity effects.
+		"""
+		if self.network_type != 'conditional':
+			raise Exception("Conditional distribution can only be measured for conditional-type networks.")
+
+		var_values = range(1, self.num_discrete_vals + 1)
+		possibilities = list(itertools.product(var_values, repeat=len(self.inputs)))
+		conditional = dict(self.distribution)
+		ym = list(self.dependencies.keys())[0]
+
+		for p in possibilities:
+			# print("Measuring experimental conditional distribution on input:", p)
+
+			# Attach a spike reader.
+			spikereader = self.__stop_activity_attach_reader()
+
+			# Present input evidence.
+			self.__present_input_evidence(duration=duration, sample=p)
+
+			# Get spikes.
+			spikes = nest.GetStatus(spikereader, keys='events')[0]
+			senders = spikes['senders']
+
+			# Count spikes per output neuron.
+			counts = defaultdict(int)
+			for node in senders:
+				for x in var_values:
+					counts[x] += 1 if node in self.get_variable_neurons(ym, x) else 0
+
+			# Calculate conditional probabilities.
+			total = np.sum(list(counts.values()))
+			for z in var_values:
+				conditional[p + (z,)] = counts[z] / total
+
+		return conditional
+
+
+	def __present_input_evidence(self, duration=None, sample=None):
+			"""
+			Presents the given sample state or a random one drawn from the set distribution
+			and simulates for the given period. This only activates/inhibits the input 
+			layer. 
+			"""
+			if not self.initialised:
+				raise Exception("Network not initialised yet.")
+
+			# Get a random state from the distribution if one is not given.
+			state = sample if sample is not None else self.draw_random_sample()
+
+			# Set currents in input layer.
+			self.set_input_currents(state)
+
+			# Simulate.
+			nest.Simulate(duration if duration is not None else self.params['sample_presentation_time'])
+
+
 	def __stop_activity_attach_reader(self):
 		"""
 		Stops all plasticity and input and attaches a reader to the excitatory subnetworks, returning it.
@@ -786,6 +1031,10 @@ class SPINetwork:
 		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
 		for ym in self.__get_variables_ordered():
 			nest.Connect(self.chi_pools[ym], spikereader, syn_spec={'delay':self.params['delay_devices']})
+
+		if self.network_type == 'conditional':
+			for ys in self.inputs:
+				nest.Connect(self.inputs[ys], spikereader, syn_spec={'delay':self.params['delay_devices']})
 
 		# Clear currents.
 		self.clear_currents()
@@ -806,7 +1055,8 @@ class SPINetwork:
 		Note: uses the first RNG to choose between equal-spike windows.
 		"""
 		state = [0 for i in range(len(self.dependencies))]
-		for i, ym in enumerate(self.__get_variables_ordered()):
+		for ym in self.__get_variables_ordered():
+			i = int(ym[1:]) - 1
 			variable_neurons = [self.get_variable_neurons(ym, x) for x in range(1, 1 + self.num_discrete_vals)]
 
 			# Count the number of spikes of each subpool.
@@ -824,6 +1074,27 @@ class SPINetwork:
 			else:
 				indices = [j for j, x in enumerate(counts) if x == max_count]
 				state[i] = self.rngs[0].choice(indices) + 1
+
+		if self.network_type == 'conditional':
+			for ys in self.inputs:
+				i = int(ys[1:]) - 1
+				variable_neurons = [self.get_input_neurons(ys, x) for x in range(1, 1 + self.num_discrete_vals)]
+
+				# Count the number of spikes of each subpool.
+				spike_counts = Counter(spikes)
+				counts = [sum(spike_counts[spike] for spike in value_neurons) for value_neurons in variable_neurons]
+
+				# If both are zero, we have a zero state.
+				if all(c == 0 for c in counts): break
+
+				# Otherwise, find the variable value with the highest
+				# number of spikes (or if equal, choose randomly).
+				max_count = np.amax(counts)
+				if counts.count(max_count) == 1: 
+					state[i] = counts.index(max_count) + 1 # +1 is necessary because the 0-state is not coded for.
+				else:
+					indices = [j for j, x in enumerate(counts) if x == max_count]
+					state[i] = self.rngs[0].choice(indices) + 1
 
 		return tuple(state)
 
@@ -873,6 +1144,11 @@ class SPINetwork:
 		spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
 		for ym in self.__get_variables_ordered():
 			nest.Connect(self.chi_pools[ym], spikereader, syn_spec={'delay':self.params['delay_devices']})
+
+
+		if self.network_type == 'conditional':
+			for ys in self.inputs:
+				nest.Connect(self.inputs[ys], spikereader, syn_spec={'delay':self.params['delay_devices']})
 
 		# Clear currents.
 		self.clear_currents()

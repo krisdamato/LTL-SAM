@@ -841,6 +841,256 @@ class SPINetworkOptimizee(Optimizee):
         logger.info("End of experiment. Cleaning up...")
 
 
+class SPIConditionalNetworkOptimizee(Optimizee):
+    """
+    Provides the interface between the LTL API and the SPINetwork class. See SPINetwork and
+    SAMModule for details on the SPI neural network (which is analogous to a SAMModule in terms
+    of intended operation).
+    """
+
+    def __init__(
+            self, 
+            traj, 
+            time_resolution=0.1, 
+            num_fitness_trials=3, 
+            seed=0, 
+            n_NEST_threads=1, 
+            plots_directory='./sam_plots'):
+        super(SPIConditionalNetworkOptimizee, self).__init__(traj)
+        
+        self.rs = np.random.RandomState(seed=seed)
+        self.num_fitness_trials = num_fitness_trials
+        self.run_number = 0
+        self.save_directory = plots_directory
+        self.time_resolution = time_resolution
+        self.num_threads = n_NEST_threads
+        self.set_kernel_defaults()
+
+        # Set up exerimental parameters.
+        self.initialise_experiment()
+
+        # create_individual can be called because __init__ is complete except for traj initialization
+        self.individual = self.create_individual()
+        for key, val in self.individual.items():
+            traj.individual.f_add_parameter(key, val)
+
+
+    def set_kernel_defaults(self):
+        """
+        Sets main NEST parameters.
+        Note: this needs to be called every time the kernel is reset.
+        """
+        nest.SetKernelStatus({
+            'local_num_threads':self.num_threads,
+            'resolution':self.time_resolution})
+
+
+    def create_individual(self):
+        """
+        Creates random parameter values within given bounds.
+        Uses an RNG seeded with the main seed of the SAM module.
+        """ 
+        param_spec = self.parameter_spec() # Sort for replicability
+        individual = {k: np.float64(self.rs.uniform(v[0], v[1])) for k, v in param_spec.items()}
+        return individual
+
+
+    def bounding_func(self, individual):
+        """
+        Bounds the individual within the required bounds via coordinate clipping.
+        """
+        param_spec = self.parameter_spec()
+        individual = {k: np.float64(np.clip(v, a_min=param_spec[k][0], a_max=param_spec[k][1])) for k, v in individual.items()}
+        return individual
+
+
+    def initialise_experiment(self):
+        """
+        Sets experimental parameters.
+        """
+        # Use the distribution from Peceveski et al., experiment 1.
+        # Define distribution.
+        self.distribution = {
+            (1,1,1):0.04,
+            (1,1,2):0.04,
+            (1,2,1):0.21,
+            (1,2,2):0.21,
+            (2,1,1):0.04,
+            (2,1,2):0.21,
+            (2,2,1):0.21,
+            (2,2,2):0.04
+        }
+
+        # Define the Markov blanket of each RV.
+        self.dependencies = {
+            'y3':['y1', 'y2']
+        }
+
+
+    def parameter_spec(self):
+        """
+        Returns the minima-maxima of each explorable variable.
+        Note: Dictionary is an OrderedDict with items sorted by key, to 
+        ensure that items are interpreted in the same way everywhere.
+        """
+        return OrderedDict(sorted(SPINetwork.parameter_spec(len(self.dependencies), 'conditional').items()))
+
+
+    def prepare_network(self, distribution, dependencies, num_discrete_vals, special_params={}):
+        """
+        Generates a recurrent network with the specified distribution and 
+        dependency parameters, but uses the hyperparameters from the individual dictionary.
+        """
+        nest.ResetKernel()
+        self.set_kernel_defaults()
+
+        self.network = SPINetwork(randomise_seed=True)
+
+        # Convert the trajectory individual to a dictionary.
+        params = {k:self.individual[k] for k in SPINetwork.parameter_spec(len(dependencies), 'conditional').keys()}
+
+        # Create a SPI network with the correct parameters.
+        self.network.create_conditional_network(
+            num_discrete_vals=num_discrete_vals, 
+            dependencies=dependencies, 
+            distribution=distribution, 
+            override_params=params)
+
+        logging.info("Creating a recurrent SPI network with overridden parameters:\n%s", self.network.parameter_string())
+
+
+    def simulate(self, traj, run_intermediates=False, save_plot=False):
+        """
+        Simulates a recurrently connected network of neuron pools, training on a target 
+        distribution; i.e. performing density estimation as in Pecevski et al. 2016,
+        experiment 2. The loss function is the the KL divergence between target and 
+        estimated distributions. 
+        If save_plot == True, this will create a directory for each individual that 
+        contains a text file with individual params and plots for each trial.
+        """
+        # Prepare paths for each individual evaluation.
+        individual_directory = os.path.join(self.save_directory, str(self.run_number) + "_" + helpers.get_now_string())
+        text_path = os.path.join(individual_directory, 'params.txt')
+        
+        # Declare fitness metrics.
+        kld_cond_experimental = []
+
+        # Run a number of trials to calculate mean fitness of this individual
+        for trial in range(self.num_fitness_trials):
+            nest.ResetKernel()
+            self.set_kernel_defaults()
+
+            self.individual = traj.individual
+            self.prepare_network(
+                distribution=self.distribution, 
+                dependencies=self.dependencies, 
+                num_discrete_vals=2)
+            
+            # Create directory and params file if requested.
+            if save_plot:
+                helpers.create_directory(individual_directory)
+                helpers.save_text(self.network.parameter_string(), text_path)
+
+            # Get the network's target distribution.
+            distribution = self.network.distribution
+            conditional = helpers.compute_conditional_distribution(distribution, self.network.num_discrete_vals)
+
+            # Train for the learning period set in the parameters.
+            t = 0
+            i = 0
+            set_second_rate = False
+            last_set_intrinsic_rate = self.network.params['bias_rate_1']
+            skip_kld = 1000
+            set_second_rate = False
+            clones = []
+            last_klds = []
+            debug = False
+
+            if debug:
+                # Print connections between first and second chi pools.
+                conn = nest.GetConnections(self.network.chi_pools['y2'], self.network.chi_pools['y4'])
+                print("some connections:\n", conn)
+
+                # Attach a spike reader to all population coding layers.
+                spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
+                nest.Connect(self.network.all_neurons, spikereader, syn_spec={'delay':self.network.params['delay_devices']})
+
+            while t <= self.network.params['learning_time']:
+                if i % 1000 == 0: logging.info("Time: {}".format(t))
+
+                # Inject a current for some time.
+                self.network.present_random_sample() 
+                self.network.clear_currents()
+                t += self.network.params['sample_presentation_time']
+
+                # Draw debug spikes.
+                if debug:
+                    helpers.plot_spikes(spikereader)
+
+                # Measure experimental joint distribution from spike activity.
+                if save_plot and run_intermediates and i % skip_kld == 0:
+                    # Clone network for later tests.
+                    clone = self.network.clone()
+
+                    # Stop plasticity on clone for testing.
+                    clone.set_intrinsic_rate(0.0)
+                    clone.set_plasticity_learning_time(0)
+
+                    clones.append(clone)
+                                    
+                # Set different intrinsic rate.
+                if t >= self.network.params['learning_time'] * self.network.params['bias_change_time_fraction'] and set_second_rate == False:
+                    set_second_rate = True
+                    last_set_intrinsic_rate = self.network.params['bias_rate_2']
+                    self.network.set_intrinsic_rate(last_set_intrinsic_rate)
+            
+                i += 1
+
+            self.network.set_intrinsic_rate(0.0)
+            self.network.set_plasticity_learning_time(0)
+
+            # Measure experimental joint distribution on para-experiment clones.
+            if save_plot:
+                plot_exp_conds = [g.measure_experimental_cond_distribution(duration=2000.0) for g in clones]
+                plot_cond_klds = [helpers.get_KL_divergence(p, conditional) for p in plot_exp_conds] 
+
+            # Plot experimental KL divergence of joint distribution.
+            if save_plot:
+                fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(8, 20))
+                if run_intermediates:
+                    ax[0].plot(np.array(range(len(plot_cond_klds))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_cond_klds, label="Experimental KLD")
+                    ax[0].legend(loc='upper center')
+                    ax[0].set_title('KL Divergence between target and estimated joint distribution')
+
+            # Measure experimental KL divergence of entire network by averaging on a few runs.
+            experimental_cond = self.network.measure_experimental_cond_distribution(duration=2000.0)
+            this_kld = helpers.get_KL_divergence(experimental_cond, conditional)
+            kld_cond_experimental.append(this_kld)
+
+            # Draw histogram of states.
+            if save_plot:
+                fig = helpers.plot_histogram(conditional, experimental_cond, self.network.num_discrete_vals, "p*(z|x)", "p(z|x;θ)", renormalise_estimated_states=True)
+                fig.savefig(os.path.join(individual_directory, str(trial) + '_histogram.png'))
+                plt.close()
+
+            logging.info("This run's experimental conditional KLD is {}".format(this_kld))
+
+            # Pre-emptively end the fitness trials if the fitness is too bad.
+            if this_kld >= 0.5: break
+
+        self.run_number += 1
+
+        mean_loss = np.sum(kld_cond_experimental) / len(kld_cond_experimental)
+
+        logging.info("Final mean experimental conditional KLD is {}".format(mean_loss))
+
+        return (mean_loss, )
+
+
+    def end(self):
+        logger.info("End of experiment. Cleaning up...")
+
+
 def main():
     import yaml
     import os

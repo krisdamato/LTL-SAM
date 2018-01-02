@@ -7,7 +7,7 @@ from ltl.logging_tools import create_shared_logger_data, configure_loggers
 from ltl.optimizers.evolution import GeneticAlgorithmOptimizer, GeneticAlgorithmParameters
 from ltl.paths import Paths
 from ltl.recorder import Recorder
-from sam.optimizee import SPINetworkOptimizee
+from sam.optimizee import SPINetworkOptimizee, SPIConditionalNetworkOptimizee
 
 logger = logging.getLogger('bin.ltl-spinetwork-ga')
 
@@ -54,7 +54,7 @@ def main():
 
 
     # NOTE: Innerloop simulator
-    optimizee = SPINetworkOptimizee(traj, n_NEST_threads=1, time_resolution=1.0, plots_directory=paths.output_dir_path, num_fitness_trials=3)
+    optimizee = SPIConditionalNetworkOptimizee(traj, n_NEST_threads=1, time_resolution=1.0, plots_directory=paths.output_dir_path, num_fitness_trials=3)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
