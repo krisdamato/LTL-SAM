@@ -411,7 +411,6 @@ class SPINetwork:
 		for ym in self.__get_variables_ordered():
 			ys = dependencies[ym]
 			input_vars = sorted(ys)
-			print(input_vars)
 			for y in input_vars:
 				self.inputs[y] = nest.Create(self.subnetwork_params[ym]['neuron_type_chi'], n=self.subnetwork_params[ym]['pool_size_excitatory'] * num_discrete_vals, params=self.input_neuron_params)
 			
