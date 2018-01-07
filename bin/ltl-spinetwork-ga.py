@@ -54,6 +54,7 @@ def main():
 
 
     # NOTE: Innerloop simulator
+    #optimizee = SPIConditionalNetworkOptimizee(traj, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path, num_fitness_trials=15)
     optimizee = SPINetworkOptimizee(traj, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path, num_fitness_trials=10)
 
     # NOTE: Outerloop optimizer initialization

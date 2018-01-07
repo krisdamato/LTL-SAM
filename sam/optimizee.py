@@ -826,7 +826,7 @@ class SPINetworkOptimizee(Optimizee):
             logging.info("This run's experimental joint KLD is {}".format(this_kld))
 
             # Pre-emptively end the fitness trials if the fitness is too bad.
-            if this_kld >= 0.5: break
+            if this_kld >= 0.7: break
 
         self.run_number += 1
 
