@@ -36,8 +36,8 @@ class SPINetwork:
 			'T':(0.0, 1.0),
 			'bias_rate_1':(0.0, 0.1),
 			'bias_baseline':(-40.0, 0.0),
-			'prob_exp_term':(0.0, 100.0),
-			#'prob_exp_term_scale':(0.0, 5.0),
+			'prob_exp_term':(0.0, 2.0),
+			'prob_exp_term_scale':(0.0, 4.0),
 			'bias_relative_spike_rate':(1e-5, 1.0),
 			'connectivity_chi_inh':(0.0, 1.0),
 			'connectivity_inh_chi':(0.0, 1.0),
@@ -812,8 +812,8 @@ class SPINetwork:
 		if self.network_type == 'joint':
 			# Get connections between chi pools.
 			for ym in self.__get_variables_ordered():
-				neurons_to = chi_pools[ym]
-				neurons_from = tuple(n for ys in self.dependencies[ym] for n in chi_pools[ys])
+				neurons_to = self.chi_pools[ym]
+				neurons_from = tuple(n for ys in self.dependencies[ym] for n in self.chi_pools[ys])
 
 				# Update all connections between neurons in these pools.
 				synapses = nest.GetConnections(neurons_from, neurons_to)

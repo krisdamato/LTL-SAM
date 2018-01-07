@@ -824,7 +824,7 @@ class SPINetworkOptimizee(Optimizee):
                 plt.close()
 
             # Pre-emptively end the fitness trials if the fitness is too bad.
-            if this_kld >= 0.5: break
+            if this_kld >= 0.7: break
 
         self.run_number += 1
 
@@ -1051,7 +1051,7 @@ class SPIConditionalNetworkOptimizee(Optimizee):
 
             # Measure experimental joint distribution on para-experiment clones.
             if save_plot:
-                plot_exp_conds = [g.measure_experimental_cond_distribution(duration=2000.0) for g in clones]
+                plot_exp_conds = [g.measure_experimental_cond_distribution(duration=5000.0) for g in clones]
                 plot_cond_klds = [helpers.get_KL_divergence(p, conditional) for p in plot_exp_conds] 
 
             # Plot experimental KL divergence of joint distribution.
@@ -1063,7 +1063,7 @@ class SPIConditionalNetworkOptimizee(Optimizee):
                     ax[0].set_title('KL Divergence between target and estimated joint distribution')
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
-            experimental_cond = self.network.measure_experimental_cond_distribution(duration=2000.0)
+            experimental_cond = self.network.measure_experimental_cond_distribution(duration=5000.0)
             this_kld = helpers.get_KL_divergence(experimental_cond, conditional)
             kld_cond_experimental.append(this_kld)
 
