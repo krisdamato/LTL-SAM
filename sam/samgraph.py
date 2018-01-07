@@ -250,6 +250,7 @@ class SAMGraph:
 		for the same RV.
 		"""
 		state = [0 for i in range(len(self.sams))]
+		rng = list(self.sams.values())[0].rngs[0]
 		for i in range(len(self.sams)):
 			var_name = "y" + str(i + 1)
 			module = self.sams[var_name]
@@ -268,7 +269,7 @@ class SAMGraph:
 			if not invalid_to_random:
 				state = [-1 for i in range(len(self.sams))]
 			else:
-				state = [self.rngs[0].choice(self.num_discrete_vals) + 1 if s == -1 else s for s in state]
+				state = [rng.choice(self.num_discrete_vals) + 1 if s == -1 else s for s in state]
 
 		return tuple(state)
 

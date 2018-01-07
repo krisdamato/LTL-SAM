@@ -519,7 +519,8 @@ class SAMGraphOptimizee(Optimizee):
             # Measure experimental KL divergence of entire network by averaging on a few runs.
             last_clone = self.graph.clone()
             experimental_joint = self.graph.measure_experimental_joint_distribution(duration=20000.0)
-            kld_joint_experimental.append(helpers.get_KL_divergence(experimental_joint, distribution))
+            this_kld = helpers.get_KL_divergence(experimental_joint, distribution)
+            kld_joint_experimental.append(this_kld)
             kld_joint_experimental_valid.append(helpers.get_KL_divergence(experimental_joint, distribution, exclude_invalid_states=True))
 
             # Draw spiking of output neurons.
@@ -533,6 +534,11 @@ class SAMGraphOptimizee(Optimizee):
                 fig = helpers.plot_histogram(distribution, experimental_joint, self.graph.num_discrete_vals, "p*(y)", "p(y;θ)", renormalise_estimated_states=True)
                 fig.savefig(os.path.join(individual_directory, str(trial) + '_histogram.png'))
                 plt.close()
+
+            logging.info("This run's experimental joint KLD is {}".format(this_kld))
+
+            # Pre-emptively end the fitness trials if the fitness is too bad.
+            if this_kld >= 0.7: break
 
         self.run_number += 1
 

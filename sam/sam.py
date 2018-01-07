@@ -105,7 +105,7 @@ class SAMModule:
 			'nu_current_minus':-30.0,
 			'alpha_current_minus':-80.0,
 			'alpha_current_plus':0.0,
-			'learning_time':600000,
+			'learning_time':300000,
 			'sample_presentation_time':100.0, # 100 ms.
 			'chi_neuron_type':'srm_pecevski_alpha',
 			'alpha_neuron_type':'srm_pecevski_alpha',
