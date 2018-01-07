@@ -823,6 +823,8 @@ class SPINetworkOptimizee(Optimizee):
                 fig.savefig(os.path.join(individual_directory, str(trial) + '_histogram.png'))
                 plt.close()
 
+            logging.info("This run's experimental joint KLD is {}".format(this_kld))
+
             # Pre-emptively end the fitness trials if the fitness is too bad.
             if this_kld >= 0.5: break
 
@@ -831,7 +833,7 @@ class SPINetworkOptimizee(Optimizee):
         mean_loss = np.sum(kld_joint_experimental) / len(kld_joint_experimental)
         mean_loss_valid = np.sum(kld_joint_experimental_valid) / len(kld_joint_experimental_valid)
 
-        logging.info("[Loss] Experimental network joint KLD is {}".format(mean_loss))
+        logging.info("Final mean experimental network joint KLD is {}".format(mean_loss))
         logging.info("Experimental network joint KLD (on valid states only) is {}".format(mean_loss_valid))
 
         return (mean_loss, )
@@ -1006,15 +1008,6 @@ class SPIConditionalNetworkOptimizee(Optimizee):
             last_klds = []
             debug = False
 
-            if debug:
-                # Print connections between first and second chi pools.
-                conn = nest.GetConnections(self.network.chi_pools['y2'], self.network.chi_pools['y4'])
-                print("some connections:\n", conn)
-
-                # Attach a spike reader to all population coding layers.
-                spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
-                nest.Connect(self.network.all_neurons, spikereader, syn_spec={'delay':self.network.params['delay_devices']})
-
             while t <= self.network.params['learning_time']:
                 if i % 1000 == 0: logging.info("Time: {}".format(t))
 
@@ -1022,10 +1015,6 @@ class SPIConditionalNetworkOptimizee(Optimizee):
                 self.network.present_random_sample() 
                 self.network.clear_currents()
                 t += self.network.params['sample_presentation_time']
-
-                # Draw debug spikes.
-                if debug:
-                    helpers.plot_spikes(spikereader)
 
                 # Measure experimental joint distribution from spike activity.
                 if save_plot and run_intermediates and i % skip_kld == 0:
@@ -1051,25 +1040,33 @@ class SPIConditionalNetworkOptimizee(Optimizee):
 
             # Measure experimental joint distribution on para-experiment clones.
             if save_plot:
-                plot_exp_conds = [g.measure_experimental_cond_distribution(duration=2000.0) for g in clones]
+                plot_exp_conds = [g.measure_experimental_cond_distribution(duration=5000.0) for g in clones]
                 plot_cond_klds = [helpers.get_KL_divergence(p, conditional) for p in plot_exp_conds] 
 
             # Plot experimental KL divergence of joint distribution.
             if save_plot:
-                fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(8, 20))
                 if run_intermediates:
+                    fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(8, 20))
                     ax[0].plot(np.array(range(len(plot_cond_klds))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_cond_klds, label="Experimental KLD")
                     ax[0].legend(loc='upper center')
                     ax[0].set_title('KL Divergence between target and estimated joint distribution')
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
-            experimental_cond = self.network.measure_experimental_cond_distribution(duration=2000.0)
+            experimental_cond = self.network.measure_experimental_cond_distribution(duration=5000.0)
             this_kld = helpers.get_KL_divergence(experimental_cond, conditional)
             kld_cond_experimental.append(this_kld)
 
             # Draw histogram of states.
             if save_plot:
-                fig = helpers.plot_histogram(conditional, experimental_cond, self.network.num_discrete_vals, "p*(z|x)", "p(z|x;θ)", renormalise_estimated_states=True)
+                # Attach a spike reader to all population coding layers.
+                spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
+                nest.Connect(self.network.all_neurons, spikereader, syn_spec={'delay':self.network.params['delay_devices']})
+                self.network.present_input_evidence(sample=(1, 2), duration=1000.0)
+                helpers.plot_spikes(spikereader, ax[1], title="Activity plot for input = (1, 2)")
+                fig.savefig(os.path.join(individual_directory, str(trial) + '.png'))
+                plt.close()
+
+                fig = helpers.plot_histogram(conditional, experimental_cond, self.network.num_discrete_vals, "p*(z|x)", "p(z|x;θ)", renormalise_estimated_states=False)
                 fig.savefig(os.path.join(individual_directory, str(trial) + '_histogram.png'))
                 plt.close()
 

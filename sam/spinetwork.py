@@ -812,8 +812,8 @@ class SPINetwork:
 		if self.network_type == 'joint':
 			# Get connections between chi pools.
 			for ym in self.__get_variables_ordered():
-				neurons_to = chi_pools[ym]
-				neurons_from = tuple(n for ys in self.dependencies[ym] for n in chi_pools[ys])
+				neurons_to = self.chi_pools[ym]
+				neurons_from = tuple(n for ys in self.dependencies[ym] for n in self.chi_pools[ys])
 
 				# Update all connections between neurons in these pools.
 				synapses = nest.GetConnections(neurons_from, neurons_to)
@@ -983,7 +983,7 @@ class SPINetwork:
 			spikereader = self.__stop_activity_attach_reader()
 
 			# Present input evidence.
-			self.__present_input_evidence(duration=duration, sample=p)
+			self.present_input_evidence(duration=duration, sample=p)
 
 			# Get spikes.
 			spikes = nest.GetStatus(spikereader, keys='events')[0]
@@ -1003,7 +1003,7 @@ class SPINetwork:
 		return conditional
 
 
-	def __present_input_evidence(self, duration=None, sample=None):
+	def present_input_evidence(self, duration=None, sample=None):
 			"""
 			Presents the given sample state or a random one drawn from the set distribution
 			and simulates for the given period. This only activates/inhibits the input 

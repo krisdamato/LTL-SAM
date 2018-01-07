@@ -288,7 +288,7 @@ def plot_all(multimeter, spikereader):
 	plt.show()
 
 
-def plot_spikes(spikereader):
+def plot_spikes(spikereader, ax=None, title=None):
 	"""
 	Plots the spike trace from all neurons the spikereader was connected to during
 	the simulation.
@@ -299,9 +299,14 @@ def plot_spikes(spikereader):
 	times = spikes['times']
 
 	# Plot
-	plt.figure()
-	plt.plot(times, senders, '|')
-	plt.show()
+	if ax is None:	
+		plt.figure()
+		plt.plot(times, senders, '|')
+		if title is not None: plt.title(title)
+		plt.show()
+	else:
+		ax.plot(times, senders, '|')
+		if title is not None: ax.set_title(title)
 
 
 def get_dictionary_string(d):
