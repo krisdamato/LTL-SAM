@@ -241,7 +241,7 @@ class SAMGraph:
 			self.sams[ym].set_plasticity_learning_time(learning_time)
 
 
-	def determine_state(self, spikes):
+	def determine_state(self, spikes, invalid_to_random=True):
 		"""
 		Given a set of spikes of the network, this determines which of
 		the network states the network is in, or whether it is in an 
@@ -263,9 +263,12 @@ class SAMGraph:
 					spike_found = True
 
 		# If any state value is greater than the maximum encoded value,
-		# the state is invalid. 
+		# this is an invalid state. 
 		if any(s == -1 for s in state):
-			state = [-1 for i in range(len(self.sams))]
+			if not invalid_to_random:
+				state = [-1 for i in range(len(self.sams))]
+			else:
+				state = [self.rngs[0].choice(self.num_discrete_vals) + 1 if s == -1 else s for s in state]
 
 		return tuple(state)
 
