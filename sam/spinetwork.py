@@ -1063,7 +1063,7 @@ class SPINetwork:
 			counts = [sum(spike_counts[spike] for spike in value_neurons) for value_neurons in variable_neurons]
 
 			# If both are zero, we have a zero state.
-			if all(c == 0 for c in counts): break
+			if all(c == 0 for c in counts): continue
 
 			# Otherwise, find the variable value with the highest
 			# number of spikes (or if equal, choose randomly).
@@ -1084,7 +1084,7 @@ class SPINetwork:
 				counts = [sum(spike_counts[spike] for spike in value_neurons) for value_neurons in variable_neurons]
 
 				# If both are zero, we have a zero state.
-				if all(c == 0 for c in counts): break
+				if all(c == 0 for c in counts): continue
 
 				# Otherwise, find the variable value with the highest
 				# number of spikes (or if equal, choose randomly).

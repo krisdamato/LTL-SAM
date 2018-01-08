@@ -241,7 +241,7 @@ class SAMGraph:
 			self.sams[ym].set_plasticity_learning_time(learning_time)
 
 
-	def determine_state(self, spikes, invalid_to_random=True):
+	def determine_state(self, spikes, invalid_handling=None):
 		"""
 		Given a set of spikes of the network, this determines which of
 		the network states the network is in, or whether it is in an 
@@ -249,32 +249,43 @@ class SAMGraph:
 		which more than one output neuron is firing at the same time
 		for the same RV.
 		"""
-		state = [0 for i in range(len(self.sams))]
+		state = [0 for i in range(len(self.dependencies))]
 		rng = list(self.sams.values())[0].rngs[0]
 		for i in range(len(self.sams)):
 			var_name = "y" + str(i + 1)
-			module = self.sams[var_name]
+			variable_neurons = [(self.sams[var_name].zeta[x],) for x in range(self.num_discrete_vals)]
 
-			# Are there any spikes of this module's zeta layer?
-			spike_found = False
-			for j, n in enumerate(module.zeta):
-				encoded_value = (j + 1) if not spike_found else -1
-				if n in spikes:
-					state[i] = encoded_value
-					spike_found = True
+			# Count the number of spikes of each subpool.
+			spike_counts = Counter(spikes)
+			counts = [sum(spike_counts[spike] for spike in value_neurons) for value_neurons in variable_neurons]
 
-		# If any state value is greater than the maximum encoded value,
+			# If both are zero, we have a zero state.
+			if all(c == 0 for c in counts): continue
+
+			# Otherwise, find the variable value with the highest
+			# number of spikes (or if equal, choose randomly).
+			max_count = np.amax(counts)
+			if counts.count(max_count) == 1: 
+				state[i] = counts.index(max_count) + 1 # +1 is necessary because the 0-state is not coded for.
+			else:
+				if invalid_handling == 'random':
+					indices = [j for j, x in enumerate(counts) if x == max_count]
+					state[i] = self.rngs[0].choice(indices) + 1
+				elif invalid_handling == 'first':
+					all_variable_neurons = [n for value_neurons in variable_neurons for n in value_neurons]
+					valid_spikes = [s for s in spikes if s in all_variable_neurons]
+					first_spike = valid_spikes[0]
+					state[i] = list(self.sams[var_name].zeta).index(first_spike) + 1
+
+		# If any state value is -1,
 		# this is an invalid state. 
 		if any(s == -1 for s in state):
-			if not invalid_to_random:
-				state = [-1 for i in range(len(self.sams))]
-			else:
-				state = [rng.choice(self.num_discrete_vals) + 1 if s == -1 else s for s in state]
-
+			state = [-1 for i in range(len(self.sams))]
+			
 		return tuple(state)
 
 
-	def measure_experimental_joint_distribution(self, duration, timestep=1.0, invalid_to_random=True):
+	def measure_experimental_joint_distribution(self, duration, timestep=1.0, invalid_handling=None):
 		"""
 		Lets the network generate spontaneous spikes for a long duration
 		and then uses the spike activity to calculate the frequency of network 
@@ -317,7 +328,7 @@ class SAMGraph:
 		for t in steps:
 			spike_indices = [i for i, st in enumerate(times) if t - tau < st <= t]
 			state_spikes = [senders[i] for i in spike_indices]
-			state = self.determine_state(state_spikes, invalid_to_random=invalid_to_random)
+			state = self.determine_state(state_spikes, invalid_handling=invalid_handling)
 			joint[state] += 1
 			if state in self.distribution: 
 				pass
