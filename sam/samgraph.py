@@ -3,7 +3,7 @@ import logging
 import nest
 import numpy as np
 import sam.helpers as helpers
-from collections import defaultdict, OrderedDict
+from collections import defaultdict, OrderedDict, Counter
 from mpi4py import MPI
 from sam.sam import SAMModule
 
