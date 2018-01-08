@@ -274,7 +274,7 @@ class SAMGraph:
 		return tuple(state)
 
 
-	def measure_experimental_joint_distribution(self, duration, timestep=1.0):
+	def measure_experimental_joint_distribution(self, duration, timestep=1.0, invalid_to_random=True):
 		"""
 		Lets the network generate spontaneous spikes for a long duration
 		and then uses the spike activity to calculate the frequency of network 
@@ -317,7 +317,7 @@ class SAMGraph:
 		for t in steps:
 			spike_indices = [i for i, st in enumerate(times) if t - tau < st <= t]
 			state_spikes = [senders[i] for i in spike_indices]
-			state = self.determine_state(state_spikes)
+			state = self.determine_state(state_spikes, invalid_to_random=invalid_to_random)
 			joint[state] += 1
 			if state in self.distribution: 
 				pass
