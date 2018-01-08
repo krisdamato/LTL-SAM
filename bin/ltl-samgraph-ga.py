@@ -56,19 +56,27 @@ def main():
     # NOTE: Innerloop simulator
     optimizee = SAMGraphOptimizee(traj, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path, num_fitness_trials=10)
 
-    # NOTE: Outerloop optimizer initialization
-    parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
-                                            MUTPB=1.0, NGEN=50, indpb=0.05,
-                                            tournsize=20, matepar=0.5,
-                                            mutpar=1.0, remutate=False
-                                            )
+    # # NOTE: Outerloop optimizer initialization
+    # parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
+    #                                         MUTPB=1.0, NGEN=50, indpb=0.05,
+    #                                         tournsize=20, matepar=0.5,
+    #                                         mutpar=1.0, remutate=False
+    #                                         )
 
-    optimizer = GeneticAlgorithmOptimizer(traj, optimizee_create_individual=optimizee.create_individual,
-                                          optimizee_fitness_weights=(-0.1,),
-                                          parameters=parameters,
-                                          optimizee_bounding_func=optimizee.bounding_func,
-                                          optimizee_parameter_spec=optimizee.parameter_spec
-                                          )
+    # optimizer = GeneticAlgorithmOptimizer(traj, optimizee_create_individual=optimizee.create_individual,
+    #                                       optimizee_fitness_weights=(-0.1,),
+    #                                       parameters=parameters,
+    #                                       optimizee_bounding_func=optimizee.bounding_func,
+    #                                       optimizee_parameter_spec=optimizee.parameter_spec
+    #                                       )
+
+    parameters = FACEParameters(min_pop_size=48, max_pop_size=96, n_elite=20, smoothing=0.2, temp_decay=0,
+                                n_iteration=50,
+                                distribution=Gaussian(), n_expand=5, stop_criterion=np.inf, seed=0)
+    optimizer = FACEOptimizer(traj, optimizee_create_individual=optimizee.create_individual,
+                              optimizee_fitness_weights=(-0.1,),
+                              parameters=parameters,
+                              optimizee_bounding_func=optimizee.bounding_func)
 
     # Add post processing
     env.add_postprocessing(optimizer.post_process)
