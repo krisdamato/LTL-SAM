@@ -1,10 +1,13 @@
 import logging.config
+import numpy as np
 import os
 
 from pypet import Environment, pypetconstants
 
 from ltl.logging_tools import create_shared_logger_data, configure_loggers
 from ltl.optimizers.evolution import GeneticAlgorithmOptimizer, GeneticAlgorithmParameters
+from ltl.optimizers.crossentropy.distribution import Gaussian
+from ltl.optimizers.face.optimizer import FACEOptimizer, FACEParameters
 from ltl.paths import Paths
 from ltl.recorder import Recorder
 from sam.optimizee import SAMGraphOptimizee
@@ -101,7 +104,6 @@ def main():
 
     # Quick plot of evolution mean fitnesses.
     import matplotlib.pyplot as plt
-    import numpy as np
     from matplotlib.ticker import MaxNLocator
     fig, ax = plt.subplots()
     ax.plot(np.array(range(len(optimizer.gen_fitnesses))) + 1, optimizer.gen_fitnesses)
