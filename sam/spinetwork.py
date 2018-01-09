@@ -1161,6 +1161,7 @@ class SPINetwork:
 		for k, v in joint.items():
 			joint[k] = v / total
 		zeros /= len(steps)
+		invalids /= len(steps)
 
 		logging.info("Probability of an invalid state: {}".format(invalids))
 		logging.info("Probability of a zero state: {}".format(zeros))
