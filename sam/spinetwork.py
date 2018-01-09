@@ -1137,8 +1137,10 @@ class SPINetwork:
 		times = spikes['times']
 
 		# Prepare state distribution variables.
+		invalid_state = tuple([-1 for i in range(len(self.sams))])
 		joint = defaultdict(int)
 		zeros = 0
+		invalids = 0
 
 		# For every timestep, figure out the network state we are in.
 		steps = np.arange(start_time, end_time, timestep)
@@ -1149,6 +1151,8 @@ class SPINetwork:
 			joint[state] += 1
 			if state in self.distribution: 
 				pass
+			elif state == invalid_state:
+				invalids += 1
 			else:
 				zeros += 1
 
@@ -1158,6 +1162,7 @@ class SPINetwork:
 			joint[k] = v / total
 		zeros /= len(steps)
 
+		logging.info("Probability of an invalid state: {}".format(invalids))
 		logging.info("Probability of a zero state: {}".format(zeros))
 
 		return joint
