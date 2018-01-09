@@ -1067,6 +1067,7 @@ class SPINetwork:
 
 			# Otherwise, find the variable value with the highest
 			# number of spikes (or if equal, choose randomly).
+			max_count = np.amax(counts)
 			if counts.count(max_count) == 1: 
 				state[i] = counts.index(max_count) + 1 # +1 is necessary because the 0-state is not coded for.
 			else:
