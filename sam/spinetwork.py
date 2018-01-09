@@ -1045,7 +1045,7 @@ class SPINetwork:
 		return spikereader
 
 
-	def __determine_state(self, spikes):
+	def __determine_state(self, spikes, invalid_handling):
 		"""
 		Given a set of spikes of the network, this determines which of
 		the network states the network is in, or whether it is in an 
@@ -1067,13 +1067,24 @@ class SPINetwork:
 
 			# Otherwise, find the variable value with the highest
 			# number of spikes (or if equal, choose randomly).
-			max_count = np.amax(counts)
 			if counts.count(max_count) == 1: 
 				state[i] = counts.index(max_count) + 1 # +1 is necessary because the 0-state is not coded for.
 			else:
-				indices = [j for j, x in enumerate(counts) if x == max_count]
-				state[i] = self.rngs[0].choice(indices) + 1
-
+				if invalid_handling == 'random':
+					indices = [j for j, x in enumerate(counts) if x == max_count]
+					state[i] = self.rngs[0].choice(indices) + 1
+				elif invalid_handling == 'first':
+					all_variable_neurons = [n for value_neurons in variable_neurons for n in value_neurons]
+					valid_spikes = [s for s in spikes if s in all_variable_neurons]
+					first_spike = valid_spikes[0]
+					membership = [first_spike in ns for ns in variable_neurons]
+					for j in membership:
+						if j: 
+							state[i] = j + 1 
+							continue
+				else:
+					state[i] = -1
+							
 		if self.network_type == 'conditional':
 			for ys in self.inputs:
 				i = int(ys[1:]) - 1
@@ -1092,13 +1103,30 @@ class SPINetwork:
 				if counts.count(max_count) == 1: 
 					state[i] = counts.index(max_count) + 1 # +1 is necessary because the 0-state is not coded for.
 				else:
-					indices = [j for j, x in enumerate(counts) if x == max_count]
-					state[i] = self.rngs[0].choice(indices) + 1
+					if invalid_handling == 'random':
+						indices = [j for j, x in enumerate(counts) if x == max_count]
+						state[i] = self.rngs[0].choice(indices) + 1
+					elif invalid_handling == 'first':
+						all_variable_neurons = [n for value_neurons in variable_neurons for n in value_neurons]
+						valid_spikes = [s for s in spikes if s in all_variable_neurons]
+						first_spike = valid_spikes[0]
+						membership = [first_spike in ns for ns in variable_neurons]
+						for j in membership:
+							if j: 
+								state[i] = j + 1 
+								continue
+					else:
+						state[i] = -1
 
+		# If any state value is -1,
+		# this is an invalid state. 
+		if any(s == -1 for s in state):
+			state = [-1 for i in range(len(self.sams))]
+			
 		return tuple(state)
 
 
-	def get_distribution_from_spikes(self, spikes, start_time, end_time, averaging_window = None, timestep=1.0):
+	def get_distribution_from_spikes(self, spikes, start_time, end_time, averaging_window = None, timestep=1.0, invalid_handling='none'):
 		"""
 		Helper function that returns the distribution represented by the 
 		spikes passed.
@@ -1116,7 +1144,7 @@ class SPINetwork:
 		for t in steps:
 			spike_indices = [i for i, st in enumerate(times) if t - averaging_window < st <= t]
 			state_spikes = [senders[i] for i in spike_indices]
-			state = self.__determine_state(state_spikes)
+			state = self.__determine_state(state_spikes, invalid_handling=invalid_handling)
 			joint[state] += 1
 			if state in self.distribution: 
 				pass
