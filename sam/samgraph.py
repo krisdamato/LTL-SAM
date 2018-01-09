@@ -276,6 +276,8 @@ class SAMGraph:
 					valid_spikes = [s for s in spikes if s in all_variable_neurons]
 					first_spike = valid_spikes[0]
 					state[i] = list(self.sams[var_name].zeta).index(first_spike) + 1
+				else:
+					state[i] = -1
 
 		# If any state value is -1,
 		# this is an invalid state. 
