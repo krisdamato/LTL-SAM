@@ -1122,7 +1122,7 @@ class SPINetwork:
 		# If any state value is -1,
 		# this is an invalid state. 
 		if any(s == -1 for s in state):
-			state = [-1 for i in range(len(self.sams))]
+			state = [-1 for i in range(len(self.dependencies))]
 			
 		return tuple(state)
 
@@ -1137,7 +1137,7 @@ class SPINetwork:
 		times = spikes['times']
 
 		# Prepare state distribution variables.
-		invalid_state = tuple([-1 for i in range(len(self.sams))])
+		invalid_state = tuple([-1 for i in range(len(self.dependencies))])
 		joint = defaultdict(int)
 		zeros = 0
 		invalids = 0
