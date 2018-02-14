@@ -830,9 +830,10 @@ class SPINetworkOptimizee(Optimizee):
                 plt.close()
 
             logging.info("This run's experimental joint KLD is {}".format(this_kld))
+            logging.info("This run's experimental joint KLD (valid only) is {}".format(this_kld_valid))
 
             # Pre-emptively end the fitness trials if the fitness is too bad.
-            if this_kld >= 0.7: break
+            #if this_kld >= 1.5: break
 
         self.run_number += 1
 
@@ -842,7 +843,7 @@ class SPINetworkOptimizee(Optimizee):
         logging.info("Final mean experimental network joint KLD is {}".format(mean_loss))
         logging.info("Experimental network joint KLD (on valid states only) is {}".format(mean_loss_valid))
 
-        return (mean_loss, )
+        return (mean_loss_valid, )
 
 
     def end(self):

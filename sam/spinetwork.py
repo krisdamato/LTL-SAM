@@ -35,7 +35,7 @@ class SPINetwork:
 			'stdp_rate_final':(0.0, 0.01),
 			'T':(0.0, 1.0),
 			'bias_rate_1':(0.0, 0.1),
-			'bias_baseline':(-40.0, 0.0),
+			'bias_baseline':(-50.0, 0.0),
 			'prob_exp_term':(0.0, 2.0),
 			'prob_exp_term_scale':(0.0, 4.0),
 			'bias_relative_spike_rate':(1e-5, 1.0),
@@ -46,12 +46,12 @@ class SPINetwork:
 			'connectivity_chi_self':(0.0, 1.0),
 			#'delay_max':(0.1, 10.0),
 			#'delay_min_ratio':(0.0, 1.0),
-			'weight_chi_inhibitors':(0.0, 10.0),
-			'weight_chi_self':(0.0, 10.0),
-			'weight_inhibitors_chi':(-10.0, 0.0),
-			'weight_inhibitors_self':(0.0, 10.0),
+			'weight_chi_inhibitors':(0.0, 14.0),
+			'weight_chi_self':(0.0, 14.0),
+			'weight_inhibitors_chi':(-14.0, 0.0),
+			'weight_inhibitors_self':(0.0, 14.0),
 			'weight_baseline':(-10.0, 0.0),
-			'weight_chi_chi_max':(0.01, 5.0)
+			'weight_chi_chi_max':(0.01, 8.0)
 			}
 
 		return param_spec
@@ -102,7 +102,7 @@ class SPINetwork:
 			'delay_inhibitors_self':delay_fixed,
 			'delay_devices':delay_min,
 			'learning_time':300000,
-			'pool_size_excitatory':5,
+			'pool_size_excitatory':10,
 			'pool_size_inhibitory':10,
 			'prob_linear_term':0.0,
 			'prob_exp_term':1.0/tau,
@@ -959,7 +959,7 @@ class SPINetwork:
 		# Get spikes.
 		spikes = nest.GetStatus(spikereader, keys='events')[0]
 
-		return self.get_distribution_from_spikes(spikes, start_time, start_time + duration, 1.5 * self.params['tau'], timestep)
+		return self.get_distribution_from_spikes(spikes, start_time, start_time + duration, 1.5 * self.params['tau'], timestep, invalid_handling='none')
 
 
 	def measure_experimental_cond_distribution(self, duration):
