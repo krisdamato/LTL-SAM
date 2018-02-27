@@ -285,7 +285,8 @@ class SAMGraphOptimizee(Optimizee):
         self.set_kernel_defaults()
 
         # Set up exerimental parameters.
-        self.initialise_experiment()
+        #self.initialise_experiment()
+        self.intitialise_distributions()
 
         # create_individual can be called because __init__ is complete except for traj initialization
         self.individual = self.create_individual()
@@ -374,6 +375,48 @@ class SAMGraphOptimizee(Optimizee):
         }
 
 
+    def intitialise_distributions(self):
+        """
+        Creates a set of distributions, one for each trial. Each distribution
+        has the same decomposition, but uses randomly generated parameters.
+        """
+        self.distributions = []
+        
+        # Joint equation is fixed.
+        joint_equation = "p(y1,y2,y3,y4) = p(y1)*p(y2)*p(y3|y1,y2)*p(y4|y2)"
+        
+        # First two distributions are fixed.
+        p1 = {(1,):0.5, (2,):0.5}
+        p2 = {(1,):0.5, (2,):0.5}
+
+        for i in range(self.num_fitness_trials):
+            p3 = helpers.generate_distribution(num_vars=3, num_discrete_vals=2, randomiser=self.rs)
+            p3 = helpers.compute_conditional_distribution(joint=p3, num_discrete_vals=2)
+            p4 = helpers.generate_distribution(num_vars=2, num_discrete_vals=2, randomiser=self.rs)
+            p4 = helpers.compute_conditional_distribution(joint=p4, num_discrete_vals=2)
+
+            # Compute the joint distribution given the individual distributions.
+            self.distributions.append(helpers.compute_joint_distribution(joint_equation, 
+                2,
+                p1, p2, p3, p4))
+
+        # Define the Markov blanket of each RV.
+        self.dependencies = {
+            'y1':['y2', 'y3'],
+            'y2':['y1', 'y3', 'y4'],
+            'y3':['y1', 'y2'],
+            'y4':['y2']
+        }
+
+        # Define special parameters for some modules.
+        self.special_params = {
+            'y1':{'max_weight':4.0},
+            'y2':{'max_weight':4.0},
+            'y3':{'max_weight':4.0},
+            'y4':{'max_weight':2.0},
+        }
+
+
     def parameter_spec(self):
         """
         Returns the minima-maxima of each explorable variable.
@@ -436,7 +479,7 @@ class SAMGraphOptimizee(Optimizee):
 
             self.individual = traj.individual
             self.prepare_network(
-                distribution=self.distribution, 
+                distribution=self.distributions[trial], 
                 dependencies=self.dependencies, 
                 num_discrete_vals=2, 
                 num_modes=2,
@@ -585,7 +628,8 @@ class SPINetworkOptimizee(Optimizee):
         self.set_kernel_defaults()
 
         # Set up exerimental parameters.
-        self.initialise_experiment()
+        #self.initialise_experiment()
+        self.intitialise_distributions()
 
         # create_individual can be called because __init__ is complete except for traj initialization
         self.individual = self.create_individual()
@@ -666,6 +710,40 @@ class SPINetworkOptimizee(Optimizee):
         }
 
 
+    def intitialise_distributions(self):
+        """
+        Creates a set of distributions, one for each trial. Each distribution
+        has the same decomposition, but uses randomly generated parameters.
+        """
+        self.distributions = []
+        
+        # Joint equation is fixed.
+        joint_equation = "p(y1,y2,y3,y4) = p(y1)*p(y2)*p(y3|y1,y2)*p(y4|y2)"
+        
+        # First two distributions are fixed.
+        p1 = {(1,):0.5, (2,):0.5}
+        p2 = {(1,):0.5, (2,):0.5}
+
+        for i in range(self.num_fitness_trials):
+            p3 = helpers.generate_distribution(num_vars=3, num_discrete_vals=2, randomiser=self.rs)
+            p3 = helpers.compute_conditional_distribution(joint=p3, num_discrete_vals=2)
+            p4 = helpers.generate_distribution(num_vars=2, num_discrete_vals=2, randomiser=self.rs)
+            p4 = helpers.compute_conditional_distribution(joint=p4, num_discrete_vals=2)
+
+            # Compute the joint distribution given the individual distributions.
+            self.distributions.append(helpers.compute_joint_distribution(joint_equation, 
+                2,
+                p1, p2, p3, p4))
+
+        # Define the Markov blanket of each RV.
+        self.dependencies = {
+            'y1':['y2', 'y3'],
+            'y2':['y1', 'y3', 'y4'],
+            'y3':['y1', 'y2'],
+            'y4':['y2']
+        }
+
+
     def parameter_spec(self):
         """
         Returns the minima-maxima of each explorable variable.
@@ -723,7 +801,7 @@ class SPINetworkOptimizee(Optimizee):
 
             self.individual = traj.individual
             self.prepare_network(
-                distribution=self.distribution, 
+                distribution=self.distributions[trial], 
                 dependencies=self.dependencies, 
                 num_discrete_vals=2)
             
@@ -876,7 +954,8 @@ class SPIConditionalNetworkOptimizee(Optimizee):
         self.set_kernel_defaults()
 
         # Set up exerimental parameters.
-        self.initialise_experiment()
+        #self.initialise_experiment()
+        self.intitialise_distributions()
 
         # create_individual can be called because __init__ is complete except for traj initialization
         self.individual = self.create_individual()
@@ -930,6 +1009,22 @@ class SPIConditionalNetworkOptimizee(Optimizee):
             (2,2,2):0.04
         }
 
+        # Define the Markov blanket of each RV.
+        self.dependencies = {
+            'y3':['y1', 'y2']
+        }
+
+
+    def intitialise_distributions(self):
+        """
+        Creates a set of distributions, one for each trial. Each distribution
+        has the same decomposition, but uses randomly generated parameters.
+        """
+        self.distributions = []
+        
+        for i in range(self.num_fitness_trials):
+            p = helpers.generate_distribution(num_vars=3, num_discrete_vals=2, randomiser=self.rs)
+            
         # Define the Markov blanket of each RV.
         self.dependencies = {
             'y3':['y1', 'y2']
@@ -991,7 +1086,7 @@ class SPIConditionalNetworkOptimizee(Optimizee):
 
             self.individual = traj.individual
             self.prepare_network(
-                distribution=self.distribution, 
+                distribution=self.distributions[trial], 
                 dependencies=self.dependencies, 
                 num_discrete_vals=2)
             
