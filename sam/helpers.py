@@ -320,6 +320,15 @@ def get_dictionary_string(d):
 	return dict_string
 
 
+def get_ordered_dictionary_string(d):
+	"""
+	Returns a nicely formatted string with a dictionary's content, first placed in order.
+	"""
+	ordered_d = OrderedDict(sorted(d.items()))
+
+	return helpers.get_dictionary_string(ordered_d)
+
+
 def create_directory(directory):
 	"""
 	Creates a directory if it does not exist.
