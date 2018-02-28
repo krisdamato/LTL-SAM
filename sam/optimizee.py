@@ -390,10 +390,10 @@ class SAMGraphOptimizee(Optimizee):
         p2 = {(1,):0.5, (2,):0.5}
 
         for i in range(self.num_fitness_trials):
-            p3 = helpers.generate_distribution(num_vars=3, num_discrete_vals=2, randomiser=self.rs)
-            p3 = helpers.compute_conditional_distribution(joint=p3, num_discrete_vals=2)
-            p4 = helpers.generate_distribution(num_vars=2, num_discrete_vals=2, randomiser=self.rs)
-            p4 = helpers.compute_conditional_distribution(joint=p4, num_discrete_vals=2)
+            p3 = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
+            p3 = helpers.compute_conditional_distribution(joint=p3, num_discrete_values=2)
+            p4 = helpers.generate_distribution(num_vars=2, num_discrete_values=2, randomiser=self.rs)
+            p4 = helpers.compute_conditional_distribution(joint=p4, num_discrete_values=2)
 
             # Compute the joint distribution given the individual distributions.
             self.distributions.append(helpers.compute_joint_distribution(joint_equation, 
@@ -726,10 +726,10 @@ class SPINetworkOptimizee(Optimizee):
         p2 = {(1,):0.5, (2,):0.5}
 
         for i in range(self.num_fitness_trials):
-            p3 = helpers.generate_distribution(num_vars=3, num_discrete_vals=2, randomiser=self.rs)
-            p3 = helpers.compute_conditional_distribution(joint=p3, num_discrete_vals=2)
-            p4 = helpers.generate_distribution(num_vars=2, num_discrete_vals=2, randomiser=self.rs)
-            p4 = helpers.compute_conditional_distribution(joint=p4, num_discrete_vals=2)
+            p3 = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
+            p3 = helpers.compute_conditional_distribution(joint=p3, num_discrete_values=2)
+            p4 = helpers.generate_distribution(num_vars=2, num_discrete_values=2, randomiser=self.rs)
+            p4 = helpers.compute_conditional_distribution(joint=p4, num_discrete_values=2)
 
             # Compute the joint distribution given the individual distributions.
             self.distributions.append(helpers.compute_joint_distribution(joint_equation, 
@@ -1025,7 +1025,8 @@ class SPIConditionalNetworkOptimizee(Optimizee):
         self.distributions = []
         
         for i in range(self.num_fitness_trials):
-            p = helpers.generate_distribution(num_vars=3, num_discrete_vals=2, randomiser=self.rs)
+            p = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
+	    self.distributions.append(p)
             
         # Define the Markov blanket of each RV.
         self.dependencies = {
