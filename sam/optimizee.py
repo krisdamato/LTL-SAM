@@ -1024,6 +1024,7 @@ class SPIConditionalNetworkOptimizee(Optimizee):
         
         for i in range(self.num_fitness_trials):
             p = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
+	    self.distributions.append(p)
             
         # Define the Markov blanket of each RV.
         self.dependencies = {
