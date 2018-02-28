@@ -582,7 +582,7 @@ class SAMGraphOptimizee(Optimizee):
             logging.info("This run's experimental joint KLD is {}".format(this_kld))
 
             # Pre-emptively end the fitness trials if the fitness is too bad.
-            if this_kld >= 0.7: break
+            #if this_kld >= 0.7: break
 
         self.run_number += 1
 
@@ -1026,7 +1026,7 @@ class SPIConditionalNetworkOptimizee(Optimizee):
         
         for i in range(self.num_fitness_trials):
             p = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
-	    self.distributions.append(p)
+            self.distributions.append(p)
             
         # Define the Markov blanket of each RV.
         self.dependencies = {

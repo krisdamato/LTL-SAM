@@ -326,7 +326,7 @@ def get_ordered_dictionary_string(d):
 	"""
 	ordered_d = OrderedDict(sorted(d.items()))
 
-	return helpers.get_dictionary_string(ordered_d)
+	return get_dictionary_string(ordered_d)
 
 
 def create_directory(directory):
