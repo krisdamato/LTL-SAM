@@ -453,6 +453,7 @@ class SAMGraphOptimizee(Optimizee):
             special_params=special_params)
 
         logging.info("Creating a recurrent SAM graph network with overridden parameters:\n%s", self.graph.parameter_string())
+        logging.info("Using distribution:\n%s", helpers.get_ordered_dictionary_string(distribution))
 
 
     def simulate(self, traj, run_intermediates=False, save_plot=False):
@@ -581,7 +582,7 @@ class SAMGraphOptimizee(Optimizee):
             logging.info("This run's experimental joint KLD is {}".format(this_kld))
 
             # Pre-emptively end the fitness trials if the fitness is too bad.
-            if this_kld >= 0.7: break
+            #if this_kld >= 0.7: break
 
         self.run_number += 1
 
@@ -775,6 +776,7 @@ class SPINetworkOptimizee(Optimizee):
             special_params=special_params)
 
         logging.info("Creating a recurrent SPI network with overridden parameters:\n%s", self.network.parameter_string())
+        logging.info("Using distribution:\n%s", helpers.get_ordered_dictionary_string(distribution))
 
 
     def simulate(self, traj, run_intermediates=False, save_plot=False):
@@ -1062,6 +1064,7 @@ class SPIConditionalNetworkOptimizee(Optimizee):
             override_params=params)
 
         logging.info("Creating a recurrent SPI network with overridden parameters:\n%s", self.network.parameter_string())
+        logging.info("Using distribution:\n%s", helpers.get_ordered_dictionary_string(distribution))
 
 
     def simulate(self, traj, run_intermediates=False, save_plot=False):
