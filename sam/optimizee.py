@@ -118,7 +118,7 @@ class SAMOptimizee(Optimizee):
         logging.info("Creating a SAM network with overridden parameters:\n%s", helpers.get_dictionary_string(params))
 
 
-    def intitialise_distributions(self):
+    def initialise_distributions(self):
         """
         Creates a set of distributions, one for each trial. Each distribution
         has the same decomposition, but uses randomly generated parameters.
