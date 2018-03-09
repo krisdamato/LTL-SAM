@@ -43,6 +43,7 @@ class SAMOptimizee(Optimizee):
         self.time_resolution = time_resolution
         self.num_threads = n_NEST_threads
         self.set_kernel_defaults()
+	self.initialise_distributions()
 
         # create_individual can be called because __init__ is complete except for traj initialization
         self.individual = self.create_individual()
@@ -117,6 +118,23 @@ class SAMOptimizee(Optimizee):
         logging.info("Creating a SAM network with overridden parameters:\n%s", helpers.get_dictionary_string(params))
 
 
+    def intitialise_distributions(self):
+        """
+        Creates a set of distributions, one for each trial. Each distribution
+        has the same decomposition, but uses randomly generated parameters.
+        """
+        self.distributions = []
+        
+        for i in range(self.num_fitness_trials):
+            p = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
+            self.distributions.append(p)
+            
+        # Define the Markov blanket of each RV.
+        self.dependencies = {
+            'y3':['y1', 'y2']
+        }
+
+
     def simulate(self, traj, save_plot=True):
         """
         Simulates a SAM module training on a target distribution; i.e. performing
@@ -125,18 +143,6 @@ class SAMOptimizee(Optimizee):
         If save_plot == True, will create a directory for each individual that 
         contains a text file with individual params and plots for each trial.
         """        
-        # Use the distribution from Peceveski et al., example 1.
-        distribution = {
-            (1,1,1):0.04,
-            (1,1,2):0.04,
-            (1,2,1):0.21,
-            (1,2,2):0.21,
-            (2,1,1):0.04,
-            (2,1,2):0.21,
-            (2,2,1):0.21,
-            (2,2,2):0.04
-        }
-
         # Prepare paths for each individual evaluation.
         individual_directory = os.path.join(self.save_directory, str(self.run_number) + "_" + helpers.get_now_string())
         text_path = os.path.join(individual_directory, 'params.txt')
@@ -152,7 +158,7 @@ class SAMOptimizee(Optimizee):
             self.set_kernel_defaults()
 
             self.individual = traj.individual
-            self.prepare_network(distribution=distribution, num_discrete_vals=2, num_modes=2)
+            self.prepare_network(distribution=self.distributions[trial], num_discrete_vals=2, num_modes=2)
             
             # Create directory and params file if requested.
             if save_plot:
