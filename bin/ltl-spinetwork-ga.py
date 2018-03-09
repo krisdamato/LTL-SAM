@@ -54,12 +54,12 @@ def main():
 
 
     # NOTE: Innerloop simulator
-    optimizee = SPIConditionalNetworkOptimizee(traj, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path, num_fitness_trials=15)
-    #optimizee = SPINetworkOptimizee(traj, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path, num_fitness_trials=10)
+    #optimizee = SPIConditionalNetworkOptimizee(traj, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path, num_fitness_trials=15)
+    optimizee = SPINetworkOptimizee(traj, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path, num_fitness_trials=5)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
-                                            MUTPB=1.0, NGEN=200, indpb=0.05,
+                                            MUTPB=1.0, NGEN=20, indpb=0.05,
                                             tournsize=20, matepar=0.5,
                                             mutpar=1.0, remutate=False
                                             )
