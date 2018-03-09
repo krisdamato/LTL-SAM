@@ -43,7 +43,7 @@ class SAMOptimizee(Optimizee):
         self.time_resolution = time_resolution
         self.num_threads = n_NEST_threads
         self.set_kernel_defaults()
-	self.initialise_distributions()
+        self.initialise_distributions()
 
         # create_individual can be called because __init__ is complete except for traj initialization
         self.individual = self.create_individual()
