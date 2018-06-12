@@ -35,6 +35,8 @@ def main():
                       comment='{} data'.format(name),
                       add_time=True,
                       automatic_storing=True,
+		      use_scoop=True,
+		      multiproc=True,
                       log_stdout=False,  # Sends stdout to logs
                       )
 
@@ -50,11 +52,11 @@ def main():
 
 
     # NOTE: Innerloop simulator
-    optimizee = SAMOptimizee(traj, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path)
+    optimizee = SAMOptimizee(traj, use_pecesvki=True, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path, num_fitness_trials=10)
 
     # NOTE: Outerloop optimizer initialization
-    parameters = GeneticAlgorithmParameters(seed=0, popsize=60, CXPB=0.5,
-                                            MUTPB=1.0, NGEN=10, indpb=0.01,
+    parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
+                                            MUTPB=1.0, NGEN=20, indpb=0.01,
                                             tournsize=20, matepar=0.5,
                                             mutpar=1.0, remutate=False
                                             )

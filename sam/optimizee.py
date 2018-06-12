@@ -33,6 +33,7 @@ class SAMOptimizee(Optimizee):
             num_fitness_trials=3, 
             seed=0, 
             n_NEST_threads=1, 
+	    use_pecevski=False,
             plots_directory='./sam_plots'):
         super(SAMOptimizee, self).__init__(traj)
         
@@ -42,8 +43,9 @@ class SAMOptimizee(Optimizee):
         self.save_directory = plots_directory
         self.time_resolution = time_resolution
         self.num_threads = n_NEST_threads
+        self.use_pecevski = use_pecevski
         self.set_kernel_defaults()
-        self.initialise_distributions()
+        self.initialise_distributions()                	
 
         # create_individual can be called because __init__ is complete except for traj initialization
         self.individual = self.create_individual()
@@ -126,7 +128,19 @@ class SAMOptimizee(Optimizee):
         self.distributions = []
         
         for i in range(self.num_fitness_trials):
-            p = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
+            if self.use_pecevski:
+                p = {
+            (1,1,1):0.04,
+            (1,1,2):0.04,
+            (1,2,1):0.21,
+            (1,2,2):0.21,
+            (2,1,1):0.04,
+            (2,1,2):0.21,
+            (2,2,1):0.21,
+            (2,2,2):0.04
+        }
+            else:
+                p = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
             self.distributions.append(p)
             
         # Define the Markov blanket of each RV.
