@@ -149,7 +149,7 @@ class SAMOptimizee(Optimizee):
         }
 
 
-    def simulate(self, traj, save_plot=True):
+    def simulate(self, traj, save_plot=False):
         """
         Simulates a SAM module training on a target distribution; i.e. performing
         density estimation as in Pecevski et al. 2016. The loss function is the
