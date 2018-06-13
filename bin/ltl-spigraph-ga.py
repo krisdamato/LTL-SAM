@@ -9,11 +9,11 @@ from ltl.paths import Paths
 from ltl.recorder import Recorder
 from sam.optimizee import SPINetworkOptimizee, SPIConditionalNetworkOptimizee
 
-logger = logging.getLogger('bin.ltl-spinetwork-ga')
+logger = logging.getLogger('bin.ltl-spigraph-ga')
 
 
-def main():
-    name = 'LTL-SPINETWORK-GA'
+def main(path_name, resolution, min_delay, fixed_delay, max_delay, use_pecevski):
+    name = path_name
     try:
         with open('bin/path.conf') as f:
             root_dir_path = f.read().strip()
@@ -24,8 +24,6 @@ def main():
             " before running the simulation"
         )
     paths = Paths(name, dict(run_no='test'), root_dir_path=root_dir_path)
-
-    # print("All output logs can be found in directory ", paths.logs_path)
 
     traj_file = os.path.join(paths.output_dir_path, 'data.h5')
 
@@ -52,10 +50,16 @@ def main():
     # Get the trajectory from the environment
     traj = env.trajectory
 
-
     # NOTE: Innerloop simulator
-    #optimizee = SPIConditionalNetworkOptimizee(traj, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path, num_fitness_trials=15)
-    optimizee = SPINetworkOptimizee(traj, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path, num_fitness_trials=5)
+    optimizee = SPINetworkOptimizee(traj, 
+									n_NEST_threads=1, 
+									time_resolution=resolution, 
+									min_delay=min_delay, 
+									fixed_delay=fixed_delay,
+									max_delay=max_delay,
+									use_pecevski=use_pecevski,
+									plots_directory=paths.output_dir_path, 
+									num_fitness_trials=5)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
@@ -101,7 +105,8 @@ def main():
     ax.set_xlabel("Generation Number")
     ax.set_ylabel("Mean Population Fitness")
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    fig.savefig("fitness_evolution.png")
+    fig.savefig("{}_fitness_evolution.png".format(path_name))
 
 if __name__ == '__main__':
-    main()
+	main(path_name='SPIGRAPH-0_1ms-0_3ms-GA-random', resolution=0.1, min_delay=0.1, fixed_delay=0.2, max_delay=0.3, use_pecevski=False)
+

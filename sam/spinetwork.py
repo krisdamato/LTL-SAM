@@ -44,8 +44,6 @@ class SPINetwork:
 			'connectivity_inh_self':(0.0, 1.0),
 			'connectivity_chi_chi':(0.0, 1.0),
 			'connectivity_chi_self':(0.0, 1.0),
-			#'delay_max':(0.1, 10.0),
-			#'delay_min_ratio':(0.0, 1.0),
 			'weight_chi_inhibitors':(0.0, 14.0),
 			'weight_chi_self':(0.0, 14.0),
 			'weight_inhibitors_chi':(-14.0, 0.0),
@@ -64,9 +62,9 @@ class SPINetwork:
 		"""
 		# Set common properties.
 		tau = 10.0 if 'tau' not in override_params else override_params['tau']
-		delay_fixed = 1.0 if 'delay_fixed' not in override_params else override_params['delay_fixed']
-		delay_max = 4.0 if 'delay_max' not in override_params else round(override_params['delay_max'], 1)
-		delay_min = 1.0 if 'delay_min_ratio' not in override_params else round(max(override_params['delay_min_ratio'] * delay_max, 0.1), 1)
+		fixed_delay = 1.0 if 'fixed_delay' not in override_params else override_params['fixed_delay']
+		max_delay = 4.0 if 'max_delay' not in override_params else override_params['max_delay']
+		min_delay = 1.0 if 'min_delay' not in override_params else override_params['min_delay']
 
 		# Set all derived and underived properties.
 		params = {
@@ -94,13 +92,13 @@ class SPINetwork:
 			'current_minus_input':-30.0,
 			'current_plus_input':30.0,
 			'dead_time_inhibitors':tau,
-			'delay_chi_inhibitors':delay_fixed,
-			'delay_inhibitors_chi':delay_fixed,
-			'delay_chi_self':delay_fixed,
-			'delay_chi_chi_min':delay_min,
-			'delay_chi_chi_max':delay_max,
-			'delay_inhibitors_self':delay_fixed,
-			'delay_devices':delay_min,
+			'delay_chi_inhibitors':fixed_delay,
+			'delay_inhibitors_chi':fixed_delay,
+			'delay_chi_self':fixed_delay,
+			'delay_chi_chi_min':min_delay,
+			'delay_chi_chi_max':max_delay,
+			'delay_inhibitors_self':fixed_delay,
+			'delay_devices':min_delay,
 			'learning_time':300000,
 			'pool_size_excitatory':8,
 			'pool_size_inhibitory':8,
@@ -121,7 +119,7 @@ class SPINetwork:
 			'synapse_type_inhibitors_self':'static_synapse',
 			'T':0.58,
 			'tau':tau,
-			'tau_membrane':delay_min/100,
+			'tau_membrane':min_delay/100,
 			'tau_alpha':tau,
 			'tau_multiplier_max':100000.0,
 			'use_rect_psp_exc':True,

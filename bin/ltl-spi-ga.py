@@ -1,21 +1,18 @@
 import logging.config
-import numpy as np
 import os
 
 from pypet import Environment, pypetconstants
 
 from ltl.logging_tools import create_shared_logger_data, configure_loggers
 from ltl.optimizers.evolution import GeneticAlgorithmOptimizer, GeneticAlgorithmParameters
-from ltl.optimizers.crossentropy.distribution import Gaussian
-from ltl.optimizers.face.optimizer import FACEOptimizer, FACEParameters
 from ltl.paths import Paths
 from ltl.recorder import Recorder
-from sam.optimizee import SAMGraphOptimizee
+from sam.optimizee import SPINetworkOptimizee, SPIConditionalNetworkOptimizee
 
-logger = logging.getLogger('bin.ltl-samgraph-ga')
+logger = logging.getLogger('bin.ltl-spi-ga')
 
 
-def main(path_name, resolution, fixed_delay, use_pecevski):
+def main(path_name, resolution, min_delay, fixed_delay, max_delay, use_pecevski):
     name = path_name
     try:
         with open('bin/path.conf') as f:
@@ -27,8 +24,6 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
             " before running the simulation"
         )
     paths = Paths(name, dict(run_no='test'), root_dir_path=root_dir_path)
-
-    # print("All output logs can be found in directory ", paths.logs_path)
 
     traj_file = os.path.join(paths.output_dir_path, 'data.h5')
 
@@ -56,13 +51,15 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
     traj = env.trajectory
 
     # NOTE: Innerloop simulator
-    optimizee = SAMGraphOptimizee(traj, 
-									n_NEST_threads=1, 
-									time_resolution=resolution, 
-									fixed_delay=fixed_delay, 
-									use_pecevski=use_pecevski, 
-									plots_directory=paths.output_dir_path, 
-									num_fitness_trials=10)
+    optimizee = SPIConditionalNetworkOptimizee(traj, 
+												n_NEST_threads=1, 
+												time_resolution=resolution, 
+												min_delay=min_delay, 
+												fixed_delay=fixed_delay,
+												max_delay=max_delay,
+												use_pecevski=use_pecevski,
+												plots_directory=paths.output_dir_path, 
+												num_fitness_trials=10)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
@@ -101,6 +98,7 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
 
     # Quick plot of evolution mean fitnesses.
     import matplotlib.pyplot as plt
+    import numpy as np
     from matplotlib.ticker import MaxNLocator
     fig, ax = plt.subplots()
     ax.plot(np.array(range(len(optimizer.gen_fitnesses))) + 1, optimizer.gen_fitnesses)
@@ -110,8 +108,5 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
     fig.savefig("{}_fitness_evolution.png".format(path_name))
 
 if __name__ == '__main__':
-	main(path_name='SAMGRAPH-0_1ms-GA-Pecevski', resolution=0.1, fixed_delay=0.1, use_pecevski=True)
-	main(path_name='SAMGRAPH-0_2ms-GA-Pecevski', resolution=0.1, fixed_delay=0.2, use_pecevski=True)
-	main(path_name='SAMGRAPH-0_5ms-GA-Pecevski', resolution=0.1, fixed_delay=0.5, use_pecevski=True)
-	main(path_name='SAMGRAPH-1_0ms-GA-Pecevski', resolution=0.1, fixed_delay=1.0, use_pecevski=True)
-	main(path_name='SAMGRAPH-2_0ms-GA-Pecevski', resolution=0.1, fixed_delay=2.0, use_pecevski=True)
+	main(path_name='SPI-0_1ms-0_3ms-GA-random', resolution=0.1, min_delay=0.1, fixed_delay=0.2, max_delay=0.3, use_pecevski=False)
+

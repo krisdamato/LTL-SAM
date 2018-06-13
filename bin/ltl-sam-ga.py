@@ -12,7 +12,7 @@ from sam.optimizee import SAMOptimizee, SAMGraphOptimizee
 logger = logging.getLogger('bin.ltl-sam-ga')
 
 
-def main(path_name, fixed_delay, use_pecevski):
+def main(path_name, resolution, fixed_delay, use_pecevski):
     name = path_name
     try:
         with open('bin/path.conf') as f:
@@ -25,8 +25,6 @@ def main(path_name, fixed_delay, use_pecevski):
         )
     paths = Paths(name, dict(run_no='test'), root_dir_path=root_dir_path)
 
-    # print("All output logs can be found in directory ", paths.logs_path)
-
     traj_file = os.path.join(paths.output_dir_path, 'data.h5')
 
     # Create an environment that handles running our simulation
@@ -35,8 +33,8 @@ def main(path_name, fixed_delay, use_pecevski):
                       comment='{} data'.format(name),
                       add_time=True,
                       automatic_storing=True,
-		      use_scoop=True,
-		      multiproc=True,
+					  use_scoop=True,
+					  multiproc=True,
                       wrap_mode=pypetconstants.WRAP_MODE_LOCAL,
                       log_stdout=False,  # Sends stdout to logs
                       )
@@ -51,9 +49,14 @@ def main(path_name, fixed_delay, use_pecevski):
     # Get the trajectory from the environment
     traj = env.trajectory
 
-
     # NOTE: Innerloop simulator
-    optimizee = SAMOptimizee(traj, use_pecevski=use_pecevski, n_NEST_threads=1, time_resolution=fixed_delay, plots_directory=paths.output_dir_path, num_fitness_trials=10)
+    optimizee = SAMOptimizee(traj, 
+							use_pecevski=use_pecevski, 
+							n_NEST_threads=1, 
+							time_resolution=resolution,
+							fixed_delay=fixed_delay,
+							plots_directory=paths.output_dir_path, 
+							num_fitness_trials=10)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
@@ -102,7 +105,8 @@ def main(path_name, fixed_delay, use_pecevski):
     fig.savefig("{}_fitness_evolution.png".format(name))
 
 if __name__ == '__main__':
-    main(path_name='SAM-0.2ms-GA-Pecevski',  fixed_delay=0.2, use_pecevski=True)
-    main(path_name='SAM-0.5ms-GA-Pecevski',  fixed_delay=0.5, use_pecevski=True)
-    main(path_name='SAM-1.0ms-GA-Pecevski',  fixed_delay=1.0, use_pecevski=True)
-    main(path_name='SAM-2.0ms-GA-Pecevski',  fixed_delay=2.0, use_pecevski=True)
+    main(path_name='SAM-0_1ms-GA-Pecevski',  resolution=0.1, fixed_delay=0.1, use_pecevski=True)
+    main(path_name='SAM-0_2ms-GA-Pecevski',  resolution=0.1, fixed_delay=0.2, use_pecevski=True)
+    main(path_name='SAM-0_5ms-GA-Pecevski',  resolution=0.1, fixed_delay=0.5, use_pecevski=True)
+    main(path_name='SAM-1_0ms-GA-Pecevski',  resolution=0.1, fixed_delay=1.0, use_pecevski=True)
+    main(path_name='SAM-2_0ms-GA-Pecevski',  resolution=0.1, fixed_delay=2.0, use_pecevski=True)

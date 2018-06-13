@@ -16,11 +16,15 @@ loggers:
     level: INFO
     handlers: [file]
     propagate: no
+  ltl-spi-ga:
+    level: INFO
+    handlers: [file]
+    propagate: no
   ltl-samgraph-sa:
     level: INFO
     handlers: [file]
     propagate: no
-  ltl-spinetwork-sa:
+  ltl-spigraph-sa:
     level: INFO
     handlers: [file]
     propagate: no
