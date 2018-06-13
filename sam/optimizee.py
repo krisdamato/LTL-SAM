@@ -807,10 +807,12 @@ class SPINetworkOptimizee(Optimizee):
         # Convert the trajectory individual to a dictionary.
         params = {k:self.individual[k] for k in SPINetwork.parameter_spec(len(dependencies)).keys()}
 
-        # Add delay values.
+        # Set other parameters.
         params['min_delay'] = self.min_delay
         params['fixed_delay'] = self.fixed_delay
         params['max_delay'] = self.max_delay
+        params['pool_size_excitatory'] = 8
+        params['pool_size_inhibitory'] = 8
 
         # Create a SPI network with the correct parameters.
         self.network.create_network(
@@ -1113,10 +1115,12 @@ class SPIConditionalNetworkOptimizee(Optimizee):
         # Convert the trajectory individual to a dictionary.
         params = {k:self.individual[k] for k in SPINetwork.parameter_spec(len(dependencies), 'conditional').keys()}
 
-        # Add delay values.
+        # Set other parameters.
         params['min_delay'] = self.min_delay
         params['fixed_delay'] = self.fixed_delay
         params['max_delay'] = self.max_delay
+        params['pool_size_excitatory'] = 10
+        params['pool_size_inhibitory'] = 10
 
         # Create a SPI network with the correct parameters.
         self.network.create_conditional_network(
