@@ -12,8 +12,8 @@ from sam.optimizee import SAMOptimizee, SAMGraphOptimizee
 logger = logging.getLogger('bin.ltl-sam-ga')
 
 
-def main():
-    name = 'LTL-SAM-GA'
+def main(path_name, fixed_delay, use_pecevski):
+    name = path_name
     try:
         with open('bin/path.conf') as f:
             root_dir_path = f.read().strip()
@@ -53,7 +53,7 @@ def main():
 
 
     # NOTE: Innerloop simulator
-    optimizee = SAMOptimizee(traj, use_pecevski=True, n_NEST_threads=1, time_resolution=0.1, plots_directory=paths.output_dir_path, num_fitness_trials=10)
+    optimizee = SAMOptimizee(traj, use_pecevski=use_pecevski, n_NEST_threads=1, time_resolution=fixed_delay, plots_directory=paths.output_dir_path, num_fitness_trials=10)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
@@ -99,7 +99,10 @@ def main():
     ax.set_xlabel("Generation Number")
     ax.set_ylabel("Mean Population Fitness")
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    fig.savefig("fitness_evolution.png")
+    fig.savefig("{}_fitness_evolution.png".format(name))
 
 if __name__ == '__main__':
-    main()
+    main(path_name='SAM-0.2ms-GA-Pecevski',  fixed_delay=0.2, use_pecevski=True)
+    main(path_name='SAM-0.5ms-GA-Pecevski',  fixed_delay=0.5, use_pecevski=True)
+    main(path_name='SAM-1.0ms-GA-Pecevski',  fixed_delay=1.0, use_pecevski=True)
+    main(path_name='SAM-2.0ms-GA-Pecevski',  fixed_delay=2.0, use_pecevski=True)
