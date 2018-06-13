@@ -30,11 +30,11 @@ class SAMOptimizee(Optimizee):
             self, 
             traj, 
             time_resolution=0.05, 
-			fixed_delay=0.05,
+            fixed_delay=0.05,
             num_fitness_trials=3, 
             seed=0, 
             n_NEST_threads=1, 
-			use_pecevski=False,
+            use_pecevski=False,
             plots_directory='./sam_plots'):
         super(SAMOptimizee, self).__init__(traj)
         
@@ -43,11 +43,11 @@ class SAMOptimizee(Optimizee):
         self.run_number = 0 # Is this NEST-process safe?
         self.save_directory = plots_directory
         self.time_resolution = time_resolution
-		self.delay = fixed_delay
+        self.delay = fixed_delay
         self.num_threads = n_NEST_threads
         self.use_pecevski = use_pecevski
         self.set_kernel_defaults()
-        self.initialise_distributions()                	
+        self.initialise_distributions()                    
 
         # create_individual can be called because __init__ is complete except for traj initialization
         self.individual = self.create_individual()
@@ -292,11 +292,11 @@ class SAMGraphOptimizee(Optimizee):
             self, 
             traj, 
             time_resolution=0.05, 
-			fixed_delay=0.05,
+            fixed_delay=0.05,
             num_fitness_trials=3, 
             seed=0, 
             n_NEST_threads=1, 
-			use_pecevski=False,
+            use_pecevski=False,
             plots_directory='./sam_plots'):
         super(SAMGraphOptimizee, self).__init__(traj)
         
@@ -305,10 +305,10 @@ class SAMGraphOptimizee(Optimizee):
         self.run_number = 0 # Is this NEST-process safe?
         self.save_directory = plots_directory
         self.time_resolution = time_resolution
-		self.delay = fixed_delay
+        self.delay = fixed_delay
         self.num_threads = n_NEST_threads
         self.set_kernel_defaults()
-		self.use_pecevski=use_pecevski
+        self.use_pecevski=use_pecevski
 
         # Set up exerimental parameters.
         self.initialise_pecevski()
@@ -416,18 +416,18 @@ class SAMGraphOptimizee(Optimizee):
         p2 = {(1,):0.5, (2,):0.5}
 
         for i in range(self.num_fitness_trials):
-			if not self.use_pecevski:
-				p3 = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
-				p3 = helpers.compute_conditional_distribution(joint=p3, num_discrete_values=2)
-				p4 = helpers.generate_distribution(num_vars=2, num_discrete_values=2, randomiser=self.rs)
-				p4 = helpers.compute_conditional_distribution(joint=p4, num_discrete_values=2)
+            if not self.use_pecevski:
+                p3 = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
+                p3 = helpers.compute_conditional_distribution(joint=p3, num_discrete_values=2)
+                p4 = helpers.generate_distribution(num_vars=2, num_discrete_values=2, randomiser=self.rs)
+                p4 = helpers.compute_conditional_distribution(joint=p4, num_discrete_values=2)
 
-				# Compute the joint distribution given the individual distributions.
-				self.distributions.append(helpers.compute_joint_distribution(joint_equation, 
-					2,
-					p1, p2, p3, p4))
-			else:
-				self.distributions.append(self.pecevski_distribution)
+                # Compute the joint distribution given the individual distributions.
+                self.distributions.append(helpers.compute_joint_distribution(joint_equation, 
+                    2,
+                    p1, p2, p3, p4))
+            else:
+                self.distributions.append(self.pecevski_distribution)
 
 
         # Define the Markov blanket of each RV.
@@ -644,10 +644,10 @@ class SPINetworkOptimizee(Optimizee):
             self, 
             traj, 
             time_resolution=0.1, 
-			min_delay=0.1,
-			fixed_delay=0.2,
-			max_delay=0.3,
-			use_pecevski=False,
+            min_delay=0.1,
+            fixed_delay=0.2,
+            max_delay=0.3,
+            use_pecevski=False,
             num_fitness_trials=3, 
             seed=0, 
             n_NEST_threads=1, 
@@ -660,9 +660,9 @@ class SPINetworkOptimizee(Optimizee):
         self.save_directory = plots_directory
         self.time_resolution = time_resolution
         self.num_threads = n_NEST_threads
-		self.min_delay = min_delay
-		self.fixed_delay = fixed_delay
-		self.max_delay = max_delay
+        self.min_delay = min_delay
+        self.fixed_delay = fixed_delay
+        self.max_delay = max_delay
         self.set_kernel_defaults()
 
         # Set up exerimental parameters.
@@ -763,18 +763,18 @@ class SPINetworkOptimizee(Optimizee):
         p2 = {(1,):0.5, (2,):0.5}
 
         for i in range(self.num_fitness_trials):
-			if not self.use_pecevski:
-				p3 = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
-				p3 = helpers.compute_conditional_distribution(joint=p3, num_discrete_values=2)
-				p4 = helpers.generate_distribution(num_vars=2, num_discrete_values=2, randomiser=self.rs)
-				p4 = helpers.compute_conditional_distribution(joint=p4, num_discrete_values=2)
+            if not self.use_pecevski:
+                p3 = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
+                p3 = helpers.compute_conditional_distribution(joint=p3, num_discrete_values=2)
+                p4 = helpers.generate_distribution(num_vars=2, num_discrete_values=2, randomiser=self.rs)
+                p4 = helpers.compute_conditional_distribution(joint=p4, num_discrete_values=2)
 
-				# Compute the joint distribution given the individual distributions.
-				self.distributions.append(helpers.compute_joint_distribution(joint_equation, 
-					2,
-					p1, p2, p3, p4))
-			else:
-				self.distributions.append(self.pecevski_distribution)
+                # Compute the joint distribution given the individual distributions.
+                self.distributions.append(helpers.compute_joint_distribution(joint_equation, 
+                    2,
+                    p1, p2, p3, p4))
+            else:
+                self.distributions.append(self.pecevski_distribution)
 
         # Define the Markov blanket of each RV.
         self.dependencies = {
@@ -807,10 +807,10 @@ class SPINetworkOptimizee(Optimizee):
         # Convert the trajectory individual to a dictionary.
         params = {k:self.individual[k] for k in SPINetwork.parameter_spec(len(dependencies)).keys()}
 
-		# Add delay values.
-		params['min_delay'] = self.min_delay
-		params['fixed_delay'] = self.fixed_delay
-		params['max_delay'] = self.max_delay
+        # Add delay values.
+        params['min_delay'] = self.min_delay
+        params['fixed_delay'] = self.fixed_delay
+        params['max_delay'] = self.max_delay
 
         # Create a SPI network with the correct parameters.
         self.network.create_network(

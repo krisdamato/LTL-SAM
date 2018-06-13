@@ -52,14 +52,14 @@ def main(path_name, resolution, min_delay, fixed_delay, max_delay, use_pecevski)
 
     # NOTE: Innerloop simulator
     optimizee = SPINetworkOptimizee(traj, 
-									n_NEST_threads=1, 
-									time_resolution=resolution, 
-									min_delay=min_delay, 
-									fixed_delay=fixed_delay,
-									max_delay=max_delay,
-									use_pecevski=use_pecevski,
-									plots_directory=paths.output_dir_path, 
-									num_fitness_trials=5)
+                                    n_NEST_threads=1, 
+                                    time_resolution=resolution, 
+                                    min_delay=min_delay, 
+                                    fixed_delay=fixed_delay,
+                                    max_delay=max_delay,
+                                    use_pecevski=use_pecevski,
+                                    plots_directory=paths.output_dir_path, 
+                                    num_fitness_trials=5)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
@@ -108,5 +108,5 @@ def main(path_name, resolution, min_delay, fixed_delay, max_delay, use_pecevski)
     fig.savefig("{}_fitness_evolution.png".format(path_name))
 
 if __name__ == '__main__':
-	main(path_name='SPIGRAPH-0_1ms-0_3ms-GA-random', resolution=0.1, min_delay=0.1, fixed_delay=0.2, max_delay=0.3, use_pecevski=False)
+    main(path_name='SPIGRAPH-0_1ms-0_3ms-GA-random', resolution=0.1, min_delay=0.1, fixed_delay=0.2, max_delay=0.3, use_pecevski=False)
 

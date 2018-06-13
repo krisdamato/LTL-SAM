@@ -33,8 +33,8 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
                       comment='{} data'.format(name),
                       add_time=True,
                       automatic_storing=True,
-					  use_scoop=True,
-					  multiproc=True,
+                      use_scoop=True,
+                      multiproc=True,
                       wrap_mode=pypetconstants.WRAP_MODE_LOCAL,
                       log_stdout=False,  # Sends stdout to logs
                       )
@@ -51,12 +51,12 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
 
     # NOTE: Innerloop simulator
     optimizee = SAMOptimizee(traj, 
-							use_pecevski=use_pecevski, 
-							n_NEST_threads=1, 
-							time_resolution=resolution,
-							fixed_delay=fixed_delay,
-							plots_directory=paths.output_dir_path, 
-							num_fitness_trials=10)
+                            use_pecevski=use_pecevski, 
+                            n_NEST_threads=1, 
+                            time_resolution=resolution,
+                            fixed_delay=fixed_delay,
+                            plots_directory=paths.output_dir_path, 
+                            num_fitness_trials=10)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,

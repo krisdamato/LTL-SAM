@@ -57,12 +57,12 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
 
     # NOTE: Innerloop simulator
     optimizee = SAMGraphOptimizee(traj, 
-									n_NEST_threads=1, 
-									time_resolution=resolution, 
-									fixed_delay=fixed_delay, 
-									use_pecevski=use_pecevski, 
-									plots_directory=paths.output_dir_path, 
-									num_fitness_trials=10)
+                                    n_NEST_threads=1, 
+                                    time_resolution=resolution, 
+                                    fixed_delay=fixed_delay, 
+                                    use_pecevski=use_pecevski, 
+                                    plots_directory=paths.output_dir_path, 
+                                    num_fitness_trials=10)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
@@ -110,8 +110,8 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
     fig.savefig("{}_fitness_evolution.png".format(path_name))
 
 if __name__ == '__main__':
-	main(path_name='SAMGRAPH-0_1ms-GA-Pecevski', resolution=0.1, fixed_delay=0.1, use_pecevski=True)
-	main(path_name='SAMGRAPH-0_2ms-GA-Pecevski', resolution=0.1, fixed_delay=0.2, use_pecevski=True)
-	main(path_name='SAMGRAPH-0_5ms-GA-Pecevski', resolution=0.1, fixed_delay=0.5, use_pecevski=True)
-	main(path_name='SAMGRAPH-1_0ms-GA-Pecevski', resolution=0.1, fixed_delay=1.0, use_pecevski=True)
-	main(path_name='SAMGRAPH-2_0ms-GA-Pecevski', resolution=0.1, fixed_delay=2.0, use_pecevski=True)
+    main(path_name='SAMGRAPH-0_1ms-GA-Pecevski', resolution=0.1, fixed_delay=0.1, use_pecevski=True)
+    main(path_name='SAMGRAPH-0_2ms-GA-Pecevski', resolution=0.1, fixed_delay=0.2, use_pecevski=True)
+    main(path_name='SAMGRAPH-0_5ms-GA-Pecevski', resolution=0.1, fixed_delay=0.5, use_pecevski=True)
+    main(path_name='SAMGRAPH-1_0ms-GA-Pecevski', resolution=0.1, fixed_delay=1.0, use_pecevski=True)
+    main(path_name='SAMGRAPH-2_0ms-GA-Pecevski', resolution=0.1, fixed_delay=2.0, use_pecevski=True)
