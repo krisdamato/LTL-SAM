@@ -47,7 +47,7 @@ class SPINetwork:
 			'weight_chi_inhibitors':(0.0, 14.0),
 			'weight_chi_self':(0.0, 14.0),
 			'weight_inhibitors_chi':(-14.0, 0.0),
-			'weight_inhibitors_self':(0.0, 14.0),
+			'weight_inhibitors_self':(-14.0, 0.0),
 			'weight_baseline':(-10.0, 0.0),
 			'weight_chi_chi_max':(0.01, 8.0)
 			}
