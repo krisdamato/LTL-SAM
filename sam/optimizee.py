@@ -986,6 +986,10 @@ class SPIConditionalNetworkOptimizee(Optimizee):
             self, 
             traj, 
             time_resolution=0.1, 
+            min_delay=0.1,
+            fixed_delay=0.2,
+            max_delay=0.3,
+            use_pecevski=False,
             num_fitness_trials=3, 
             seed=0, 
             n_NEST_threads=1, 
@@ -998,10 +1002,14 @@ class SPIConditionalNetworkOptimizee(Optimizee):
         self.save_directory = plots_directory
         self.time_resolution = time_resolution
         self.num_threads = n_NEST_threads
+        self.min_delay = min_delay
+        self.fixed_delay = fixed_delay
+        self.max_delay = max_delay
+        self.use_pecevski = use_pecevski
         self.set_kernel_defaults()
 
         # Set up exerimental parameters.
-        #self.initialise_experiment()
+        self.initialise_experiment()
         self.intitialise_distributions()
 
         # create_individual can be called because __init__ is complete except for traj initialization
@@ -1045,7 +1053,7 @@ class SPIConditionalNetworkOptimizee(Optimizee):
         """
         # Use the distribution from Peceveski et al., experiment 1.
         # Define distribution.
-        self.distribution = {
+        self.pecevski_distribution = {
             (1,1,1):0.04,
             (1,1,2):0.04,
             (1,2,1):0.21,
@@ -1070,7 +1078,11 @@ class SPIConditionalNetworkOptimizee(Optimizee):
         self.distributions = []
         
         for i in range(self.num_fitness_trials):
-            p = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
+            if not self.use_pecevski:
+                p = helpers.generate_distribution(num_vars=3, num_discrete_values=2, randomiser=self.rs)
+            else:
+                p = self.pecevski_distribution
+            
             self.distributions.append(p)
             
         # Define the Markov blanket of each RV.
@@ -1100,6 +1112,11 @@ class SPIConditionalNetworkOptimizee(Optimizee):
 
         # Convert the trajectory individual to a dictionary.
         params = {k:self.individual[k] for k in SPINetwork.parameter_spec(len(dependencies), 'conditional').keys()}
+
+        # Add delay values.
+        params['min_delay'] = self.min_delay
+        params['fixed_delay'] = self.fixed_delay
+        params['max_delay'] = self.max_delay
 
         # Create a SPI network with the correct parameters.
         self.network.create_conditional_network(
@@ -1223,8 +1240,8 @@ class SPIConditionalNetworkOptimizee(Optimizee):
 
             logging.info("This run's experimental conditional KLD is {}".format(this_kld))
 
-            # Pre-emptively end the fitness trials if the fitness is too bad.
-            if this_kld >= 0.5: break
+            ## Pre-emptively end the fitness trials if the fitness is too bad.
+            #if this_kld >= 0.5: break
 
         self.run_number += 1
 

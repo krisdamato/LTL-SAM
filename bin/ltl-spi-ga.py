@@ -108,5 +108,5 @@ def main(path_name, resolution, min_delay, fixed_delay, max_delay, use_pecevski)
     fig.savefig("{}_fitness_evolution.png".format(path_name))
 
 if __name__ == '__main__':
-    main(path_name='SPI-0_1ms-0_3ms-GA-random', resolution=0.1, min_delay=0.1, fixed_delay=0.2, max_delay=0.3, use_pecevski=False)
+    main(path_name='SPI-0_1ms-0_2ms-0_3ms-GA-random', resolution=0.1, min_delay=0.1, fixed_delay=0.2, max_delay=0.3, use_pecevski=False)
 
