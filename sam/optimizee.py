@@ -476,11 +476,7 @@ class SAMGraphOptimizee(Optimizee):
         params['delay'] = self.delay
         params['weight_chi_alpha_mean'] = 4.0 / 3
         params['stdp_time_fraction'] = 1.0
-<<<<<<< HEAD
         params['intrinsic_step_time_fraction'] = 1.0
-=======
-		params['intrinsic_step_time_fraction'] = 1.0
->>>>>>> 262c1debbb1a9fbf99e267146bfd57e95266ebcf
         params['learning_time'] = 300000
 
         # Create a SAM module with the correct parameters.
