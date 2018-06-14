@@ -59,7 +59,7 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
                                     fixed_delay=fixed_delay, 
                                     use_pecevski=use_pecevski, 
                                     plots_directory=paths.output_dir_path, 
-                                    num_fitness_trials=10)
+                                    num_fitness_trials=5)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
