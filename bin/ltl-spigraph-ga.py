@@ -6,7 +6,6 @@ from pypet import Environment, pypetconstants
 from ltl.logging_tools import create_shared_logger_data, configure_loggers
 from ltl.optimizers.evolution import GeneticAlgorithmOptimizer, GeneticAlgorithmParameters
 from ltl.paths import Paths
-from ltl.recorder import Recorder
 from sam.optimizee import SPINetworkOptimizee, SPIConditionalNetworkOptimizee
 
 logger = logging.getLogger('bin.ltl-spigraph-ga')
@@ -79,20 +78,11 @@ def main(path_name, resolution, min_delay, fixed_delay, max_delay, use_pecevski)
     # Add post processing
     env.add_postprocessing(optimizer.post_process)
 
-    # Add Recorder
-    recorder = Recorder(trajectory=traj,
-                        optimizee_name=optimizee.__class__.__name__, 
-                        optimizee_parameters=None,
-                        optimizer_name=optimizer.__class__.__name__,
-                        optimizer_parameters=optimizer.get_params())
-    recorder.start()
-
     # Run the simulation with all parameter combinations
     env.run(optimizee.simulate)
 
     # NOTE: Outerloop optimizer end
     optimizer.end(traj)
-    recorder.end()
 
     # Finally disable logging and close all log-files
     env.disable_logging()

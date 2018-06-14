@@ -9,7 +9,6 @@ from ltl.optimizers.evolution import GeneticAlgorithmOptimizer, GeneticAlgorithm
 from ltl.optimizers.crossentropy.distribution import Gaussian
 from ltl.optimizers.face.optimizer import FACEOptimizer, FACEParameters
 from ltl.paths import Paths
-from ltl.recorder import Recorder
 from sam.optimizee import SAMGraphOptimizee
 
 logger = logging.getLogger('bin.ltl-samgraph-ga')
@@ -27,8 +26,6 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
             " before running the simulation"
         )
     paths = Paths(name, dict(run_no='test'), root_dir_path=root_dir_path)
-
-    # print("All output logs can be found in directory ", paths.logs_path)
 
     traj_file = os.path.join(paths.output_dir_path, 'data.h5')
 
@@ -82,20 +79,11 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
     # Add post processing
     env.add_postprocessing(optimizer.post_process)
 
-    # Add Recorder
-    recorder = Recorder(trajectory=traj,
-                        optimizee_name=optimizee.__class__.__name__, 
-                        optimizee_parameters=None,
-                        optimizer_name=optimizer.__class__.__name__,
-                        optimizer_parameters=optimizer.get_params())
-    recorder.start()
-
     # Run the simulation with all parameter combinations
     env.run(optimizee.simulate)
 
     # NOTE: Outerloop optimizer end
     optimizer.end(traj)
-    recorder.end()
 
     # Finally disable logging and close all log-files
     env.disable_logging()
