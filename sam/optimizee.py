@@ -111,6 +111,9 @@ class SAMOptimizee(Optimizee):
         # Peg the delay to the time resolution.
         params['delay'] = self.delay
         params['weight_chi_alpha_mean'] = 3.0
+        params['stdp_time_fraction'] = 1.0
+        params['intrinsic_step_time_fraction'] = 1.0
+        params['learning_time'] = 300000
 
         # Create a SAM module with the correct parameters.
         self.sam.create_network(num_x_vars=num_vars - 1, 
@@ -472,6 +475,9 @@ class SAMGraphOptimizee(Optimizee):
         # Peg the delay to the time resolution.
         params['delay'] = self.delay
         params['weight_chi_alpha_mean'] = 4.0 / 3
+        params['stdp_time_fraction'] = 1.0
+        params['intrinsic_step_time_fraction'] = 1.0
+        params['learning_time'] = 300000
 
         # Create a SAM module with the correct parameters.
         self.graph.create_network(
