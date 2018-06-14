@@ -1,9 +1,9 @@
 import logging.config
 import numpy as np
 import os
+import argparse
 
 from pypet import Environment, pypetconstants
-
 from ltl.logging_tools import create_shared_logger_data, configure_loggers
 from ltl.optimizers.evolution import GeneticAlgorithmOptimizer, GeneticAlgorithmParameters
 from ltl.optimizers.crossentropy.distribution import Gaussian
@@ -75,7 +75,8 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
                                           optimizee_fitness_weights=(-0.1,),
                                           parameters=parameters,
                                           optimizee_bounding_func=optimizee.bounding_func,
-                                          optimizee_parameter_spec=optimizee.parameter_spec
+                                          optimizee_parameter_spec=optimizee.parameter_spec,
+                                          fitness_plot_name=path_name
                                           )
 
     # Add post processing
@@ -99,19 +100,13 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
     # Finally disable logging and close all log-files
     env.disable_logging()
 
-    # Quick plot of evolution mean fitnesses.
-    import matplotlib.pyplot as plt
-    from matplotlib.ticker import MaxNLocator
-    fig, ax = plt.subplots()
-    ax.plot(np.array(range(len(optimizer.gen_fitnesses))) + 1, optimizer.gen_fitnesses)
-    ax.set_xlabel("Generation Number")
-    ax.set_ylabel("Mean Population Fitness")
-    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    fig.savefig("{}_fitness_evolution.png".format(path_name))
 
 if __name__ == '__main__':
-    main(path_name='SAMGRAPH-0_1ms-GA-Pecevski', resolution=0.1, fixed_delay=0.1, use_pecevski=True)
-    main(path_name='SAMGRAPH-0_2ms-GA-Pecevski', resolution=0.1, fixed_delay=0.2, use_pecevski=True)
-    main(path_name='SAMGRAPH-0_5ms-GA-Pecevski', resolution=0.1, fixed_delay=0.5, use_pecevski=True)
-    main(path_name='SAMGRAPH-1_0ms-GA-Pecevski', resolution=0.1, fixed_delay=1.0, use_pecevski=True)
-    main(path_name='SAMGRAPH-2_0ms-GA-Pecevski', resolution=0.1, fixed_delay=2.0, use_pecevski=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n', '--name', required=True, help='Experiment name')
+    parser.add_argument('-r', '--resolution', required=True, type=float, help='Resolution')
+    parser.add_argument('-fd', '--fixed_delay', required=True, type=float, help='Fixed delay')
+    parser.add_argument('-p', '--use_pecevski', action='store_true', help='Use Pecevski distributions')
+    args = parser.parse_args()
+
+    main(path_name=args.name, resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski)

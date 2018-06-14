@@ -1,8 +1,8 @@
 import logging.config
 import os
+import argparse
 
 from pypet import Environment, pypetconstants
-
 from ltl.logging_tools import create_shared_logger_data, configure_loggers
 from ltl.optimizers.evolution import GeneticAlgorithmOptimizer, GeneticAlgorithmParameters
 from ltl.paths import Paths
@@ -72,7 +72,8 @@ def main(path_name, resolution, min_delay, fixed_delay, max_delay, use_pecevski)
                                           optimizee_fitness_weights=(-0.1,),
                                           parameters=parameters,
                                           optimizee_bounding_func=optimizee.bounding_func,
-                                          optimizee_parameter_spec=optimizee.parameter_spec
+                                          optimizee_parameter_spec=optimizee.parameter_spec,
+                                          fitness_plot_name=path_name
                                           )
 
     # Add post processing
@@ -96,17 +97,15 @@ def main(path_name, resolution, min_delay, fixed_delay, max_delay, use_pecevski)
     # Finally disable logging and close all log-files
     env.disable_logging()
 
-    # Quick plot of evolution mean fitnesses.
-    import matplotlib.pyplot as plt
-    import numpy as np
-    from matplotlib.ticker import MaxNLocator
-    fig, ax = plt.subplots()
-    ax.plot(np.array(range(len(optimizer.gen_fitnesses))) + 1, optimizer.gen_fitnesses)
-    ax.set_xlabel("Generation Number")
-    ax.set_ylabel("Mean Population Fitness")
-    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    fig.savefig("{}_fitness_evolution.png".format(path_name))
 
 if __name__ == '__main__':
-    main(path_name='SPIGRAPH-0_1ms-0_2ms-0_3ms-GA-random', resolution=0.1, min_delay=0.1, fixed_delay=0.2, max_delay=0.3, use_pecevski=False)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n', '--name', required=True, help='Experiment name')
+    parser.add_argument('-r', '--resolution', required=True, type=float, help='Resolution')
+    parser.add_argument('-mind', '--min_delay', required=True, type=float, help='Minimum delay')
+    parser.add_argument('-fd', '--fixed_delay', required=True, type=float, help='Fixed delay')
+    parser.add_argument('-maxd', '--max_delay', required=True, type=float, help='Maximum delay')
+    parser.add_argument('-p', '--use_pecevski', action='store_true', help='Use Pecevski distributions')
+    args = parser.parse_args()
 
+    main(path_name=args.name, resolution=args.resolution, min_delay=args.min_delay, fixed_delay=args.fixed_delay, max_delay=args.max_delay, use_pecevski=args.use_pecevski)
