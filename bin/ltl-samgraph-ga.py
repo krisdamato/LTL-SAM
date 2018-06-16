@@ -14,7 +14,11 @@ from sam.optimizee import SAMGraphOptimizee
 logger = logging.getLogger('bin.ltl-samgraph-ga')
 
 
-def main(path_name, resolution, fixed_delay, use_pecevski):
+def main(path_name, 
+         resolution, 
+         fixed_delay,
+         state_handling,
+         use_pecevski):
     name = path_name
     try:
         with open('bin/path.conf') as f:
@@ -58,6 +62,7 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
                                     time_resolution=resolution, 
                                     fixed_delay=fixed_delay, 
                                     use_pecevski=use_pecevski, 
+                                    state_handling=state_handling,
                                     plots_directory=paths.output_dir_path, 
                                     num_fitness_trials=5)
 
@@ -95,6 +100,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--resolution', required=True, type=float, help='Resolution')
     parser.add_argument('-fd', '--fixed_delay', required=True, type=float, help='Fixed delay')
     parser.add_argument('-p', '--use_pecevski', action='store_true', help='Use Pecevski distributions')
+    parser.add_argument('-s', '--state_handling', required=True, help='State handling ("none", "first", "random"')
     args = parser.parse_args()
 
-    main(path_name=args.name, resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski)
+    main(path_name=args.name, resolution=args.resolution, fixed_delay=args.fixed_delay, state_handling=args.state_handling, use_pecevski=args.use_pecevski)

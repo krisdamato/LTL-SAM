@@ -300,6 +300,7 @@ class SAMGraphOptimizee(Optimizee):
             seed=0, 
             n_NEST_threads=1, 
             use_pecevski=False,
+            state_handling='none',
             plots_directory='./sam_plots'):
         super(SAMGraphOptimizee, self).__init__(traj)
         
@@ -312,6 +313,7 @@ class SAMGraphOptimizee(Optimizee):
         self.num_threads = n_NEST_threads
         self.set_kernel_defaults()
         self.use_pecevski=use_pecevski
+        self.state_handling=state_handling
 
         # Set up exerimental parameters.
         self.initialise_pecevski()
@@ -579,7 +581,7 @@ class SAMGraphOptimizee(Optimizee):
 
             # Measure experimental joint distribution on para-experiment clones.
             if save_plot:
-                plot_exp_joints = [g.measure_experimental_joint_distribution(duration=20000.0, invalid_handling=None) for g in graph_clones]
+                plot_exp_joints = [g.measure_experimental_joint_distribution(duration=20000.0, invalid_handling=self.state_handling) for g in graph_clones]
                 plot_joint_klds = [helpers.get_KL_divergence(p, distribution) for p in plot_exp_joints] 
                 plot_joint_klds_valid = [helpers.get_KL_divergence(p, distribution, exclude_invalid_states=True) for p in plot_exp_joints] 
 
@@ -598,7 +600,7 @@ class SAMGraphOptimizee(Optimizee):
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
             last_clone = self.graph.clone()
-            experimental_joint = self.graph.measure_experimental_joint_distribution(duration=20000.0, invalid_handling=None)
+            experimental_joint = self.graph.measure_experimental_joint_distribution(duration=20000.0, invalid_handling=self.state_handling)
             this_kld = helpers.get_KL_divergence(experimental_joint, distribution)
             kld_joint_experimental.append(this_kld)
             kld_joint_experimental_valid.append(helpers.get_KL_divergence(experimental_joint, distribution, exclude_invalid_states=True))
