@@ -98,7 +98,7 @@ def run_best_sam(resolution, fixed_delay, use_pecevski):
     from sam.optimizee import SAMOptimizee
     from ltl import DummyTrajectory
    
-    fns, hps = process_sam_results('../results/')
+    fns, hps = process_sam_results('/home/krisdamato/LTL-SAM/results/')
     for i, fn in enumerate(fns):
         print("{}: {}".format(i, fn))
 
