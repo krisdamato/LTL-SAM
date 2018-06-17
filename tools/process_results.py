@@ -120,7 +120,6 @@ def run_best_sam(resolution, fixed_delay, use_pecevski):
 
     # Create a dummy trajectory.
     fake_traj = DummyTrajectory()
-    fake_traj.individual = sdict(optimizee.create_individual())
 
     # Create the SAM optimizee.
     optimizee = SAMOptimizee(fake_traj, 
@@ -131,8 +130,11 @@ def run_best_sam(resolution, fixed_delay, use_pecevski):
                             plots_directory='/home/krisdamato/LTL-SAM/plots/', 
                             forced_params=params,
                             plot_all=True,
-                            num_fitness_trials=10)
+                            num_fitness_trials=1)
     
+    # Create individual for fake traj.
+    fake_traj.individual = sdict(optimizee.create_individual())
+
     # Run simulation with the forced params.
     optimizee.simulate(fake_traj)
 
