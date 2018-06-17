@@ -35,6 +35,8 @@ class SAMOptimizee(Optimizee):
             seed=0, 
             n_NEST_threads=1, 
             use_pecevski=False,
+            forced_params=None,
+            plot_all=False,
             plots_directory='./sam_plots'):
         super(SAMOptimizee, self).__init__(traj)
         
@@ -46,6 +48,8 @@ class SAMOptimizee(Optimizee):
         self.delay = fixed_delay
         self.num_threads = n_NEST_threads
         self.use_pecevski = use_pecevski
+        self.plot_all = plot_all
+        self.forced_params = forced_params
         self.set_kernel_defaults()
         self.initialise_distributions()                    
 
@@ -115,6 +119,10 @@ class SAMOptimizee(Optimizee):
         params['intrinsic_step_time_fraction'] = 1.0
         params['learning_time'] = 300000
 
+        # Force params from outside, if so requested.
+        if self.forced_params is not None:
+            params.update(self.forced_params)
+
         # Create a SAM module with the correct parameters.
         self.sam.create_network(num_x_vars=num_vars - 1, 
             num_discrete_vals=num_discrete_vals, 
@@ -154,12 +162,12 @@ class SAMOptimizee(Optimizee):
         }
 
 
-    def simulate(self, traj, save_plot=False):
+    def simulate(self, traj):
         """
         Simulates a SAM module training on a target distribution; i.e. performing
         density estimation as in Pecevski et al. 2016. The loss function is the
         the KL divergence between target and estimated distributions.
-        If save_plot == True, will create a directory for each individual that 
+        If self.plot_all == True, will create a directory for each individual that 
         contains a text file with individual params and plots for each trial.
         """        
         # Prepare paths for each individual evaluation.
@@ -180,7 +188,7 @@ class SAMOptimizee(Optimizee):
             self.prepare_network(distribution=self.distributions[trial], num_discrete_vals=2, num_modes=2)
             
             # Create directory and params file if requested.
-            if save_plot:
+            if self.plot_all:
                 params_dict = OrderedDict(sorted(self.sam.params.items()))
                 helpers.create_directory(individual_directory)
                 helpers.save_text(helpers.get_dictionary_string(params_dict), text_path)
@@ -210,14 +218,14 @@ class SAMOptimizee(Optimizee):
                 t += self.sam.params['sample_presentation_time']
 
                 # Compute theoretical distributions and measure KLD.
-                if save_plot and i % skip_kld == 0:
+                if self.plot_all and i % skip_kld == 0:
                     implicit = self.sam.compute_implicit_distribution()
                     implicit_conditional = helpers.compute_conditional_distribution(implicit, self.sam.num_discrete_vals, self.sam.output_index)
                     kls_joint.append(helpers.get_KL_divergence(implicit, distribution))
                     kls_cond.append(helpers.get_KL_divergence(implicit_conditional, conditional))
 
                 # Measure experimental conditional distribution from spike activity.
-                if save_plot and i % skip_exp_cond == 0:
+                if self.plot_all and i % skip_exp_cond == 0:
                     # Clone module for later tests.
                     sam_clone = self.sam.clone()
 
@@ -238,12 +246,12 @@ class SAMOptimizee(Optimizee):
             self.sam.set_plasticity_learning_time(0)
 
             # Measure experimental conditional on para-experiment clones.
-            if save_plot:
+            if self.plot_all:
                 plot_exp_conditionals = [tests.measure_experimental_cond_distribution(s, duration=2000.0) for s in sam_clones]
                 kls_cond_exp = [helpers.get_KL_divergence(p, conditional) for p in plot_exp_conditionals] 
 
             # Plot KL divergence plot.
-            if save_plot:
+            if self.plot_all:
                 plt.figure()
                 plt.plot(np.array(range(len(kls_cond))) * skip_kld * self.sam.params['sample_presentation_time'] * 1e-3, kls_cond, label="KLd p(z|x)")
                 plt.plot(np.array(range(len(kls_joint))) * skip_kld * self.sam.params['sample_presentation_time'] * 1e-3, kls_joint, label="KLd p(x,z)")
@@ -259,7 +267,7 @@ class SAMOptimizee(Optimizee):
             kld_conditional.append(helpers.get_KL_divergence(implicit_conditional, conditional))
 
             # Print experimental distribution.
-            if save_plot:
+            if self.plot_all:
                 logging.info("Implicit conditional distribution:\n{}".format(implicit_conditional))
                 fig = helpers.plot_3d_histogram(conditional, implicit_conditional, self.sam.num_discrete_vals, target_label='p*(z|x)', estimated_label='p(z|x;θ)')
                 fig.savefig(os.path.join(individual_directory, str(trial) + '_conditional.png'))
@@ -301,6 +309,8 @@ class SAMGraphOptimizee(Optimizee):
             n_NEST_threads=1, 
             use_pecevski=False,
             state_handling='none',
+            forced_params=None,
+            plot_all=False,
             plots_directory='./sam_plots'):
         super(SAMGraphOptimizee, self).__init__(traj)
         
@@ -312,8 +322,10 @@ class SAMGraphOptimizee(Optimizee):
         self.delay = fixed_delay
         self.num_threads = n_NEST_threads
         self.set_kernel_defaults()
-        self.use_pecevski=use_pecevski
-        self.state_handling=state_handling
+        self.use_pecevski = use_pecevski
+        self.state_handling = state_handling
+        self.forced_params = forced_params
+        self.plot_all = plot_all
 
         # Set up exerimental parameters.
         self.initialise_pecevski()
@@ -481,6 +493,10 @@ class SAMGraphOptimizee(Optimizee):
         params['intrinsic_step_time_fraction'] = 1.0
         params['learning_time'] = 300000
 
+        # Update params by external params if necessary.
+        if self.forced_params is not None:
+            params.update(self.forced_params)
+
         # Create a SAM module with the correct parameters.
         self.graph.create_network(
             num_discrete_vals=num_discrete_vals, 
@@ -494,13 +510,13 @@ class SAMGraphOptimizee(Optimizee):
         logging.info("Using distribution:\n%s", helpers.get_ordered_dictionary_string(distribution))
 
 
-    def simulate(self, traj, run_intermediates=False, save_plot=False):
+    def simulate(self, traj):
         """
         Simulates a recurrently connected group of SAM modules, training on a target 
         distribution; i.e. performing density estimation as in Pecevski et al. 2016,
         experiment 2. The loss function is the the KL divergence between target and 
         estimated distributions. 
-        If save_plot == True, this will create a directory for each individual that 
+        If self.plot_all == True, this will create a directory for each individual that 
         contains a text file with individual params and plots for each trial.
         """
         # Prepare paths for each individual evaluation.
@@ -525,7 +541,7 @@ class SAMGraphOptimizee(Optimizee):
                 special_params=self.special_params)
             
             # Create directory and params file if requested.
-            if save_plot:
+            if self.plot_all:
                 helpers.create_directory(individual_directory)
                 helpers.save_text(self.graph.parameter_string(), text_path)
 
@@ -551,14 +567,14 @@ class SAMGraphOptimizee(Optimizee):
                 t += self.graph.params['sample_presentation_time']
 
                 # Compute theoretical distributions and measure KLD.
-                if save_plot and i % skip_kld_module == 0:
+                if self.plot_all and i % skip_kld_module == 0:
                     implicits = [s.compute_implicit_distribution() for s in self.graph.sams.values()]
                     distributions = [s.distribution for s in self.graph.sams.values()]
                     for j, (implicit, dist) in enumerate(zip(implicits, distributions)):
                         kls_joints[j].append(helpers.get_KL_divergence(implicit, dist))
 
                 # Measure experimental joint distribution from spike activity.
-                if save_plot and run_intermediates and i % skip_kld == 0:
+                if self.plot_all and i % skip_kld == 0:
                     # Clone network for later tests.
                     graph_clone = self.graph.clone()
 
@@ -580,23 +596,22 @@ class SAMGraphOptimizee(Optimizee):
             self.graph.set_plasticity_learning_time(0)
 
             # Measure experimental joint distribution on para-experiment clones.
-            if save_plot:
+            if self.plot_all:
                 plot_exp_joints = [g.measure_experimental_joint_distribution(duration=20000.0, invalid_handling=self.state_handling) for g in graph_clones]
                 plot_joint_klds = [helpers.get_KL_divergence(p, distribution) for p in plot_exp_joints] 
                 plot_joint_klds_valid = [helpers.get_KL_divergence(p, distribution, exclude_invalid_states=True) for p in plot_exp_joints] 
 
             # Plot modules' KL divergence plots and experimental KL divergence of joint distribution.
-            if save_plot:
+            if self.plot_all:
                 fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(8, 20))
                 for kld, ym in zip(kls_joints, self.graph.sams):
                     ax[0].plot(np.array(range(len(kld))) * skip_kld_module * self.graph.params['sample_presentation_time'] * 1e-3, kld, label="Analytical KLD {}".format(ym))
                     ax[0].set_title('KL divergence between target and estimated marginal (module) distributions')
                 ax[0].legend(loc='upper center')
-                if run_intermediates:
-                    ax[1].plot(np.array(range(len(plot_joint_klds))) * skip_kld * self.graph.params['sample_presentation_time'] * 1e-3, plot_joint_klds, label="Experimental KLD")
-                    ax[1].plot(np.array(range(len(plot_joint_klds_valid))) * skip_kld * self.graph.params['sample_presentation_time'] * 1e-3, plot_joint_klds_valid, label="Experimental KLD (valid only)")
-                    ax[1].legend(loc='upper center')
-                    ax[1].set_title('KL Divergence between target and estimated joint distribution')
+                ax[1].plot(np.array(range(len(plot_joint_klds))) * skip_kld * self.graph.params['sample_presentation_time'] * 1e-3, plot_joint_klds, label="Experimental KLD")
+                ax[1].plot(np.array(range(len(plot_joint_klds_valid))) * skip_kld * self.graph.params['sample_presentation_time'] * 1e-3, plot_joint_klds_valid, label="Experimental KLD (valid only)")
+                ax[1].legend(loc='upper center')
+                ax[1].set_title('KL Divergence between target and estimated joint distribution')
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
             last_clone = self.graph.clone()
@@ -606,13 +621,13 @@ class SAMGraphOptimizee(Optimizee):
             kld_joint_experimental_valid.append(helpers.get_KL_divergence(experimental_joint, distribution, exclude_invalid_states=True))
 
             # Draw spiking of output neurons.
-            if save_plot:
+            if self.plot_all:
                 last_clone.draw_stationary_state(duration=500, ax=ax[2])
                 fig.savefig(os.path.join(individual_directory, str(trial) + '.png'))
                 plt.close()
 
             # Draw histogram of states.
-            if save_plot:
+            if self.plot_all:
                 fig = helpers.plot_histogram(distribution, experimental_joint, self.graph.num_discrete_vals, "p*(y)", "p(y;θ)", renormalise_estimated_states=True)
                 fig.savefig(os.path.join(individual_directory, str(trial) + '_histogram.png'))
                 plt.close()
@@ -624,14 +639,14 @@ class SAMGraphOptimizee(Optimizee):
 
         self.run_number += 1
 
-        if save_plot:
+        if self.plot_all:
             last_klds = [kls_joints[i][-1] for i in range(len(kls_joints))]
         mean_loss = np.sum(kld_joint_experimental) / len(kld_joint_experimental)
         mean_loss_valid = np.sum(kld_joint_experimental_valid) / len(kld_joint_experimental_valid)
 
         logging.info("[Loss] Experimental network joint KLD is {}".format(mean_loss))
         logging.info("Experimental network joint KLD (on valid states only) is {}".format(mean_loss_valid))
-        if save_plot:
+        if self.plot_all:
             logging.info("Mean analytical module joint KLD is {}".format(np.sum(last_klds) / len(last_klds)))
 
         return (mean_loss, )
@@ -656,6 +671,8 @@ class SPINetworkOptimizee(Optimizee):
             fixed_delay=0.2,
             max_delay=0.3,
             use_pecevski=False,
+            plot_all=False,
+            forced_params=None,
             num_fitness_trials=3, 
             seed=0, 
             n_NEST_threads=1, 
@@ -671,6 +688,8 @@ class SPINetworkOptimizee(Optimizee):
         self.min_delay = min_delay
         self.fixed_delay = fixed_delay
         self.max_delay = max_delay
+        self.plot_all = plot_all
+        self.forced_params = forced_params
         self.set_kernel_defaults()
 
         # Set up exerimental parameters.
@@ -822,6 +841,10 @@ class SPINetworkOptimizee(Optimizee):
         params['pool_size_excitatory'] = 8
         params['pool_size_inhibitory'] = 8
 
+        # Update params by external params if necessary.
+        if self.forced_params is not None:
+            params.update(self.forced_params)
+
         # Create a SPI network with the correct parameters.
         self.network.create_network(
             num_discrete_vals=num_discrete_vals, 
@@ -834,13 +857,13 @@ class SPINetworkOptimizee(Optimizee):
         logging.info("Using distribution:\n%s", helpers.get_ordered_dictionary_string(distribution))
 
 
-    def simulate(self, traj, run_intermediates=False, save_plot=False):
+    def simulate(self, traj):
         """
         Simulates a recurrently connected network of neuron pools, training on a target 
         distribution; i.e. performing density estimation as in Pecevski et al. 2016,
         experiment 2. The loss function is the the KL divergence between target and 
         estimated distributions. 
-        If save_plot == True, this will create a directory for each individual that 
+        If self.plot_all == True, this will create a directory for each individual that 
         contains a text file with individual params and plots for each trial.
         """
         # Prepare paths for each individual evaluation.
@@ -863,7 +886,7 @@ class SPINetworkOptimizee(Optimizee):
                 num_discrete_vals=2)
             
             # Create directory and params file if requested.
-            if save_plot:
+            if self.plot_all:
                 helpers.create_directory(individual_directory)
                 helpers.save_text(self.network.parameter_string(), text_path)
 
@@ -908,7 +931,7 @@ class SPINetworkOptimizee(Optimizee):
                     print(exp_joint)
 
                 # Measure experimental joint distribution from spike activity.
-                if save_plot and run_intermediates and i % skip_kld == 0:
+                if self.plot_all and i % skip_kld == 0:
                     # Clone network for later tests.
                     clone = self.network.clone()
 
@@ -930,19 +953,18 @@ class SPINetworkOptimizee(Optimizee):
             self.network.set_plasticity_learning_time(0)
 
             # Measure experimental joint distribution on para-experiment clones.
-            if save_plot:
+            if self.plot_all:
                 plot_exp_joints = [g.measure_experimental_joint_distribution(duration=20000.0) for g in clones]
                 plot_joint_klds = [helpers.get_KL_divergence(p, distribution) for p in plot_exp_joints] 
                 plot_joint_klds_valid = [helpers.get_KL_divergence(p, distribution, exclude_invalid_states=True) for p in plot_exp_joints] 
 
             # Plot experimental KL divergence of joint distribution.
-            if save_plot:
+            if self.plot_all:
                 fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(8, 20))
-                if run_intermediates:
-                    ax[0].plot(np.array(range(len(plot_joint_klds))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_joint_klds, label="Experimental KLD")
-                    ax[0].plot(np.array(range(len(plot_joint_klds_valid))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_joint_klds_valid, label="Experimental KLD (valid only)")
-                    ax[0].legend(loc='upper center')
-                    ax[0].set_title('KL Divergence between target and estimated joint distribution')
+                ax[0].plot(np.array(range(len(plot_joint_klds))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_joint_klds, label="Experimental KLD")
+                ax[0].plot(np.array(range(len(plot_joint_klds_valid))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_joint_klds_valid, label="Experimental KLD (valid only)")
+                ax[0].legend(loc='upper center')
+                ax[0].set_title('KL Divergence between target and estimated joint distribution')
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
             experimental_joint = self.network.measure_experimental_joint_distribution(duration=20000.0)
@@ -952,14 +974,14 @@ class SPINetworkOptimizee(Optimizee):
             kld_joint_experimental_valid.append(this_kld_valid)
 
             # Draw spiking of output neurons.
-            if save_plot:
+            if self.plot_all:
                 last_clone = self.network.clone()
                 last_clone.draw_stationary_state(duration=500, ax=ax[1])
                 fig.savefig(os.path.join(individual_directory, str(trial) + '.png'))
                 plt.close()
 
             # Draw histogram of states.
-            if save_plot:
+            if self.plot_all:
                 fig = helpers.plot_histogram(distribution, experimental_joint, self.network.num_discrete_vals, "p*(y)", "p(y;θ)", renormalise_estimated_states=True)
                 fig.savefig(os.path.join(individual_directory, str(trial) + '_histogram.png'))
                 plt.close()
@@ -1001,6 +1023,8 @@ class SPIConditionalNetworkOptimizee(Optimizee):
             max_delay=0.3,
             use_pecevski=False,
             num_fitness_trials=3, 
+            plot_all=False,
+            forced_params=None,
             seed=0, 
             n_NEST_threads=1, 
             plots_directory='./sam_plots'):
@@ -1016,6 +1040,8 @@ class SPIConditionalNetworkOptimizee(Optimizee):
         self.fixed_delay = fixed_delay
         self.max_delay = max_delay
         self.use_pecevski = use_pecevski
+        self.forced_params = forced_params
+        self.plot_all = plot_all
         self.set_kernel_defaults()
 
         # Set up exerimental parameters.
@@ -1130,6 +1156,10 @@ class SPIConditionalNetworkOptimizee(Optimizee):
         params['pool_size_excitatory'] = 10
         params['pool_size_inhibitory'] = 10
 
+        # Update params by external params if necessary.
+        if self.forced_params is not None:
+            params.update(self.forced_params)
+
         # Create a SPI network with the correct parameters.
         self.network.create_conditional_network(
             num_discrete_vals=num_discrete_vals, 
@@ -1141,13 +1171,13 @@ class SPIConditionalNetworkOptimizee(Optimizee):
         logging.info("Using distribution:\n%s", helpers.get_ordered_dictionary_string(distribution))
 
 
-    def simulate(self, traj, run_intermediates=False, save_plot=False):
+    def simulate(self, traj):
         """
         Simulates a recurrently connected network of neuron pools, training on a target 
         distribution; i.e. performing density estimation as in Pecevski et al. 2016,
         experiment 2. The loss function is the the KL divergence between target and 
         estimated distributions. 
-        If save_plot == True, this will create a directory for each individual that 
+        If self.plot_all == True, this will create a directory for each individual that 
         contains a text file with individual params and plots for each trial.
         """
         # Prepare paths for each individual evaluation.
@@ -1169,7 +1199,7 @@ class SPIConditionalNetworkOptimizee(Optimizee):
                 num_discrete_vals=2)
             
             # Create directory and params file if requested.
-            if save_plot:
+            if self.plot_all:
                 helpers.create_directory(individual_directory)
                 helpers.save_text(self.network.parameter_string(), text_path)
 
@@ -1197,7 +1227,7 @@ class SPIConditionalNetworkOptimizee(Optimizee):
                 t += self.network.params['sample_presentation_time']
 
                 # Measure experimental joint distribution from spike activity.
-                if save_plot and run_intermediates and i % skip_kld == 0:
+                if self.plot_all and i % skip_kld == 0:
                     # Clone network for later tests.
                     clone = self.network.clone()
 
@@ -1219,17 +1249,16 @@ class SPIConditionalNetworkOptimizee(Optimizee):
             self.network.set_plasticity_learning_time(0)
 
             # Measure experimental joint distribution on para-experiment clones.
-            if save_plot:
+            if self.plot_all:
                 plot_exp_conds = [g.measure_experimental_cond_distribution(duration=5000.0) for g in clones]
                 plot_cond_klds = [helpers.get_KL_divergence(p, conditional) for p in plot_exp_conds] 
 
             # Plot experimental KL divergence of joint distribution.
-            if save_plot:
-                if run_intermediates:
-                    fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(8, 20))
-                    ax[0].plot(np.array(range(len(plot_cond_klds))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_cond_klds, label="Experimental KLD")
-                    ax[0].legend(loc='upper center')
-                    ax[0].set_title('KL Divergence between target and estimated joint distribution')
+            if self.plot_all:
+                fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(8, 20))
+                ax[0].plot(np.array(range(len(plot_cond_klds))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_cond_klds, label="Experimental KLD")
+                ax[0].legend(loc='upper center')
+                ax[0].set_title('KL Divergence between target and estimated joint distribution')
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
             experimental_cond = self.network.measure_experimental_cond_distribution(duration=5000.0)
@@ -1237,7 +1266,7 @@ class SPIConditionalNetworkOptimizee(Optimizee):
             kld_cond_experimental.append(this_kld)
 
             # Draw histogram of states.
-            if save_plot:
+            if self.plot_all:
                 # Attach a spike reader to all population coding layers.
                 spikereader = nest.Create('spike_detector', params={'withtime':True, 'withgid':True})
                 nest.Connect(self.network.all_neurons, spikereader, syn_spec={'delay':self.network.params['delay_devices']})
