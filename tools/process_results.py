@@ -97,6 +97,7 @@ def run_best_sam(resolution, fixed_delay, use_pecevski):
 
     from sam.optimizee import SAMOptimizee
     from ltl import DummyTrajectory
+    from ltl import sdict
 
     print("Running with resolution = {}, fixed delay = {}, use_pecevski = {}".format(resolution, fixed_delay, use_pecevski))
    
@@ -119,6 +120,7 @@ def run_best_sam(resolution, fixed_delay, use_pecevski):
 
     # Create a dummy trajectory.
     fake_traj = DummyTrajectory()
+    fake_traj.individual = sdict(optimizee.create_individual())
 
     # Create the SAM optimizee.
     optimizee = SAMOptimizee(fake_traj, 
