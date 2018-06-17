@@ -124,7 +124,7 @@ def run_best_sam(resolution, fixed_delay, use_pecevski):
                             n_NEST_threads=1, 
                             time_resolution=resolution,
                             fixed_delay=fixed_delay,
-                            plots_directory=paths.output_dir_path, 
+                            plots_directory='/home/krisdamato/LTL-SAM/plots/', 
                             forced_params=params,
                             plot_all=True,
                             num_fitness_trials=10)
