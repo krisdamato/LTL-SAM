@@ -1,3 +1,3 @@
 source ../NEST/bin/nest_vars.sh
 
-python tools/process_results.py -rs -fd 0.1 -p
+python tools/process_results.py -rs -r 0.1 -fd 0.1 -p
