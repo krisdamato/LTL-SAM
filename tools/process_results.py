@@ -95,18 +95,56 @@ def process_files(filenames, hps, hps_latex):
 def run_best_sam(resolution, fixed_delay, use_pecevski):
     '''Runs the best SAM setup in the log file chosen by the user.'''
 
+    import logging.config
+    
     from sam.optimizee import SAMOptimizee
     from ltl import DummyTrajectory
     from ltl import sdict
 
-    print("Running with resolution = {}, fixed delay = {}, use_pecevski = {}".format(resolution, fixed_delay, use_pecevski))
+    from pypet import Environment, pypetconstants
+    from ltl.logging_tools import create_shared_logger_data, configure_loggers
+    from ltl.optimizers.evolution import GeneticAlgorithmOptimizer, GeneticAlgorithmParameters
+    from ltl.paths import Paths
+    from sam.optimizee import SAMOptimizee, SAMGraphOptimizee
+
+    logger = logging.getLogger('bin.ltl-sam-ga')
+
+    name = "trial"
+    root_dir_path = "plots"
+    paths = Paths(name, dict(run_no='test'), root_dir_path=root_dir_path)
+
+    traj_file = os.path.join(paths.output_dir_path, 'data.h5')
+
+    # Create an environment that handles running our simulation
+    # This initializes a PyPet environment
+    env = Environment(trajectory=name, filename=traj_file, file_title='{} data'.format(name),
+                      comment='{} data'.format(name),
+                      add_time=True,
+                      automatic_storing=True,
+                      use_scoop=True,
+                      multiproc=True,
+                      wrap_mode=pypetconstants.WRAP_MODE_LOCAL,
+                      log_stdout=False,  # Sends stdout to logs
+                      )
+
+    create_shared_logger_data(logger_names=['bin', 'optimizers'],
+                              log_levels=['INFO', 'INFO'],
+                              log_to_consoles=[True, True],
+                              sim_name=name,
+                              log_directory=paths.logs_path)
+    configure_loggers()
+
+    # Get the trajectory from the environment
+    traj = env.trajectory
+
+    print("Running with resolution = {}, fixed delay = {}, use_pecevski = {}\n".format(resolution, fixed_delay, use_pecevski))
    
     fns, hps = process_sam_results('/home/krisdamato/LTL-SAM/results/')
     for i, fn in enumerate(fns):
-        print("{}: {}".format(i, fn))
+        print("\n{}: {}".format(i, fn))
 
     try:
-        i = int(input('Choose log index:'))
+        i = int(input('\nChoose log index: '))
     except ValueError:
         print("Not a number!")
         return
@@ -118,11 +156,8 @@ def run_best_sam(resolution, fixed_delay, use_pecevski):
     # Get best hps in the chosen log file.
     params = hps[fns[i]]
 
-    # Create a dummy trajectory.
-    fake_traj = DummyTrajectory()
-
     # Create the SAM optimizee.
-    optimizee = SAMOptimizee(fake_traj, 
+    optimizee = SAMOptimizee(traj, 
                             use_pecevski=use_pecevski, 
                             n_NEST_threads=1, 
                             time_resolution=resolution,
@@ -133,10 +168,10 @@ def run_best_sam(resolution, fixed_delay, use_pecevski):
                             num_fitness_trials=1)
     
     # Create individual for fake traj.
-    fake_traj.individual = sdict(optimizee.create_individual())
+    traj.individual = sdict(optimizee.create_individual())
 
     # Run simulation with the forced params.
-    optimizee.simulate(fake_traj)
+    optimizee.simulate(traj)
 
 
 if __name__ == "__main__":
