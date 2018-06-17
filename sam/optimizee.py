@@ -257,6 +257,8 @@ class SAMOptimizee(Optimizee):
                 plt.plot(np.array(range(len(kls_joint))) * skip_kld * self.sam.params['sample_presentation_time'] * 1e-3, kls_joint, label="KLd p(x,z)")
                 plt.plot(np.array(range(len(kls_cond_exp))) * skip_exp_cond * self.sam.params['sample_presentation_time'] * 1e-3, kls_cond_exp, label="Exp. KLd p(z|x)")
                 plt.legend(loc='upper center')
+                plt.xlabel("Time (s)")
+                plt.ylim(ymin=0)
                 plt.savefig(os.path.join(individual_directory, str(trial) + '.png'))
                 plt.close()
 
