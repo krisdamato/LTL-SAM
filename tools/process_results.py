@@ -93,7 +93,7 @@ def process_files(filenames, hps, hps_latex):
     return best_dicts
 
 
-def run_best_sam(resolution, fixed_delay, use_pecevski):
+def run_best_sam(resolution, fixed_delay, use_pecevski, num_trials):
     '''Runs the best SAM setup in the log file chosen by the user.'''
 
     import logging.config
@@ -157,6 +157,9 @@ def run_best_sam(resolution, fixed_delay, use_pecevski):
 
     # Get best hps in the chosen log file.
     params = hps[fns[i]]
+    params['stdp_time_fraction'] = 0.5
+    params['intrinsic_step_time_fraction'] = 0.5
+    params['learning_time'] = 600000
 
     # Create the SAM optimizee.
     optimizee = SAMOptimizee(traj, 
@@ -167,7 +170,7 @@ def run_best_sam(resolution, fixed_delay, use_pecevski):
                             plots_directory='/home/krisdamato/LTL-SAM/plots/', 
                             forced_params=params,
                             plot_all=True,
-                            num_fitness_trials=1)
+                            num_fitness_trials=num_trials)
 
     # Run simulation with the forced params.
     optimizee.simulate(traj)
@@ -180,7 +183,9 @@ if __name__ == "__main__":
     parser.add_argument('-r', '--resolution', required=False, type=float, help='Resolution')
     parser.add_argument('-fd', '--fixed_delay', required=False, type=float, help='Fixed delay')
     parser.add_argument('-p', '--use_pecevski', action='store_true', help='Use Pecevski distributions')
+    parser.add_argument('-nt', '--num_trials', required=False, type=int, help='Number of trials')
+
     args = parser.parse_args()
 
     if args.copy: copy_log_files_to("D:\\LTL-SAM\\results\\")
-    if args.run_sam: run_best_sam(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski)
+    if args.run_sam: run_best_sam(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials)
