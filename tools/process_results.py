@@ -140,8 +140,9 @@ def run_best_sam(resolution, fixed_delay, use_pecevski):
     print("Running with resolution = {}, fixed delay = {}, use_pecevski = {}\n".format(resolution, fixed_delay, use_pecevski))
    
     fns, hps = process_sam_results('/home/krisdamato/LTL-SAM/results/')
+    print('')
     for i, fn in enumerate(fns):
-        print("\n{}: {}".format(i, fn))
+        print("{}: {}".format(i, fn))
 
     try:
         i = int(input('\nChoose log index: '))
@@ -166,9 +167,6 @@ def run_best_sam(resolution, fixed_delay, use_pecevski):
                             forced_params=params,
                             plot_all=True,
                             num_fitness_trials=1)
-    
-    # Create individual for fake traj.
-    traj.individual = sdict(optimizee.create_individual())
 
     # Run simulation with the forced params.
     optimizee.simulate(traj)
