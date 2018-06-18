@@ -61,8 +61,8 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
 
     # Get bounds for mu and sigma calculation.
     param_spec = OrderedDict(sorted(SAMModule.parameter_spec().items()))
-    mu = [(v_min + v_max) / 2 for k, (v_min, v_max) in param_spec.items()]
-    sigma = [(v_max - v_min) / 2 for k, (v_min, v_max) in param_spec.items()]
+    mu = np.array([(v_min + v_max) / 2 for k, (v_min, v_max) in param_spec.items()])
+    sigma = np.array([(v_max - v_min) / 2 for k, (v_min, v_max) in param_spec.items()])
 
     print("Using means: {}\nUsing stds: {}".format(mu, sigma))
 
