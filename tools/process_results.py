@@ -49,7 +49,7 @@ def process_samgraph_results(log_dir="D:\\LTL results\\New"):
     return filenames, best_dicts
 
 
-def process_files(filenames, hps, hps_latex):
+def process_files(filenames, hps, hps_latex, search_string='generation 19', skip_lines=2):
     # Create dictionary of hp:value dictionaries
     best_dicts = {}
     
@@ -57,8 +57,8 @@ def process_files(filenames, hps, hps_latex):
         with open(filename) as f:
             best_n = 100000000
             for n, line in enumerate(f):
-                if "generation 19" in line:
-                    best_n = n + 2
+                if search_string in line:
+                    best_n = n + skip_lines
                 if n == best_n:
                     dict_str = line[line.find("{"):line.find("}") + 1]
                     best_dict = ast.literal_eval(dict_str)
@@ -93,7 +93,7 @@ def process_files(filenames, hps, hps_latex):
     return best_dicts
 
 
-def run_best_sam(resolution, fixed_delay, use_pecevski, num_trials):
+def run_best_sam(resolution, fixed_delay, use_pecevski, num_trials, is_nes=False):
     '''Runs the best SAM setup in the log file chosen by the user.'''
 
     import logging.config
@@ -140,7 +140,10 @@ def run_best_sam(resolution, fixed_delay, use_pecevski, num_trials):
 
     print("Running with resolution = {}, fixed delay = {}, use_pecevski = {}\n".format(resolution, fixed_delay, use_pecevski))
    
-    fns, hps = process_sam_results('/home/krisdamato/LTL-SAM/results/')
+    if is_nes:
+        fns, hps = process_sam_results('/home/krisdamato/LTL-SAM/results/', search_string='generation 39', skip_lines=5)
+    else:
+        fns, hps = process_sam_results('/home/krisdamato/LTL-SAM/results/')
     print('')
     for i, fn in enumerate(fns):
         print("{}: {}".format(i, fn))
@@ -183,11 +186,11 @@ if __name__ == "__main__":
     parser.add_argument('-r', '--resolution', required=False, type=float, help='Resolution')
     parser.add_argument('-fd', '--fixed_delay', required=False, type=float, help='Fixed delay')
     parser.add_argument('-p', '--use_pecevski', action='store_true', help='Use Pecevski distributions')
+    parser.add_argument('-in', '--is_nes', action='store_true', help='Assume NES log type')
     parser.add_argument('-nt', '--num_trials', required=False, type=int, help='Number of trials')
 
     args = parser.parse_args()
 
     if args.copy: copy_log_files_to("D:\\LTL-SAM\\results\\")
-    if args.run_sam: run_best_sam(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials)
+    if args.run_sam: run_best_sam(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, is_nes=args.is_nes)
 
-    process_samgraph_results()
