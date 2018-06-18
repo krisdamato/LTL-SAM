@@ -19,7 +19,7 @@ def copy_log_files_to(dest):
         shutil.copy(f, dest)
 
 
-def process_sam_results(log_dir="D:\\LTL results\\New"):
+def process_sam_results(log_dir="D:\\LTL results\\New", search_string='generation 19', skip_lines=2):
     # Set SAM HP order
     hps = ['bias_baseline', 'weight_baseline', 'T', 'relative_bias_spike_rate', 'first_bias_rate', 'second_bias_rate', 'initial_stdp_rate', 'final_stdp_rate', 'exp_term_prob', 'exp_term_prob_scale']
     hps_latex = ['$b_-$', '$w_-$', '$T$', '$R$', "$\\eta'_0$", "$\\eta'_1$", "$\\eta_0$", '$\\eta_1$', '$c_1$', '$c_2$']
@@ -29,12 +29,12 @@ def process_sam_results(log_dir="D:\\LTL results\\New"):
     filenames = glob.glob(directory + '/**/*SAM-*_LOG.txt', recursive=True)
     filenames = sorted(filenames)
 
-    best_dicts = process_files(filenames, hps, hps_latex)
+    best_dicts = process_files(filenames, hps, hps_latex, search_string, skip_lines)
 
     return filenames, best_dicts
 
 
-def process_samgraph_results(log_dir="D:\\LTL results\\New"):
+def process_samgraph_results(log_dir="D:\\LTL results\\New", search_string='generation 19', skip_lines=2):
     # Set SAMGRAPH HP order
     hps = ['bias_baseline_1', 'bias_baseline_2', 'bias_baseline_3', 'bias_baseline_4', 'weight_baseline', 'T', 'relative_bias_spike_rate', 'first_bias_rate', 'initial_stdp_rate', 'final_stdp_rate', 'exp_term_prob', 'exp_term_prob_scale']
     hps_latex = ['$b^1_-$', '$b^2_-$', '$b^3_-$', '$b^4_-$', '$w_-$', '$T$', '$R$', "$\\eta'_0$", '$\\eta_0$', '$\\eta_1$', '$c_1$', '$c_2$']
@@ -44,12 +44,12 @@ def process_samgraph_results(log_dir="D:\\LTL results\\New"):
     filenames = glob.glob(directory + '/**/*SAMGRAPH-*_LOG.txt', recursive=True)
     filenames = sorted(filenames)
 
-    best_dicts = process_files(filenames, hps, hps_latex)
+    best_dicts = process_files(filenames, hps, hps_latex, search_string, skip_lines)
 
     return filenames, best_dicts
 
 
-def process_files(filenames, hps, hps_latex, search_string='generation 19', skip_lines=2):
+def process_files(filenames, hps, hps_latex, search_string, skip_lines):
     # Create dictionary of hp:value dictionaries
     best_dicts = {}
     
@@ -194,3 +194,4 @@ if __name__ == "__main__":
     if args.copy: copy_log_files_to("D:\\LTL-SAM\\results\\")
     if args.run_sam: run_best_sam(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, is_nes=args.is_nes)
 
+    process_samgraph_results()
