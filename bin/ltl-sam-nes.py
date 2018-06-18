@@ -57,7 +57,7 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
                             time_resolution=resolution,
                             fixed_delay=fixed_delay,
                             plots_directory=paths.output_dir_path, 
-                            num_fitness_trials=10)
+                            num_fitness_trials=1)
 
     # Get bounds for mu and sigma calculation.
     param_spec = OrderedDict(sorted(SAMModule.parameter_spec().items()))
@@ -67,10 +67,10 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
     print("Using means: {}\nUsing stds: {}".format(mu, sigma))
 
     # NOTE: Outerloop optimizer initialization
-    parameters = NaturalEvolutionStrategiesParameters(seed=0, pop_size=100,
-                                            n_iteration=20, 
-                                            learning_rate_sigma=0.1,
-                                            learning_rate_mu=0.1,
+    parameters = NaturalEvolutionStrategiesParameters(seed=0, pop_size=48,
+                                            n_iteration=80, 
+                                            learning_rate_sigma=1.0,
+                                            learning_rate_mu=1.0,
                                             mu=mu,
                                             sigma=sigma,
                                             mirrored_sampling_enabled=True,

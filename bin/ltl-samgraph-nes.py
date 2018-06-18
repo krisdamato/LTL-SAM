@@ -62,7 +62,7 @@ def main(path_name,
                                     use_pecevski=use_pecevski, 
                                     state_handling=state_handling,
                                     plots_directory=paths.output_dir_path, 
-                                    num_fitness_trials=5)
+                                    num_fitness_trials=1)
 
     # Get bounds for mu and sigma calculation.
     param_spec = OrderedDict(sorted(SAMGraph.parameter_spec(4).items()))
@@ -72,10 +72,10 @@ def main(path_name,
     print("Using means: {}\nUsing stds: {}".format(mu, sigma))
 
     # NOTE: Outerloop optimizer initialization
-    parameters = NaturalEvolutionStrategiesParameters(seed=0, pop_size=100,
-                                            n_iteration=20, 
-                                            learning_rate_sigma=0.1,
-                                            learning_rate_mu=0.1,
+    parameters = NaturalEvolutionStrategiesParameters(seed=0, pop_size=48,
+                                            n_iteration=100, 
+                                            learning_rate_sigma=1.0,
+                                            learning_rate_mu=1.0,
                                             mu=mu,
                                             sigma=sigma,
                                             mirrored_sampling_enabled=True,
