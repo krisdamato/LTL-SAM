@@ -80,7 +80,7 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
         
     optimizer = NaturalEvolutionStrategiesOptimizer(traj, 
                                           optimizee_create_individual=optimizee.create_individual,
-                                          optimizee_fitness_weights=(-0.1,),
+                                          optimizee_fitness_weights=(-1.0,),
                                           parameters=parameters,
                                           optimizee_bounding_func=optimizee.bounding_func,
                                           fitness_plot_name=path_name
