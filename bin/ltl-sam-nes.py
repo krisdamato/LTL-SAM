@@ -67,7 +67,7 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
     print("Using means: {}\nUsing stds: {}".format(mu, sigma))
 
     # NOTE: Outerloop optimizer initialization
-    parameters = NaturalEvolutionStrategiesParameters(seed=0, pop_size=200,
+    parameters = NaturalEvolutionStrategiesParameters(seed=0, pop_size=100,
                                             n_iteration=20, 
                                             learning_rate_sigma=0.1,
                                             learning_rate_mu=0.1,
