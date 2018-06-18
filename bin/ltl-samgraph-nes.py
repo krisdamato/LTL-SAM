@@ -65,7 +65,7 @@ def main(path_name,
                                     num_fitness_trials=5)
 
     # Get bounds for mu and sigma calculation.
-    param_spec = OrderedDict(sorted(SAMGraph.parameter_spec().items()))
+    param_spec = OrderedDict(sorted(SAMGraph.parameter_spec(4).items()))
     mu = np.array([(v_min + v_max) / 2 for k, (v_min, v_max) in param_spec.items()])
     sigma = np.array([(v_max - v_min) / 2 for k, (v_min, v_max) in param_spec.items()])
 
