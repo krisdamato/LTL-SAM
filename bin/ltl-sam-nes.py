@@ -1,12 +1,15 @@
-import logging.config
-import os
 import argparse
+import logging.config
+import numpy as np
+import os
 
+from collections import OrderedDict
 from pypet import Environment, pypetconstants
 from ltl.logging_tools import create_shared_logger_data, configure_loggers
 from ltl.optimizers.naturalevolutionstrategies import NaturalEvolutionStrategiesOptimizer, NaturalEvolutionStrategiesParameters
 from ltl.paths import Paths
 from sam.optimizee import SAMOptimizee, SAMGraphOptimizee
+from sam import SAMModule
 
 logger = logging.getLogger('bin.ltl-sam-nes')
 
@@ -56,13 +59,20 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
                             plots_directory=paths.output_dir_path, 
                             num_fitness_trials=10)
 
+    # Get bounds for mu and sigma calculation.
+    param_spec = OrderedDict(sorted(SAMModule.parameter_spec().items()))
+    mu = [(v_min + v_max) / 2 for k, (v_min, v_max) in param_spec]
+    sigma = [(v_max - v_min) / 2 for k, (v_min, v_max) in param_spec]
+
+    print("Using means: {}\nUsing stds: {}".format(mu, sigma))
+
     # NOTE: Outerloop optimizer initialization
     parameters = NaturalEvolutionStrategiesParameters(seed=0, pop_size=200,
                                             n_iteration=20, 
                                             learning_rate_sigma=0.1,
                                             learning_rate_mu=0.1,
-                                            mu=[0,1,1],
-                                            sigma=[0,1],
+                                            mu=mu,
+                                            sigma=sigma,
                                             mirrored_sampling_enabled=True,
                                             fitness_shaping_enabled=True,
                                             stop_criterion=np.Inf
