@@ -13,7 +13,11 @@ from sam.samgraph import SAMGraph
 
 logger = logging.getLogger('bin.ltl-samgraph-nes')
 
-def main(path_name, resolution, fixed_delay, use_pecevski):
+def main(path_name, 
+         resolution, 
+         fixed_delay,
+         state_handling,
+         use_pecevski):
     name = path_name
     try:
         with open('bin/path.conf') as f:
