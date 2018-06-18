@@ -189,3 +189,5 @@ if __name__ == "__main__":
 
     if args.copy: copy_log_files_to("D:\\LTL-SAM\\results\\")
     if args.run_sam: run_best_sam(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials)
+
+    process_samgraph_results()
