@@ -313,7 +313,7 @@ class SAMGraphOptimizee(Optimizee):
             state_handling='none',
             forced_params=None,
             plot_all=False,
-            plots_directory='./sam_plots'):
+            plots_directory='./samgraph_plots'):
         super(SAMGraphOptimizee, self).__init__(traj)
         
         self.rs = np.random.RandomState(seed=seed)
@@ -678,7 +678,7 @@ class SPINetworkOptimizee(Optimizee):
             num_fitness_trials=3, 
             seed=0, 
             n_NEST_threads=1, 
-            plots_directory='./sam_plots'):
+            plots_directory='./spi_plots'):
         super(SPINetworkOptimizee, self).__init__(traj)
         
         self.rs = np.random.RandomState(seed=seed)
@@ -1029,7 +1029,7 @@ class SPIConditionalNetworkOptimizee(Optimizee):
             forced_params=None,
             seed=0, 
             n_NEST_threads=1, 
-            plots_directory='./sam_plots'):
+            plots_directory='./spigraph_plots'):
         super(SPIConditionalNetworkOptimizee, self).__init__(traj)
         
         self.rs = np.random.RandomState(seed=seed)
