@@ -937,7 +937,7 @@ class SPINetwork:
         return nest.GetStatus(nest.GetConnections([source], [target]), 'weight')[0]
 
 
-    def measure_experimental_joint_distribution(self, duration, resolution, sampling_timestep=10.0, smoothen=True):
+    def measure_experimental_joint_distribution(self, duration, kernel_tau, resolution, sampling_timestep=10.0, smoothen=True):
         """
         Lets the network generate spontaneous spikes for a long duration
         and then uses the spike activity to calculate the frequency of network 
@@ -1128,7 +1128,7 @@ class SPINetwork:
         return tuple(state)
 
 
-    def get_neuron_variable_mapping():
+    def get_neuron_variable_mapping(self):
         """
         Returns a dictionary with neuron_idx:variable_str pairs
         """
@@ -1143,7 +1143,7 @@ class SPINetwork:
         return neuron_dict
 
 
-    def get_neuron_value_mapping():
+    def get_neuron_value_mapping(self):
         """
         Return a dictionary with neuron_idx:value pairs
         """
@@ -1166,14 +1166,14 @@ class SPINetwork:
         times = spikes['times']
 
         # Get variable and value maps.
-        var_map = get_neuron_variable_mapping()
-        value_map = get_neuron_value_mapping()
+        var_map = self.get_neuron_variable_mapping()
+        value_map = self.get_neuron_value_mapping()
 
         # Create variable-value trains.
         trains = dict()
-        for var in var_map.values():
+        for var in set(var_map.values()):
             trains[var] = dict()
-            for val in value_map.values():
+            for val in set(value_map.values()):
                 trains[var][val] = []
 
         # Convert spike trains into multiple trains of deltas.
@@ -1183,16 +1183,16 @@ class SPINetwork:
             value = value_map[n]
             this_list = trains[var][value]
             last_pos = len(this_list) - 1
-            new_pos = round((t - start_time) / timestep)
+            new_pos = int(round((t - start_time) / timestep))
             if new_pos != last_pos:
                 this_list += [0] * (new_pos - last_pos - 1)
                 this_list += [1]
             else:
                 this_list[last_pos] += 1
 
-        end_pos = round((end_time - start_time) / timestep)
-        for var in var_map.values():
-            for val in value_map.values():
+        end_pos = int(round((end_time - start_time) / timestep))
+        for var in set(var_map.values()):
+            for val in set(value_map.values()):
                 last_pos = len(trains[var][val]) - 1
                 trains[var][val] += [0] * (end_pos - last_pos)
 
@@ -1219,13 +1219,13 @@ class SPINetwork:
         kernel = self.__get_alpha_kernel(timestep, kernel_tau)
 
         # Get variable and value maps.
-        var_map = get_neuron_variable_mapping()
-        value_map = get_neuron_value_mapping()
+        var_map = self.get_neuron_variable_mapping()
+        value_map = self.get_neuron_value_mapping()
 
         # Convolve to smoothen.
-        for var in var_map.values():
-            for val in value_map.values():
-                trains[var][val] = np.convolve(trains[var][val], kernel, mode='same')
+        for var in set(var_map.values()):
+            for val in set(value_map.values()):
+                trains[var][val] = np.convolve(trains[var][val], kernel)
 
         return trains
 
@@ -1235,16 +1235,20 @@ class SPINetwork:
         Helper function that smoothens NEST spikes and measures the distribution at samples in the
         time series.
         """
+        print("Converting to trains...")
         trains = self.__convert_spikes_to_trains(spikes, start_time, end_time, resolution)
+
+        print("Smoothing...")
         trains = self.__smoothen_trains(trains, resolution, kernel_tau)
 
         # For performance reasons, prepare some variables here.
         null_state = [0 for i in range(len(self.dependencies))]
         ordered_vars = self.__get_variables_ordered()
-        ordered_var_indices = [int(ym[1:]) for ym in ordered_vars]
+        ordered_var_indices = range(len(self.dependencies))
         joint = defaultdict(int)
 
         # At each time step, find the state of the network.
+        print("Measuring...")
         num_steps = len(trains['y1'][1])
         skip_steps = round(sampling_timestep / resolution)
         for i in range(0, num_steps, skip_steps):
@@ -1252,13 +1256,14 @@ class SPINetwork:
             for ym, m in zip(ordered_vars, ordered_var_indices):
                 rates = [trains[ym][j][i] for j in range(1, 1 + self.num_discrete_vals)]
                 state[m] = np.argmax(rates) + 1 
-            joint[state] += 1
+            joint[tuple(state)] += 1
 
+        print("Normalizing...")
         # Normalise all values.
         total = np.sum(list(joint.values()))
         for k, v in joint.items():
             joint[k] = v / total
-        
+
         return joint
 
 
