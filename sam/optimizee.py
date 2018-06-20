@@ -929,7 +929,7 @@ class SPINetworkOptimizee(Optimizee):
                 if debug:
                     helpers.plot_spikes(spikereader)
                     spikes = nest.GetStatus(spikereader, keys='events')[0]
-                    exp_joint = self.network.get_distribution_from_spikes(spikes, t - self.network.params['sample_presentation_time'], t)
+                    exp_joint = self.network.get_distribution_from_smoothened_spikes(spikes, t - self.network.params['sample_presentation_time'], t, 100, self.time_resolution, 1.0)
                     print(exp_joint)
 
                 # Measure experimental joint distribution from spike activity.
@@ -956,7 +956,10 @@ class SPINetworkOptimizee(Optimizee):
 
             # Measure experimental joint distribution on para-experiment clones.
             if self.plot_all:
-                plot_exp_joints = [g.measure_experimental_joint_distribution(duration=20000.0) for g in clones]
+                plot_exp_joints = [g.measure_experimental_joint_distribution(duration=20000.0, 
+                                                                             resolution=self.time_resolution, 
+                                                                             sampling_timestep=1.0, 
+                                                                             smoothen=True) for g in clones]
                 plot_joint_klds = [helpers.get_KL_divergence(p, distribution) for p in plot_exp_joints] 
                 plot_joint_klds_valid = [helpers.get_KL_divergence(p, distribution, exclude_invalid_states=True) for p in plot_exp_joints] 
 
@@ -969,7 +972,10 @@ class SPINetworkOptimizee(Optimizee):
                 ax[0].set_title('KL Divergence between target and estimated joint distribution')
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
-            experimental_joint = self.network.measure_experimental_joint_distribution(duration=20000.0)
+            experimental_joint = self.network.measure_experimental_joint_distribution(duration=20000.0, 
+                                                                             resolution=self.time_resolution, 
+                                                                             sampling_timestep=1.0, 
+                                                                             smoothen=True)
             this_kld = helpers.get_KL_divergence(experimental_joint, distribution)
             this_kld_valid = helpers.get_KL_divergence(experimental_joint, distribution, exclude_invalid_states=True)
             kld_joint_experimental.append(this_kld)
