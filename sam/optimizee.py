@@ -692,6 +692,7 @@ class SPINetworkOptimizee(Optimizee):
         self.max_delay = max_delay
         self.plot_all = plot_all
         self.forced_params = forced_params
+        self.use_pecevski = use_pecevski
         self.set_kernel_defaults()
 
         # Set up exerimental parameters.
