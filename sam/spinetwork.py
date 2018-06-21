@@ -98,7 +98,7 @@ class SPINetwork:
             'delay_chi_chi_min':min_delay,
             'delay_chi_chi_max':max_delay,
             'delay_inhibitors_self':fixed_delay,
-            'delay_devices':min_delay,
+            'delay_devices':fixed_delay,
             'learning_time':300000,
             'pool_size_excitatory':8,
             'pool_size_inhibitory':8,
@@ -1235,10 +1235,7 @@ class SPINetwork:
         Helper function that smoothens NEST spikes and measures the distribution at samples in the
         time series.
         """
-        print("Converting to trains...")
         trains = self.__convert_spikes_to_trains(spikes, start_time, end_time, resolution)
-
-        print("Smoothing...")
         trains = self.__smoothen_trains(trains, resolution, kernel_tau)
 
         # For performance reasons, prepare some variables here.
@@ -1248,7 +1245,6 @@ class SPINetwork:
         joint = defaultdict(int)
 
         # At each time step, find the state of the network.
-        print("Measuring...")
         num_steps = len(trains['y1'][1])
         skip_steps = round(sampling_timestep / resolution)
         for i in range(0, num_steps, skip_steps):
@@ -1258,7 +1254,6 @@ class SPINetwork:
                 state[m] = np.argmax(rates) + 1 
             joint[tuple(state)] += 1
 
-        print("Normalizing...")
         # Normalise all values.
         total = np.sum(list(joint.values()))
         for k, v in joint.items():
