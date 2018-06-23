@@ -66,10 +66,11 @@ def main(path_name,
 
     # Get bounds for mu and sigma calculation.
     param_spec = OrderedDict(sorted(SAMGraph.parameter_spec(4).items()))
+    names = [k for k, _ in param_spec.items()]
     mu = np.array([(v_min + v_max) / 2 for k, (v_min, v_max) in param_spec.items()])
     sigma = np.array([(v_max - v_min) / 2 for k, (v_min, v_max) in param_spec.items()])
 
-    print("Using means: {}\nUsing stds: {}".format(mu, sigma))
+    print("Using means: {}\nUsing stds: {}".format(dict(zip(names, mu)), dict(zip(names, sigma))))
 
     # NOTE: Outerloop optimizer initialization
     parameters = NaturalEvolutionStrategiesParameters(seed=0, pop_size=48,
