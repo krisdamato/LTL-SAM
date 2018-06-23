@@ -1,17 +1,24 @@
-import logging.config
-import os
 import argparse
+import logging.config
+import numpy as np
+import os
 
+from collections import OrderedDict
 from pypet import Environment, pypetconstants
 from ltl.logging_tools import create_shared_logger_data, configure_loggers
-from ltl.optimizers.evolution import GeneticAlgorithmOptimizer, GeneticAlgorithmParameters
+from ltl.optimizers.naturalevolutionstrategies import NaturalEvolutionStrategiesOptimizer, NaturalEvolutionStrategiesParameters
 from ltl.paths import Paths
 from sam.optimizee import SPINetworkOptimizee
+from sam.spinetwork import SPINetwork
 
-logger = logging.getLogger('bin.ltl-spigraph-ga')
+logger = logging.getLogger('bin.ltl-spigraph-nes')
 
-
-def main(path_name, resolution, min_delay, fixed_delay, max_delay, use_pecevski):
+def main(path_name, 
+         resolution, 
+         min_delay, 
+         fixed_delay, 
+         max_delay, 
+         use_pecevski):
     name = path_name
     try:
         with open('bin/path.conf') as f:
@@ -32,11 +39,10 @@ def main(path_name, resolution, min_delay, fixed_delay, max_delay, use_pecevski)
                       comment='{} data'.format(name),
                       add_time=True,
                       automatic_storing=True,
-                      log_stdout=False,  # Sends stdout to logs
-                      multiproc=True,
                       use_scoop=True,
-                      freeze_input=False,
-                      wrap_mode=pypetconstants.WRAP_MODE_LOCAL
+                      multiproc=True,
+                      wrap_mode=pypetconstants.WRAP_MODE_LOCAL,
+                      log_stdout=False,  # Sends stdout to logs
                       )
 
     create_shared_logger_data(logger_names=['bin', 'optimizers'],
@@ -58,20 +64,32 @@ def main(path_name, resolution, min_delay, fixed_delay, max_delay, use_pecevski)
                                     max_delay=max_delay,
                                     use_pecevski=use_pecevski,
                                     plots_directory=paths.output_dir_path, 
-                                    num_fitness_trials=5)
+                                    num_fitness_trials=1)
+
+    # Get bounds for mu and sigma calculation.
+    param_spec = OrderedDict(sorted(SPINetwork.parameter_spec(4).items()))
+    mu = np.array([(v_min + v_max) / 2 for k, (v_min, v_max) in param_spec.items()])
+    sigma = np.array([(v_max - v_min) / 2 for k, (v_min, v_max) in param_spec.items()])
+
+    print("Using means: {}\nUsing stds: {}".format(mu, sigma))
 
     # NOTE: Outerloop optimizer initialization
-    parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
-                                            MUTPB=1.0, NGEN=20, indpb=0.05,
-                                            tournsize=20, matepar=0.5,
-                                            mutpar=1.0, remutate=False
+    parameters = NaturalEvolutionStrategiesParameters(seed=0, pop_size=96,
+                                            n_iteration=80, 
+                                            learning_rate_sigma=0.5,
+                                            learning_rate_mu=0.5,
+                                            mu=mu,
+                                            sigma=sigma,
+                                            mirrored_sampling_enabled=True,
+                                            fitness_shaping_enabled=True,
+                                            stop_criterion=np.Inf
                                             )
-
-    optimizer = GeneticAlgorithmOptimizer(traj, optimizee_create_individual=optimizee.create_individual,
-                                          optimizee_fitness_weights=(-0.1,),
+        
+    optimizer = NaturalEvolutionStrategiesOptimizer(traj, 
+                                          optimizee_create_individual=optimizee.create_individual,
+                                          optimizee_fitness_weights=(-1.0,),
                                           parameters=parameters,
                                           optimizee_bounding_func=optimizee.bounding_func,
-                                          optimizee_parameter_spec=optimizee.parameter_spec,
                                           fitness_plot_name=path_name
                                           )
 
