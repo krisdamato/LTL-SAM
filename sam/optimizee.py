@@ -959,7 +959,7 @@ class SPINetworkOptimizee(Optimizee):
             if self.plot_all:
                 plot_exp_joints = [g.measure_experimental_joint_distribution(duration=20000.0, 
                                                                              resolution=self.time_resolution, 
-                                                                             sampling_timestep=1.0, 
+                                                                             sampling_timestep=10.0, 
                                                                              kernel_tau=100.0,
                                                                              smoothen=True) for g in clones]
                 plot_joint_klds = [helpers.get_KL_divergence(p, distribution) for p in plot_exp_joints] 
@@ -976,7 +976,7 @@ class SPINetworkOptimizee(Optimizee):
             # Measure experimental KL divergence of entire network by averaging on a few runs.
             experimental_joint = self.network.measure_experimental_joint_distribution(duration=20000.0, 
                                                                              resolution=self.time_resolution, 
-                                                                             sampling_timestep=1.0,
+                                                                             sampling_timestep=10.0,
                                                                              kernel_tau=100.0,
                                                                              smoothen=True)
             this_kld = helpers.get_KL_divergence(experimental_joint, distribution)
@@ -1001,7 +1001,7 @@ class SPINetworkOptimizee(Optimizee):
             logging.info("This run's experimental joint KLD (valid only) is {}".format(this_kld_valid))
 
             # Pre-emptively end the fitness trials if the fitness is too bad.
-            #if this_kld >= 1.5: break
+            if this_kld >= 1.5: break
 
         self.run_number += 1
 
