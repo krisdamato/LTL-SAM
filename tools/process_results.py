@@ -156,11 +156,17 @@ def run_best_sam(resolution, fixed_delay, use_pecevski, num_trials):
         print("Choose within the range!")
         return
 
+    # Determine delay.
+    delim1 = fns[i].find('-')
+    delim2 = fns[i].find('ms')
+    delay = float(fns[i][delim1:delim2].replace('_', '.'))
+
     # Get best hps in the chosen log file.
     params = hps[fns[i]]
     params['stdp_time_fraction'] = 0.5
     params['intrinsic_step_time_fraction'] = 0.5
     params['learning_time'] = 600000
+    params['delay'] = delay
 
     # Create the SAM optimizee.
     optimizee = SAMOptimizee(traj, 
@@ -237,11 +243,17 @@ def run_best_samgraph(resolution, fixed_delay, use_pecevski, num_trials, state_h
         print("Choose within the range!")
         return
 
+    # Determine delay.
+    delim1 = fns[i].find('-')
+    delim2 = fns[i].find('ms')
+    delay = float(fns[i][delim1:delim2].replace('_', '.'))
+
     # Get best hps in the chosen log file.
     params = hps[fns[i]]
     params['stdp_time_fraction'] = 1.0
     params['intrinsic_step_time_fraction'] = 1.0
     params['learning_time'] = 300000
+    params['delay'] = delay
 
     # Create the SAM optimizee.
     optimizee = SAMGraphOptimizee(traj, 
