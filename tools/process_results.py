@@ -3,6 +3,7 @@ import ast
 import glob
 import os
 import shutil
+import re
 
 from collections import OrderedDict
 
@@ -157,9 +158,7 @@ def run_best_sam(resolution, fixed_delay, use_pecevski, num_trials):
         return
 
     # Determine delay.
-    delim1 = fns[i].find('-')
-    delim2 = fns[i].find('ms')
-    delay = float(fns[i][delim1:delim2].replace('_', '.'))
+    delay = float(re.search('SAM-(.*)ms', fns[i]).group(1).replace('_', '.'))
 
     # Get best hps in the chosen log file.
     params = hps[fns[i]]
@@ -244,9 +243,7 @@ def run_best_samgraph(resolution, fixed_delay, use_pecevski, num_trials, state_h
         return
 
     # Determine delay.
-    delim1 = fns[i].find('-')
-    delim2 = fns[i].find('ms')
-    delay = float(fns[i][delim1:delim2].replace('_', '.'))
+    delay = float(re.search('SAMGRAPH-(.*)ms', fns[i]).group(1).replace('_', '.'))
 
     # Get best hps in the chosen log file.
     params = hps[fns[i]]
