@@ -73,10 +73,10 @@ def main(path_name,
     print("Using means: {}\nUsing stds: {}".format(dict(zip(names, mu)), dict(zip(names, sigma))))
 
     # NOTE: Outerloop optimizer initialization
-    parameters = NaturalEvolutionStrategiesParameters(seed=0, pop_size=48,
-                                            n_iteration=100, 
-                                            learning_rate_sigma=1.0,
-                                            learning_rate_mu=1.0,
+    parameters = NaturalEvolutionStrategiesParameters(seed=0, pop_size=96,
+                                            n_iteration=40, 
+                                            learning_rate_sigma=0.5,
+                                            learning_rate_mu=0.5,
                                             mu=mu,
                                             sigma=sigma,
                                             mirrored_sampling_enabled=True,
