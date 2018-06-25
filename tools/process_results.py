@@ -29,7 +29,7 @@ def process_sam_results(log_dir="D:\\LTL results\\New", search_str=''):
     filenames = glob.glob(directory + '/**/*SAM-*{}*_LOG.txt'.format(search_str), recursive=True)
     filenames = sorted(filenames)
 
-    best_dicts = process_files(filenames, hps, hps_latex)
+    best_dicts = process_files(filenames, hps, hps_latex, 79)
 
     return filenames, best_dicts
 
@@ -44,12 +44,12 @@ def process_samgraph_results(log_dir="D:\\LTL results\\New", search_str=''):
     filenames = glob.glob(directory + '/**/*SAMGRAPH-*{}*_LOG.txt'.format(search_str), recursive=True)
     filenames = sorted(filenames)
 
-    best_dicts = process_files(filenames, hps, hps_latex)
+    best_dicts = process_files(filenames, hps, hps_latex, 39)
 
     return filenames, best_dicts
 
 
-def process_files(filenames, hps, hps_latex):
+def process_files(filenames, hps, hps_latex, nes_gen_number):
     # Create dictionary of hp:value dictionaries
     best_dicts = {}
     
@@ -57,7 +57,7 @@ def process_files(filenames, hps, hps_latex):
         with open(filename) as f:
             best_n = 100000000
             for n, line in enumerate(f):
-                search_string = "generation 19" if "GA" in filename else "generation 79"
+                search_string = "generation 19" if "GA" in filename else "generation {}".format(nes_gen_number)
                 if search_string in line:
                     best_n = n + 2 if "GA" in filename else n + 5
                 if n == best_n:
@@ -275,4 +275,4 @@ if __name__ == "__main__":
     if args.copy: copy_log_files_to("D:\\LTL-SAM\\results\\")
     elif args.run_sam: run_best_sam(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials)
     elif args.run_sam_graph: run_best_samgraph(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling)
-    else: process_sam_results(search_str='NES')
+    else: process_samgraph_results(search_str='NES')

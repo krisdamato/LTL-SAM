@@ -607,12 +607,14 @@ class SAMGraphOptimizee(Optimizee):
             if self.plot_all:
                 fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(8, 20))
                 for kld, ym in zip(kls_joints, self.graph.sams):
-                    ax[0].plot(np.array(range(len(kld))) * skip_kld_module * self.graph.params['sample_presentation_time'] * 1e-3, kld, label="Analytical KLD {}".format(ym))
+                    ax[0].plot(np.array(range(len(kld))) * skip_kld_module * self.graph.params['sample_presentation_time'] * 1e-3, kld, label="Analytical KL div. {}".format(ym))
                     ax[0].set_title('KL divergence between target and estimated marginal (module) distributions')
+                    ax[0].set_xlabel('Time (s)')
                 ax[0].legend(loc='upper center')
-                ax[1].plot(np.array(range(len(plot_joint_klds))) * skip_kld * self.graph.params['sample_presentation_time'] * 1e-3, plot_joint_klds, label="Experimental KLD")
-                ax[1].plot(np.array(range(len(plot_joint_klds_valid))) * skip_kld * self.graph.params['sample_presentation_time'] * 1e-3, plot_joint_klds_valid, label="Experimental KLD (valid only)")
+                ax[1].plot(np.array(range(len(plot_joint_klds))) * skip_kld * self.graph.params['sample_presentation_time'] * 1e-3, plot_joint_klds, label="Experimental KL div.")
+                ax[1].plot(np.array(range(len(plot_joint_klds_valid))) * skip_kld * self.graph.params['sample_presentation_time'] * 1e-3, plot_joint_klds_valid, label="Experimental KL div. (valid only)")
                 ax[1].legend(loc='upper center')
+                ax[1].set_xlabel('Time (s)')
                 ax[1].set_title('KL Divergence between target and estimated joint distribution')
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
@@ -968,10 +970,11 @@ class SPINetworkOptimizee(Optimizee):
             # Plot experimental KL divergence of joint distribution.
             if self.plot_all:
                 fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(8, 20))
-                ax[0].plot(np.array(range(len(plot_joint_klds))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_joint_klds, label="Experimental KLD")
-                ax[0].plot(np.array(range(len(plot_joint_klds_valid))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_joint_klds_valid, label="Experimental KLD (valid only)")
+                ax[0].plot(np.array(range(len(plot_joint_klds))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_joint_klds, label="Experimental KL div.")
+                ax[0].plot(np.array(range(len(plot_joint_klds_valid))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_joint_klds_valid, label="Experimental KL div. (valid only)")
                 ax[0].legend(loc='upper center')
-                ax[0].set_title('KL Divergence between target and estimated joint distribution')
+                ax[0].set_xlabel('Time (s)')
+                ax[0].set_title('KL divergence between target and estimated joint distribution')
 
             # Report weights before.
             conns = nest.GetConnections(self.network.all_neurons, self.network.all_neurons)
@@ -1276,9 +1279,10 @@ class SPIConditionalNetworkOptimizee(Optimizee):
             # Plot experimental KL divergence of joint distribution.
             if self.plot_all:
                 fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(8, 20))
-                ax[0].plot(np.array(range(len(plot_cond_klds))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_cond_klds, label="Experimental KLD")
+                ax[0].plot(np.array(range(len(plot_cond_klds))) * skip_kld * self.network.params['sample_presentation_time'] * 1e-3, plot_cond_klds, label="Experimental KL div.")
                 ax[0].legend(loc='upper center')
-                ax[0].set_title('KL Divergence between target and estimated joint distribution')
+                ax[0].set_xlabel('Time (s)')
+                ax[0].set_title('KL divergence between target and estimated joint distribution')
 
             # Measure experimental KL divergence of entire network by averaging on a few runs.
             experimental_cond = self.network.measure_experimental_cond_distribution(duration=5000.0)
