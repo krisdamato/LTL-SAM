@@ -1,0 +1,1174 @@
+2018-06-23 12:30:19,499 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 0 --
+2018-06-23 12:30:19,499 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:30:19,500 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0761
+2018-06-23 12:30:19,500 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.2641
+2018-06-23 12:30:19,501 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.2610203878497769, 'T': 0.11792803804677848, 'bias_baseline': -40.0, 'exp_term_prob_scale': 0.7763770386251558, 'weight_baseline': -1.8982085082824374, 'final_stdp_rate': 0.0017385320003249043, 'exp_term_prob': 1.0, 'second_bias_rate': 0.02601720929960262, 'first_bias_rate': 0.023940534384944458, 'initial_stdp_rate': 0.0}
+2018-06-23 12:30:19,502 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.16697680e-01  -2.57925788e+01   6.33865833e-01   2.97388590e+00
+   4.25228478e-03   3.23782650e-02   4.72931701e-03   5.53775203e-01
+   5.55960863e-02  -4.94054555e+00]
+
+Current sigma:
+[  5.20512069e-01   2.19685184e+01   4.42965115e-01   1.96583947e+00
+   6.07247250e-03   5.73259227e-02   5.29239467e-03   3.95058850e-01
+   5.86673202e-02   4.77267163e+00]
+2018-06-23 12:30:40,139 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 1 --
+2018-06-23 12:30:40,139 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:30:40,139 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.1202
+2018-06-23 12:30:40,139 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.2080
+2018-06-23 12:30:40,140 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.5252175810527292, 'T': 0.5696527541708303, 'bias_baseline': 0.0, 'exp_term_prob_scale': 1.015491769430353, 'weight_baseline': 0.0, 'final_stdp_rate': 0.0, 'exp_term_prob': 1.0, 'second_bias_rate': 0.02035711701940382, 'first_bias_rate': 0.01489594309674775, 'initial_stdp_rate': 0.01}
+2018-06-23 12:30:40,141 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.57819230e-01  -2.72446823e+01   7.08424366e-01   3.30375536e+00
+   4.85400242e-03   2.07075008e-02   6.29354827e-03   5.32201027e-01
+   5.39183469e-02  -5.45397332e+00]
+
+Current sigma:
+[  4.21848253e-01   2.21357705e+01   4.21912340e-01   1.68966594e+00
+   5.75970249e-03   4.95234138e-02   5.68378245e-03   3.57665670e-01
+   6.12806490e-02   4.85583037e+00]
+2018-06-23 12:31:00,630 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 2 --
+2018-06-23 12:31:00,631 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:31:00,631 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0039
+2018-06-23 12:31:00,631 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.1317
+2018-06-23 12:31:00,632 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.3850808891547019, 'T': 0.3326430052449631, 'bias_baseline': -32.62739808851021, 'exp_term_prob_scale': 0.6196691505002461, 'weight_baseline': -5.466458549268376, 'final_stdp_rate': 0.007796785220608378, 'exp_term_prob': 0.543724579002554, 'second_bias_rate': 0.08353219245209882, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:31:00,633 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  5.71103642e-01  -3.20355606e+01   6.69939443e-01   3.09047758e+00
+   4.18029221e-03   8.22388226e-03   6.69702902e-03   5.13861911e-01
+   5.39887715e-02  -5.38607717e+00]
+
+Current sigma:
+[  4.26316798e-01   2.14533233e+01   3.73240118e-01   2.01271287e+00
+   4.45431544e-03   5.11312225e-02   6.17734717e-03   3.56455021e-01
+   5.32417445e-02   4.59625558e+00]
+2018-06-23 12:31:21,152 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 3 --
+2018-06-23 12:31:21,152 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:31:21,152 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0743
+2018-06-23 12:31:21,153 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.3872
+2018-06-23 12:31:21,154 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.010493347915771722, 'T': 1.0, 'bias_baseline': -31.27832825891674, 'exp_term_prob_scale': 0.820572951582224, 'weight_baseline': -2.922876871320603, 'final_stdp_rate': 0.00025545635995696554, 'exp_term_prob': 0.579912446884825, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:31:21,154 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.36346487e-01  -3.42655220e+01   6.39698697e-01   3.37467751e+00
+   3.24383167e-03  -2.81055482e-03   6.61873875e-03   5.12895712e-01
+   5.97157734e-02  -4.91921285e+00]
+
+Current sigma:
+[  4.13015799e-01   1.96909024e+01   2.76855139e-01   1.63863721e+00
+   4.43514339e-03   4.41340808e-02   6.15801908e-03   3.60789823e-01
+   5.23523794e-02   4.62897492e+00]
+2018-06-23 12:31:41,647 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 4 --
+2018-06-23 12:31:41,647 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:31:41,647 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0800
+2018-06-23 12:31:41,648 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.1260
+2018-06-23 12:31:41,649 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 1.0, 'bias_baseline': -6.414413540336412, 'exp_term_prob_scale': 0.7857445522591919, 'weight_baseline': -2.582434763299224, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.6220736871079712, 'second_bias_rate': 0.025600020316595966, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.005814375858842374}
+2018-06-23 12:31:41,649 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  7.38321163e-01  -3.00372144e+01   6.14036508e-01   2.90626355e+00
+   3.62300631e-04  -8.48572165e-03   6.49338546e-03   5.85987576e-01
+   5.12768686e-02  -3.90697694e+00]
+
+Current sigma:
+[  4.42281190e-01   2.12160158e+01   2.78128718e-01   1.78046349e+00
+   6.05357301e-03   4.17855379e-02   6.23135580e-03   3.91241217e-01
+   4.63019588e-02   4.42965290e+00]
+2018-06-23 12:32:02,096 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 5 --
+2018-06-23 12:32:02,096 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:32:02,097 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0728
+2018-06-23 12:32:02,097 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.1528
+2018-06-23 12:32:02,098 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.9662624165837981, 'T': 0.32473198821293614, 'bias_baseline': -21.93643013699031, 'exp_term_prob_scale': 0.670402217748344, 'weight_baseline': -2.355420496802008, 'final_stdp_rate': 0.007765078543073064, 'exp_term_prob': 0.7248140879710816, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.002812167448139269}
+2018-06-23 12:32:02,099 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  7.26263241e-01  -3.34191315e+01   6.95985565e-01   2.15690423e+00
+  -1.55992736e-03  -1.75650385e-02   6.53913069e-03   5.56952503e-01
+   4.13651831e-02  -2.93881329e+00]
+
+Current sigma:
+[  4.14830787e-01   2.17641646e+01   2.41810835e-01   1.84431441e+00
+   6.20231769e-03   4.72181770e-02   5.86038257e-03   3.67426501e-01
+   5.53381989e-02   4.07279945e+00]
+2018-06-23 12:32:22,480 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 6 --
+2018-06-23 12:32:22,481 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:32:22,481 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.1018
+2018-06-23 12:32:22,481 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.2628
+2018-06-23 12:32:22,482 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.6697776024391172, 'T': 0.6725200368306729, 'bias_baseline': -2.819432587974134, 'exp_term_prob_scale': 0.6138844252774964, 'weight_baseline': -4.588623998608691, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.4107890337127149, 'second_bias_rate': 0.1, 'first_bias_rate': 0.04260599889341639, 'initial_stdp_rate': 0.01}
+2018-06-23 12:32:22,483 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  7.24792734e-01  -3.47161007e+01   6.57109701e-01   2.02538754e+00
+  -2.35021101e-03  -1.77449215e-02   6.10754027e-03   4.90736438e-01
+   5.12956171e-02  -2.45256099e+00]
+
+Current sigma:
+[  4.50541660e-01   2.83413716e+01   2.16781306e-01   1.49182708e+00
+   5.83431300e-03   4.58658345e-02   5.74084635e-03   3.62392012e-01
+   6.69369441e-02   3.64794321e+00]
+2018-06-23 12:32:43,056 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 7 --
+2018-06-23 12:32:43,056 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:32:43,056 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0468
+2018-06-23 12:32:43,057 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.2068
+2018-06-23 12:32:43,058 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.0, 'bias_baseline': -40.0, 'exp_term_prob_scale': 0.7064413572120609, 'weight_baseline': -3.323517905055236, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.6727337851244132, 'second_bias_rate': 0.1, 'first_bias_rate': 0.011954950451057138, 'initial_stdp_rate': 0.0024109859192216246}
+2018-06-23 12:32:43,058 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  7.39080810e-01  -4.06446789e+01   6.85366106e-01   1.87057931e+00
+  -2.09695275e-03  -1.81112341e-02   7.27580119e-03   4.94210297e-01
+   6.54683470e-02  -2.42740866e+00]
+
+Current sigma:
+[  5.62859311e-01   3.04368990e+01   2.35893038e-01   1.36034715e+00
+   5.71351616e-03   4.19256742e-02   6.51538890e-03   3.01872029e-01
+   6.84195905e-02   2.85514855e+00]
+2018-06-23 12:33:04,284 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 8 --
+2018-06-23 12:33:04,284 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:33:04,284 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0184
+2018-06-23 12:33:04,284 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.2102
+2018-06-23 12:33:04,285 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.3679066895102437, 'T': 0.29958920669452915, 'bias_baseline': -18.588741753074736, 'exp_term_prob_scale': 0.4587004362462288, 'weight_baseline': -5.063975516186254, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.8418502740692065, 'second_bias_rate': 0.02989992557024053, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:33:04,286 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.48572814e-01  -3.99133254e+01   6.49690705e-01   1.43805700e+00
+  -1.49529932e-03  -2.19036326e-02   9.73909677e-03   3.81645698e-01
+   5.91786122e-02  -2.65669873e+00]
+
+Current sigma:
+[  5.89122585e-01   2.90393700e+01   2.37991981e-01   1.06764434e+00
+   5.82450297e-03   4.33329208e-02   7.31119928e-03   2.88601746e-01
+   7.14730022e-02   2.20617258e+00]
+2018-06-23 12:33:24,956 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 9 --
+2018-06-23 12:33:24,957 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:33:24,957 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0121
+2018-06-23 12:33:24,957 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.2161
+2018-06-23 12:33:24,958 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.10394663886855493, 'T': 1.0, 'bias_baseline': -23.42467569866692, 'exp_term_prob_scale': 1.4381299809624852, 'weight_baseline': -2.136473956292798, 'final_stdp_rate': 0.01, 'exp_term_prob': 0.014889435597804312, 'second_bias_rate': 0.025547068871551212, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.005224475950151193}
+2018-06-23 12:33:24,959 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  7.00164023e-01  -3.76859276e+01   6.24723780e-01   1.36217401e+00
+  -6.67982781e-04  -1.44836415e-02   9.84612141e-03   3.86543411e-01
+   5.12525985e-02  -2.35132507e+00]
+
+Current sigma:
+[  6.64788653e-01   2.79999750e+01   2.98098297e-01   7.78510953e-01
+   7.20265064e-03   3.77085111e-02   6.39154870e-03   3.46260041e-01
+   6.69204324e-02   1.96819897e+00]
+2018-06-23 12:33:46,162 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 10 --
+2018-06-23 12:33:46,162 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:33:46,162 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0383
+2018-06-23 12:33:46,162 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.2134
+2018-06-23 12:33:46,164 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.4254361430740082, 'bias_baseline': -7.362119041163087, 'exp_term_prob_scale': 0.9805066166781797, 'weight_baseline': -2.276054013564451, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.5108953404033655, 'second_bias_rate': 0.0980947945688642, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.009289176232390799}
+2018-06-23 12:33:46,164 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  7.42646697e-01  -2.74517368e+01   5.81748833e-01   1.24686128e+00
+  -2.24171713e-03  -2.44238272e-02   1.02185103e-02   3.80416977e-01
+   4.39732431e-02  -2.21114198e+00]
+
+Current sigma:
+[  5.24922611e-01   3.08058049e+01   3.08409207e-01   6.39610144e-01
+   8.05495092e-03   3.18342782e-02   6.64189007e-03   3.86169118e-01
+   6.45803842e-02   1.57365001e+00]
+2018-06-23 12:34:06,950 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 11 --
+2018-06-23 12:34:06,951 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:34:06,951 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0101
+2018-06-23 12:34:06,951 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.1586
+2018-06-23 12:34:06,952 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.5783446694025244, 'T': 0.6887159954445515, 'bias_baseline': -40.0, 'exp_term_prob_scale': 0.7854974799328123, 'weight_baseline': -3.149690429325108, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.18748287316299306, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:34:06,953 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.61222349e-01  -3.43206365e+01   4.77620516e-01   9.01163078e-01
+  -2.40186909e-03  -2.50400511e-02   1.03512943e-02   4.33990333e-01
+   4.87458434e-02  -2.21874985e+00]
+
+Current sigma:
+[  4.38648876e-01   3.37154843e+01   2.69857327e-01   4.72973296e-01
+   8.97759371e-03   3.48876989e-02   5.83856207e-03   3.30009907e-01
+   7.03492399e-02   1.40389333e+00]
+2018-06-23 12:34:27,731 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 12 --
+2018-06-23 12:34:27,731 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:34:27,731 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0153
+2018-06-23 12:34:27,731 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.1655
+2018-06-23 12:34:27,732 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.5272963620223144, 'T': 0.7626645983368707, 'bias_baseline': -40.0, 'exp_term_prob_scale': 0.8508186026560253, 'weight_baseline': -2.6365459774231503, 'final_stdp_rate': 0.009953119704360547, 'exp_term_prob': 0.3200101958747654, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.0}
+2018-06-23 12:34:27,733 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.80412556e-01  -3.44768521e+01   4.91840723e-01   8.75301352e-01
+  -3.14800052e-03  -2.38317494e-02   9.55877285e-03   4.47218746e-01
+   5.87481581e-02  -2.28693342e+00]
+
+Current sigma:
+[  3.24590540e-01   3.23521367e+01   2.69416057e-01   3.55614089e-01
+   7.30783509e-03   3.58110689e-02   6.02414544e-03   3.01741148e-01
+   6.88277306e-02   1.07012067e+00]
+2018-06-23 12:34:48,823 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 13 --
+2018-06-23 12:34:48,824 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:34:48,824 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0147
+2018-06-23 12:34:48,824 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.1797
+2018-06-23 12:34:48,825 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.7581427308075928, 'T': 0.500507415687113, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7787512858907648, 'weight_baseline': -3.1939243895918565, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.8306396456543015, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.00749562839353751}
+2018-06-23 12:34:48,826 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.88713394e-01  -2.72069644e+01   5.51100587e-01   8.36253080e-01
+  -4.12030561e-03  -2.33155024e-02   1.16754422e-02   4.86273004e-01
+   6.13767437e-02  -2.44912545e+00]
+
+Current sigma:
+[  2.45549921e-01   3.33383031e+01   2.64513380e-01   2.54683965e-01
+   7.50449081e-03   3.59743857e-02   6.11071483e-03   3.70553305e-01
+   7.07889356e-02   7.81890081e-01]
+2018-06-23 12:35:09,796 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 14 --
+2018-06-23 12:35:09,796 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:35:09,796 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0108
+2018-06-23 12:35:09,797 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0728
+2018-06-23 12:35:09,798 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.44220088267112573, 'T': 0.6559816570288434, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7954327888533559, 'weight_baseline': -3.1327489034135185, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.4559378907080679, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:35:09,798 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.53924789e-01  -2.25690956e+01   4.45761760e-01   8.23499269e-01
+  -3.98826506e-03  -2.88058939e-02   1.24494252e-02   4.91883716e-01
+   8.27282075e-02  -2.61719577e+00]
+
+Current sigma:
+[  2.04057041e-01   3.28391822e+01   2.60233616e-01   2.03160878e-01
+   7.38587956e-03   3.31180723e-02   5.63068276e-03   3.25244217e-01
+   8.44233744e-02   7.33068176e-01]
+2018-06-23 12:35:30,932 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 15 --
+2018-06-23 12:35:30,933 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:35:30,933 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0060
+2018-06-23 12:35:30,933 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0592
+2018-06-23 12:35:30,934 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.38661394986336695, 'T': 0.6663924034553668, 'bias_baseline': -28.384744245758924, 'exp_term_prob_scale': 0.7344061560406966, 'weight_baseline': -3.0669748851740484, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.2934126720629697, 'second_bias_rate': 0.1, 'first_bias_rate': 0.015289577270708322, 'initial_stdp_rate': 0.01}
+2018-06-23 12:35:30,935 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.14952143e-01  -2.84716337e+01   4.33561001e-01   8.24545618e-01
+  -4.02637927e-03  -1.44896859e-02   1.46896671e-02   4.50876457e-01
+   9.67243053e-02  -2.69707048e+00]
+
+Current sigma:
+[  1.41789420e-01   3.94952535e+01   1.84147741e-01   1.62506919e-01
+   6.37432813e-03   3.45868046e-02   5.95132845e-03   3.77787665e-01
+   8.78141896e-02   6.17963913e-01]
+2018-06-23 12:35:52,003 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 16 --
+2018-06-23 12:35:52,003 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:35:52,003 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0104
+2018-06-23 12:35:52,003 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0449
+2018-06-23 12:35:52,004 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.7989954117640075, 'T': 0.46287108692829204, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7658857620262993, 'weight_baseline': -2.609306726120348, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.637683629300041, 'second_bias_rate': 0.1, 'first_bias_rate': 0.01078678149209208, 'initial_stdp_rate': 0.01}
+2018-06-23 12:35:52,005 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.08521388e-01  -2.18727233e+01   4.23543491e-01   7.84811547e-01
+  -3.64118380e-03  -1.69917010e-02   1.47371867e-02   4.84633573e-01
+   9.93933830e-02  -2.84600138e+00]
+
+Current sigma:
+[  1.23897370e-01   3.77917519e+01   1.65978486e-01   1.30240887e-01
+   6.34972766e-03   3.24760647e-02   4.78260051e-03   3.46657223e-01
+   1.02731286e-01   6.02550067e-01]
+2018-06-23 12:36:13,197 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 17 --
+2018-06-23 12:36:13,197 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:36:13,197 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0070
+2018-06-23 12:36:13,197 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0422
+2018-06-23 12:36:13,198 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6037645835869044, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7972764743517029, 'weight_baseline': -3.4113748393368453, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.14964224822205607, 'second_bias_rate': 0.07080299139688988, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:36:13,199 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  5.88658830e-01  -1.85194186e+01   4.09074154e-01   7.70975646e-01
+  -5.66527937e-03  -2.37103945e-02   1.54596353e-02   4.91215544e-01
+   9.98546219e-02  -3.03644238e+00]
+
+Current sigma:
+[  1.14981583e-01   3.86533832e+01   1.93285837e-01   1.00469085e-01
+   7.68940361e-03   2.98879564e-02   5.74722464e-03   3.10169305e-01
+   1.07993078e-01   5.34163214e-01]
+2018-06-23 12:36:34,355 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 18 --
+2018-06-23 12:36:34,355 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:36:34,355 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0072
+2018-06-23 12:36:34,355 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0468
+2018-06-23 12:36:34,356 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.8560433711375324, 'T': 0.5963138766181985, 'bias_baseline': -3.909933481326245, 'exp_term_prob_scale': 0.7727715637954284, 'weight_baseline': -3.306992400074523, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.5834485147133642, 'second_bias_rate': 0.009371097955267901, 'first_bias_rate': 0.004676448190683885, 'initial_stdp_rate': 0.01}
+2018-06-23 12:36:34,357 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.01328675e-01  -1.24005499e+01   4.10205698e-01   7.55343359e-01
+  -5.19716812e-03  -2.69926195e-02   1.67267135e-02   5.28706288e-01
+   8.63850793e-02  -3.16249471e+00]
+
+Current sigma:
+[  7.87197407e-02   2.81678098e+01   1.70123562e-01   8.11378511e-02
+   7.44873422e-03   3.94867961e-02   4.83308709e-03   4.10021210e-01
+   1.21928832e-01   4.44886830e-01]
+2018-06-23 12:36:55,556 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 19 --
+2018-06-23 12:36:55,556 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:36:55,556 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0117
+2018-06-23 12:36:55,556 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0571
+2018-06-23 12:36:55,557 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.98110218483211, 'T': 0.5791762565538148, 'bias_baseline': -40.0, 'exp_term_prob_scale': 0.66060453402253, 'weight_baseline': -3.3615240400674975, 'final_stdp_rate': 0.0043401925961847896, 'exp_term_prob': 0.32992715881215895, 'second_bias_rate': 0.0074272523741797936, 'first_bias_rate': 0.03530376656883097, 'initial_stdp_rate': 0.01}
+2018-06-23 12:36:55,558 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.02955953e-01  -2.42335317e+01   4.28011551e-01   7.25826486e-01
+  -4.68316847e-03  -3.62948656e-02   1.61014618e-02   6.27005887e-01
+   1.01718268e-01  -3.19859030e+00]
+
+Current sigma:
+[  6.53304449e-02   3.09079862e+01   1.49628909e-01   7.87926909e-02
+   6.73269501e-03   4.48578111e-02   4.38676580e-03   4.23498436e-01
+   1.11941727e-01   3.17662406e-01]
+2018-06-23 12:37:16,688 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 20 --
+2018-06-23 12:37:16,689 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:37:16,689 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0072
+2018-06-23 12:37:16,689 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0356
+2018-06-23 12:37:16,690 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.5316911478238446, 'bias_baseline': -40.0, 'exp_term_prob_scale': 0.6527580421374343, 'weight_baseline': -3.5724998396479606, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.412247872395093, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:37:16,691 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.21504769e-01  -2.19126481e+01   3.83002093e-01   7.20013090e-01
+  -5.79448148e-03  -3.75957429e-02   1.65686367e-02   7.32647461e-01
+   9.14433651e-02  -3.27172997e+00]
+
+Current sigma:
+[  6.74598758e-02   2.72015352e+01   1.51571609e-01   5.75057689e-02
+   6.32485669e-03   4.16417508e-02   4.27238428e-03   3.94228637e-01
+   1.02598210e-01   2.49755933e-01]
+2018-06-23 12:37:37,882 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 21 --
+2018-06-23 12:37:37,882 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:37:37,883 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0074
+2018-06-23 12:37:37,883 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0333
+2018-06-23 12:37:37,884 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.7187020227163262, 'T': 0.6631435150766107, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7673915356687772, 'weight_baseline': -3.2447232184451487, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.13670615595140706, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:37:37,885 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.01638626e-01  -2.42682060e+01   3.52276469e-01   7.12056821e-01
+  -5.68108029e-03  -4.29312681e-02   1.66781468e-02   7.66102516e-01
+   1.21199608e-01  -3.23944981e+00]
+
+Current sigma:
+[  5.41873197e-02   2.27197916e+01   1.50749019e-01   5.20422716e-02
+   7.14091637e-03   4.17586827e-02   3.91452392e-03   3.78712566e-01
+   1.05716446e-01   2.20258683e-01]
+2018-06-23 12:37:58,901 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 22 --
+2018-06-23 12:37:58,902 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:37:58,902 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0086
+2018-06-23 12:37:58,902 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0308
+2018-06-23 12:37:58,903 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.539482877919428, 'bias_baseline': -40.0, 'exp_term_prob_scale': 0.7423078623488911, 'weight_baseline': -3.5180196926441565, 'final_stdp_rate': 0.00949613102221391, 'exp_term_prob': 0.2636362363256995, 'second_bias_rate': 0.05607469937416745, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:37:58,904 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.00882584e-01  -2.52705635e+01   3.71716802e-01   7.19097203e-01
+  -6.64342668e-03  -5.09690094e-02   1.76216111e-02   7.64101579e-01
+   1.22846719e-01  -3.25281681e+00]
+
+Current sigma:
+[  4.75704978e-02   2.47748692e+01   1.05685131e-01   4.18028472e-02
+   7.19163691e-03   3.78621043e-02   4.14936175e-03   3.68656087e-01
+   9.90816742e-02   2.01056952e-01]
+2018-06-23 12:38:20,292 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 23 --
+2018-06-23 12:38:20,292 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:38:20,292 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0070
+2018-06-23 12:38:20,292 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0217
+2018-06-23 12:38:20,293 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.6986642346324551, 'T': 0.6148900696103453, 'bias_baseline': -38.24681171185274, 'exp_term_prob_scale': 0.7270839565983205, 'weight_baseline': -3.577119780151673, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.24059500763961092, 'second_bias_rate': 0.07890421179443186, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:38:20,294 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.24158572e-01  -1.92089673e+01   3.83964772e-01   7.31133954e-01
+  -7.56363489e-03  -5.54860401e-02   1.85163647e-02   6.95385593e-01
+   1.00469527e-01  -3.30739411e+00]
+
+Current sigma:
+[  4.41989993e-02   2.54666160e+01   1.00211497e-01   3.55223131e-02
+   8.42505435e-03   4.63624141e-02   4.06853028e-03   3.87063250e-01
+   9.96202643e-02   2.03326934e-01]
+2018-06-23 12:38:41,364 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 24 --
+2018-06-23 12:38:41,364 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:38:41,364 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0069
+2018-06-23 12:38:41,364 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0251
+2018-06-23 12:38:41,366 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.31521148741342103, 'T': 0.7043761234087779, 'bias_baseline': -21.32588829085553, 'exp_term_prob_scale': 0.748270675949189, 'weight_baseline': -3.07507724027188, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.36315666061298324, 'second_bias_rate': 0.020647243312362645, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:38:41,366 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.39213253e-01  -1.88970163e+01   3.66349009e-01   7.37232207e-01
+  -5.17709406e-03  -5.50014098e-02   1.83384456e-02   6.90582080e-01
+   6.19068086e-02  -3.31484144e+00]
+
+Current sigma:
+[  4.36274519e-02   1.95955988e+01   7.79574221e-02   3.25352310e-02
+   1.05171218e-02   4.77150518e-02   3.69975643e-03   3.44314752e-01
+   9.09704987e-02   1.76848350e-01]
+2018-06-23 12:39:02,560 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 25 --
+2018-06-23 12:39:02,561 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:39:02,561 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0064
+2018-06-23 12:39:02,561 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0210
+2018-06-23 12:39:02,562 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6122367011027637, 'bias_baseline': -11.022972415137303, 'exp_term_prob_scale': 0.7175216087411859, 'weight_baseline': -3.4171418191462055, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.39383254463168366, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:39:02,563 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.31653191e-01  -1.91031570e+01   3.50184376e-01   7.30580506e-01
+  -8.22014847e-03  -6.47483721e-02   1.87273744e-02   7.38071304e-01
+   2.50983437e-02  -3.30519320e+00]
+
+Current sigma:
+[  3.27469708e-02   1.84519651e+01   8.09369767e-02   2.89090085e-02
+   1.01951046e-02   4.65468825e-02   3.92585519e-03   3.12854752e-01
+   9.44982043e-02   1.47713238e-01]
+2018-06-23 12:39:23,915 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 26 --
+2018-06-23 12:39:23,915 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:39:23,915 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0039
+2018-06-23 12:39:23,916 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0172
+2018-06-23 12:39:23,917 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.7756805093693683, 'T': 0.6511509048763839, 'bias_baseline': -19.666884898195416, 'exp_term_prob_scale': 0.7575332405577648, 'weight_baseline': -3.248781279994768, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.18510065700205425, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:39:23,917 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.36619064e-01  -1.60415086e+01   3.13160845e-01   7.31718203e-01
+  -8.96170179e-03  -6.35735404e-02   1.83863166e-02   7.80745671e-01
+   1.36971478e-02  -3.32157720e+00]
+
+Current sigma:
+[  2.93962184e-02   2.31161534e+01   7.79524578e-02   2.43842962e-02
+   8.67902118e-03   4.52015869e-02   3.56626198e-03   2.74090334e-01
+   9.76551944e-02   1.69318924e-01]
+2018-06-23 12:39:45,311 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 27 --
+2018-06-23 12:39:45,311 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:39:45,311 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0065
+2018-06-23 12:39:45,312 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0257
+2018-06-23 12:39:45,313 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.8868128380637676, 'T': 0.624723606326016, 'bias_baseline': -15.128817705888576, 'exp_term_prob_scale': 0.7527146364431476, 'weight_baseline': -3.4234742488261296, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.13654516361491137, 'second_bias_rate': 0.012474176828833169, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:39:45,313 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.29960102e-01  -1.54174211e+01   2.94057557e-01   7.33375090e-01
+  -9.56924646e-03  -7.33777943e-02   1.74996454e-02   7.51024350e-01
+   1.54630099e-02  -3.37552225e+00]
+
+Current sigma:
+[  2.47337666e-02   2.07080415e+01   7.30923617e-02   2.42271509e-02
+   8.70236454e-03   4.59844824e-02   3.60321166e-03   2.92922322e-01
+   8.40750071e-02   1.66345880e-01]
+2018-06-23 12:40:06,454 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 28 --
+2018-06-23 12:40:06,454 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:40:06,454 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0023
+2018-06-23 12:40:06,455 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0139
+2018-06-23 12:40:06,456 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.8869338512658943, 'T': 0.6399148119758125, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7583393622341622, 'weight_baseline': -3.4143685787577094, 'final_stdp_rate': 0.004760799313510878, 'exp_term_prob': 0.17957063150181107, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:40:06,456 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.34566252e-01  -1.35431826e+01   2.82622882e-01   7.35994902e-01
+  -9.34146596e-03  -7.43981093e-02   1.75004595e-02   6.99815256e-01
+   2.62388028e-02  -3.35150467e+00]
+
+Current sigma:
+[  1.86735896e-02   2.03941720e+01   7.57453157e-02   2.34089788e-02
+   9.08089491e-03   3.69395934e-02   3.36455576e-03   2.77309962e-01
+   1.19099968e-01   1.58602373e-01]
+2018-06-23 12:40:27,823 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 29 --
+2018-06-23 12:40:27,824 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:40:27,824 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0041
+2018-06-23 12:40:27,824 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0164
+2018-06-23 12:40:27,825 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.953836805991986, 'T': 0.639152667951648, 'bias_baseline': -16.08746225055827, 'exp_term_prob_scale': 0.7142709950343743, 'weight_baseline': -3.4012930075495724, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.37138206391085127, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:40:27,826 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.63751571 -10.00125638   0.28243574   0.73097581  -0.01043382
+  -0.08721277   0.01827067   0.65192547   0.07017358  -3.44239322]
+
+Current sigma:
+[  1.64991651e-02   2.17390877e+01   6.66643942e-02   2.08117585e-02
+   1.03211047e-02   3.42266496e-02   3.18714134e-03   3.03127317e-01
+   1.06339314e-01   1.78940592e-01]
+2018-06-23 12:40:49,249 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 30 --
+2018-06-23 12:40:49,250 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:40:49,250 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0042
+2018-06-23 12:40:49,250 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0180
+2018-06-23 12:40:49,251 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.42137747239302054, 'T': 0.6366527406984916, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7477245144401299, 'weight_baseline': -3.281375234521063, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.24033690181546497, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:40:49,252 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.31144913e-01  -8.82081610e+00   2.62444467e-01   7.28572770e-01
+  -7.68158315e-03  -9.00009249e-02   1.85070692e-02   6.65894193e-01
+   4.22823101e-02  -3.40181990e+00]
+
+Current sigma:
+[  1.61460112e-02   2.03507473e+01   6.25199962e-02   2.00547229e-02
+   1.18306969e-02   3.42809090e-02   3.24480277e-03   2.88802097e-01
+   1.22282853e-01   1.70494395e-01]
+2018-06-23 12:41:10,841 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 31 --
+2018-06-23 12:41:10,842 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:41:10,842 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0046
+2018-06-23 12:41:10,842 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0165
+2018-06-23 12:41:10,843 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.8355524784244978, 'T': 0.6438500663679134, 'bias_baseline': -18.508534475203064, 'exp_term_prob_scale': 0.736418537353945, 'weight_baseline': -3.1865533384069926, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.17488646848617911, 'second_bias_rate': 0.091706993395653, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:41:10,844 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.32614482e-01  -1.06693321e+01   2.46846187e-01   7.28364137e-01
+  -6.85230249e-03  -9.98131171e-02   1.71359991e-02   5.76978039e-01
+   3.96003500e-02  -3.38845541e+00]
+
+Current sigma:
+[  1.65551052e-02   1.72189841e+01   5.52296438e-02   2.03671560e-02
+   1.09848097e-02   3.45430920e-02   3.17360460e-03   3.47408831e-01
+   1.37423935e-01   1.45460463e-01]
+2018-06-23 12:41:32,225 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 32 --
+2018-06-23 12:41:32,225 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:41:32,225 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0049
+2018-06-23 12:41:32,225 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0144
+2018-06-23 12:41:32,227 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.6193297374348754, 'bias_baseline': -5.719770108745666, 'exp_term_prob_scale': 0.7426551149343414, 'weight_baseline': -3.5064015308133607, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.23189417626617287, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:41:32,227 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.30002505e-01  -1.22815951e+01   2.42373936e-01   7.30328385e-01
+  -7.63316754e-03  -1.02225358e-01   1.67676578e-02   4.63710530e-01
+   7.73173557e-03  -3.41866376e+00]
+
+Current sigma:
+[  1.58357839e-02   1.63370443e+01   5.75366153e-02   1.82546302e-02
+   9.26606804e-03   3.05427824e-02   3.37450619e-03   4.20253289e-01
+   1.33442718e-01   1.26596949e-01]
+2018-06-23 12:41:53,573 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 33 --
+2018-06-23 12:41:53,573 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:41:53,573 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0058
+2018-06-23 12:41:53,573 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0189
+2018-06-23 12:41:53,575 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.5873953964339117, 'T': 0.6271930155528036, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7260198169178862, 'weight_baseline': -3.485781212954762, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.1981220583151208, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:41:53,575 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.28968385e-01  -9.48912827e+00   2.27719613e-01   7.29717330e-01
+  -6.44444060e-03  -9.36832621e-02   1.65684721e-02   4.90854819e-01
+   6.31715899e-02  -3.42786553e+00]
+
+Current sigma:
+[  1.38571891e-02   1.72770058e+01   5.02261898e-02   1.75229462e-02
+   9.76798559e-03   3.82886502e-02   3.61644288e-03   3.72761909e-01
+   1.48144438e-01   1.34276707e-01]
+2018-06-23 12:42:14,878 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 34 --
+2018-06-23 12:42:14,878 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:42:14,878 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0072
+2018-06-23 12:42:14,879 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0228
+2018-06-23 12:42:14,880 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.6296361862603266, 'bias_baseline': -2.755758567196554, 'exp_term_prob_scale': 0.7499284218638606, 'weight_baseline': -3.5524463747647577, 'final_stdp_rate': 0.001573046356764021, 'exp_term_prob': 0.23888681856887165, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:42:14,881 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.28614016e-01  -9.17149945e+00   2.30489923e-01   7.29212576e-01
+  -2.63897573e-03  -9.32932117e-02   1.61511898e-02   5.73298891e-01
+   5.23625735e-02  -3.43859489e+00]
+
+Current sigma:
+[  1.41349862e-02   1.61219427e+01   4.14709690e-02   2.12351331e-02
+   1.24285630e-02   3.95093819e-02   3.96705509e-03   3.46258737e-01
+   1.79994602e-01   1.09948875e-01]
+2018-06-23 12:42:36,144 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 35 --
+2018-06-23 12:42:36,144 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:42:36,144 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0046
+2018-06-23 12:42:36,144 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0170
+2018-06-23 12:42:36,146 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.3040419835202154, 'T': 0.6107266633858462, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7422897470523884, 'weight_baseline': -3.589684684116118, 'final_stdp_rate': 0.00573282550911402, 'exp_term_prob': 0.21497581103148775, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:42:36,146 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.27956320e-01  -6.27909094e+00   2.27390195e-01   7.27011929e-01
+  -5.00140672e-03  -9.64599548e-02   1.65177385e-02   5.78960211e-01
+   3.28701767e-02  -3.47926344e+00]
+
+Current sigma:
+[  1.28093931e-02   1.76596163e+01   3.94141043e-02   1.89541777e-02
+   1.14326421e-02   4.17463693e-02   4.19382404e-03   5.15895092e-01
+   1.75992300e-01   1.13957383e-01]
+2018-06-23 12:42:57,594 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 36 --
+2018-06-23 12:42:57,594 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:42:57,594 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0054
+2018-06-23 12:42:57,595 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0183
+2018-06-23 12:42:57,596 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.9867827893395673, 'T': 0.6240704354877996, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7007910083148018, 'weight_baseline': -3.5210172900429852, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.19288839576753497, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:42:57,597 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.62728954 -5.83604692  0.21563868  0.7268888  -0.0060547  -0.08023603
+  0.01765441  0.56747822  0.06942659 -3.52857799]
+
+Current sigma:
+[  1.19232977e-02   1.61586592e+01   3.86852393e-02   1.69745150e-02
+   1.10127648e-02   4.34258664e-02   4.07726413e-03   5.24200534e-01
+   2.08789021e-01   1.03373733e-01]
+2018-06-23 12:43:18,974 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 37 --
+2018-06-23 12:43:18,974 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:43:18,974 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0043
+2018-06-23 12:43:18,974 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0180
+2018-06-23 12:43:18,975 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.047859033921231364, 'T': 0.6463464186573775, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7295993481956191, 'weight_baseline': -3.7216373006592036, 'final_stdp_rate': 0.0046299807570350585, 'exp_term_prob': 0.1812873724805687, 'second_bias_rate': 0.06512382745205024, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:43:18,976 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.62811339 -3.84960643  0.21926819  0.72743479 -0.00477134 -0.08695388
+  0.01724548  0.57545961  0.07738433 -3.54674602]
+
+Current sigma:
+[  1.22459435e-02   1.42027121e+01   3.75817423e-02   1.47215291e-02
+   9.82221146e-03   3.82322624e-02   3.73346088e-03   4.91841722e-01
+   2.14278634e-01   1.10311915e-01]
+2018-06-23 12:43:40,937 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 38 --
+2018-06-23 12:43:40,937 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:43:40,938 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0049
+2018-06-23 12:43:40,938 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0167
+2018-06-23 12:43:40,939 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6277960067927111, 'bias_baseline': -2.630247622972308, 'exp_term_prob_scale': 0.7128328775577063, 'weight_baseline': -3.478917317350847, 'final_stdp_rate': 0.008947033461616346, 'exp_term_prob': 0.21494833964896268, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:43:40,940 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.29799901e-01  -1.34506819e+00   2.20550169e-01   7.25795046e-01
+  -3.47161274e-03  -7.77440540e-02   1.74959703e-02   8.38946007e-01
+  -8.91186909e-03  -3.56102644e+00]
+
+Current sigma:
+[  1.23036356e-02   1.42585002e+01   3.37509757e-02   1.69577229e-02
+   9.02800374e-03   3.56627308e-02   3.54470834e-03   6.69292900e-01
+   2.17455132e-01   7.87352520e-02]
+2018-06-23 12:44:02,238 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 39 --
+2018-06-23 12:44:02,238 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:44:02,238 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0040
+2018-06-23 12:44:02,238 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0155
+2018-06-23 12:44:02,239 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6314899499994954, 'bias_baseline': -2.0485627970393008, 'exp_term_prob_scale': 0.7270621293542553, 'weight_baseline': -3.5244789973068427, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.24161797732368082, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:44:02,240 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.63135938 -3.53238809  0.21810842  0.72822435 -0.00490373 -0.07937473
+  0.0164968   0.8669842  -0.07072298 -3.5728589 ]
+
+Current sigma:
+[  1.18097888e-02   1.36957377e+01   3.62704375e-02   1.75834227e-02
+   7.76721750e-03   3.20068738e-02   3.62095124e-03   7.73091338e-01
+   2.77280474e-01   6.83619832e-02]
+2018-06-23 12:44:23,633 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 40 --
+2018-06-23 12:44:23,633 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:44:23,633 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0040
+2018-06-23 12:44:23,633 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0146
+2018-06-23 12:44:23,634 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.24890686897227976, 'T': 0.6224628717021472, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7129142101447621, 'weight_baseline': -3.4829210249834337, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.2721910299534431, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:44:23,635 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.31182216e-01  -3.86160513e+00   2.21657261e-01   7.32075528e-01
+  -8.08804202e-03  -8.20737415e-02   1.78220253e-02   8.74898560e-01
+  -1.48964941e-03  -3.56710679e+00]
+
+Current sigma:
+[  1.02619720e-02   1.19989590e+01   3.26745693e-02   1.71142507e-02
+   7.72325633e-03   2.99992543e-02   3.63757642e-03   7.05658882e-01
+   2.45842088e-01   7.56438767e-02]
+2018-06-23 12:44:45,248 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 41 --
+2018-06-23 12:44:45,248 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:44:45,248 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0068
+2018-06-23 12:44:45,248 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0157
+2018-06-23 12:44:45,249 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.20874807041161692, 'T': 0.639505350943619, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7447967161612051, 'weight_baseline': -3.5381036862699777, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.1818810800637943, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:44:45,250 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.63064259 -0.89102077  0.21345414  0.73913881 -0.01038656 -0.07530992
+  0.01798158  0.83575592 -0.01670801 -3.55151227]
+
+Current sigma:
+[  7.65044567e-03   1.13740987e+01   3.21834562e-02   1.42782878e-02
+   8.30167789e-03   2.82412375e-02   3.91230682e-03   6.28633540e-01
+   2.85940534e-01   7.23818439e-02]
+2018-06-23 12:45:06,839 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 42 --
+2018-06-23 12:45:06,840 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:45:06,840 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0027
+2018-06-23 12:45:06,840 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0184
+2018-06-23 12:45:06,841 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.6273272130558465, 'bias_baseline': -6.627795471035201, 'exp_term_prob_scale': 0.7518230139643692, 'weight_baseline': -3.632862294634884, 'final_stdp_rate': 0.0010670526303296554, 'exp_term_prob': 0.17504566875501434, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:45:06,842 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.62841158 -1.37978248  0.19811952  0.74027883 -0.00890203 -0.07875613
+  0.01753573  0.61381928 -0.06507404 -3.55640829]
+
+Current sigma:
+[  7.61734690e-03   1.12842327e+01   3.33770178e-02   1.38737914e-02
+   8.16674672e-03   2.74672028e-02   4.29273553e-03   6.34798987e-01
+   2.97112390e-01   5.56929727e-02]
+2018-06-23 12:45:28,289 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 43 --
+2018-06-23 12:45:28,289 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:45:28,290 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0028
+2018-06-23 12:45:28,290 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0114
+2018-06-23 12:45:28,291 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.7147684307802122, 'T': 0.6284898062352451, 'bias_baseline': -0.31132132369410903, 'exp_term_prob_scale': 0.7220553941477259, 'weight_baseline': -3.494994192473738, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.18831183806466908, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:45:28,292 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.63109453 -0.05029285  0.20590066  0.73693331 -0.00941658 -0.07665534
+  0.0173106   0.58863507 -0.03937734 -3.55474277]
+
+Current sigma:
+[  6.78197447e-03   1.04216158e+01   3.57933872e-02   1.38713665e-02
+   6.61506968e-03   2.48662881e-02   4.49938168e-03   5.95012078e-01
+   2.61546372e-01   6.03825587e-02]
+2018-06-23 12:45:49,717 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 44 --
+2018-06-23 12:45:49,717 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:45:49,717 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0032
+2018-06-23 12:45:49,717 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0105
+2018-06-23 12:45:49,718 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6284921588604252, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7094115005586438, 'weight_baseline': -3.529477184399865, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.20706957371830698, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:45:49,719 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.62997063  3.03405117  0.20424001  0.73588427 -0.00794929 -0.0743887
+  0.01667452  0.52089009 -0.04655535 -3.54440204]
+
+Current sigma:
+[  7.30645581e-03   1.36646246e+01   2.70326472e-02   1.36778029e-02
+   7.77360417e-03   3.20146782e-02   4.08099897e-03   6.35937996e-01
+   2.32837432e-01   5.53251259e-02]
+2018-06-23 12:46:11,216 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 45 --
+2018-06-23 12:46:11,216 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:46:11,216 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0032
+2018-06-23 12:46:11,216 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0150
+2018-06-23 12:46:11,217 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6273561758458472, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7362334272476126, 'weight_baseline': -3.502801577573959, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.16781123166619275, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:46:11,218 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.29892322e-01   5.56906333e+00   1.99722554e-01   7.33797905e-01
+  -8.76487159e-03  -7.42547152e-02   1.63167863e-02   6.27385237e-01
+  -3.00268731e-03  -3.54110181e+00]
+
+Current sigma:
+[  6.60298011e-03   1.40451953e+01   2.49813651e-02   1.13323307e-02
+   7.85223309e-03   3.10653709e-02   4.46992754e-03   5.85692151e-01
+   2.16091073e-01   6.07534555e-02]
+2018-06-23 12:46:32,921 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 46 --
+2018-06-23 12:46:32,921 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:46:32,921 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0053
+2018-06-23 12:46:32,921 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0151
+2018-06-23 12:46:32,922 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.623159451926401, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7113227854020946, 'weight_baseline': -3.6783416431675118, 'final_stdp_rate': 0.007949901883696297, 'exp_term_prob': 0.1831211849368004, 'second_bias_rate': 0.05713662559331623, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:46:32,923 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.63003149  5.81452713  0.20206548  0.73286155 -0.00629495 -0.08026731
+  0.01565494  0.38663616 -0.03688851 -3.55305405]
+
+Current sigma:
+[  6.15349410e-03   1.17969356e+01   2.05981487e-02   1.14725934e-02
+   8.89807359e-03   3.15292091e-02   4.48801638e-03   7.46495113e-01
+   2.11954343e-01   7.12579287e-02]
+2018-06-23 12:46:54,249 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 47 --
+2018-06-23 12:46:54,250 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:46:54,250 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0032
+2018-06-23 12:46:54,250 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0133
+2018-06-23 12:46:54,251 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.635395341471253, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7252033807074787, 'weight_baseline': -3.5833108353863232, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.19404715504002465, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:46:54,252 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.30296811e-01   7.77275257e+00   2.01180075e-01   7.32999666e-01
+  -6.63187280e-03  -8.08705904e-02   1.74257357e-02   5.26665579e-01
+  -4.87823507e-02  -3.56400667e+00]
+
+Current sigma:
+[  6.17277933e-03   1.19378693e+01   1.68935659e-02   8.53285815e-03
+   1.18669262e-02   3.18181858e-02   4.88909977e-03   8.84710012e-01
+   2.57047471e-01   7.23354684e-02]
+2018-06-23 12:47:15,429 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 48 --
+2018-06-23 12:47:15,429 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:47:15,429 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0049
+2018-06-23 12:47:15,429 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0162
+2018-06-23 12:47:15,430 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.635032509728755, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.737699535836691, 'weight_baseline': -3.5558678995493063, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.21148482771704377, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:47:15,431 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.63179949  7.50727785  0.20121862  0.7350652  -0.01123028 -0.07464729
+  0.0170508   0.68450444 -0.05152049 -3.5706093 ]
+
+Current sigma:
+[  6.72743015e-03   1.02354046e+01   1.61417349e-02   8.20072026e-03
+   1.20851301e-02   2.96059532e-02   4.90151792e-03   9.22971696e-01
+   2.43113698e-01   6.30945005e-02]
+2018-06-23 12:47:36,917 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 49 --
+2018-06-23 12:47:36,918 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:47:36,918 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0056
+2018-06-23 12:47:36,918 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0170
+2018-06-23 12:47:36,919 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6311162047644048, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7299523183039952, 'weight_baseline': -3.505419584626765, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.19945618138103383, 'second_bias_rate': 0.1, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:47:36,920 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.63083057  8.84185448  0.20189293  0.73624505 -0.01398189 -0.08364539
+  0.01774423  0.69239604 -0.02463488 -3.57334734]
+
+Current sigma:
+[  5.65136464e-03   8.93160119e+00   1.59625799e-02   7.87227601e-03
+   1.27815201e-02   3.35297868e-02   4.88587183e-03   9.13065402e-01
+   2.99159026e-01   7.07277262e-02]
+2018-06-23 12:47:58,546 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 50 --
+2018-06-23 12:47:58,547 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:47:58,547 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0017
+2018-06-23 12:47:58,547 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0147
+2018-06-23 12:47:58,548 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6320029405181183, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.733686651266102, 'weight_baseline': -3.5970842265196636, 'final_stdp_rate': 0.004805113242143758, 'exp_term_prob': 0.21683160079254105, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:47:58,549 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.62967723  7.30369447  0.20453364  0.73713171 -0.0108971  -0.087275
+  0.0171078   0.62864162 -0.03605919 -3.56950253]
+
+Current sigma:
+[  5.42128452e-03   8.93668059e+00   1.76001761e-02   8.39705047e-03
+   1.41526615e-02   3.04168417e-02   4.06257062e-03   8.58794917e-01
+   2.92700593e-01   5.64971666e-02]
+2018-06-23 12:48:19,889 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 51 --
+2018-06-23 12:48:19,889 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:48:19,889 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0038
+2018-06-23 12:48:19,890 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0103
+2018-06-23 12:48:19,891 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.7759074634201875, 'T': 0.6278279047750002, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7325717495590874, 'weight_baseline': -3.6045647639298934, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.19866809030162796, 'second_bias_rate': 0.0714926455357678, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:48:19,892 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.63069146  9.09331935  0.21021826  0.73650726 -0.01282814 -0.08749113
+  0.01796842  0.42282934 -0.06415111 -3.57246551]
+
+Current sigma:
+[  5.21560750e-03   9.16247867e+00   1.78026699e-02   8.92770372e-03
+   1.38996891e-02   3.12557064e-02   3.64067053e-03   8.19426197e-01
+   2.91350914e-01   5.65642811e-02]
+2018-06-23 12:48:41,325 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 52 --
+2018-06-23 12:48:41,325 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:48:41,325 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0041
+2018-06-23 12:48:41,325 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0145
+2018-06-23 12:48:41,326 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.017299711164814546, 'T': 0.6356919462736642, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7411683165736894, 'weight_baseline': -3.5581235641485724, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.22829279673228714, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:48:41,327 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[ 0.63070931  9.26493624  0.21031248  0.73447129 -0.01705582 -0.08374326
+  0.01789785  0.29994959 -0.15925641 -3.57745565]
+
+Current sigma:
+[  5.76770092e-03   7.56182244e+00   1.82074336e-02   8.88699031e-03
+   1.14924169e-02   2.96265997e-02   3.60948484e-03   8.17634769e-01
+   2.54367805e-01   5.06006989e-02]
+2018-06-23 12:49:03,019 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 53 --
+2018-06-23 12:49:03,020 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:49:03,020 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0048
+2018-06-23 12:49:03,020 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0157
+2018-06-23 12:49:03,021 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6428428759031198, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7418129680406873, 'weight_baseline': -3.5153064776802827, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.22254669521906484, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:49:03,022 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.6286859   12.57726527   0.21163505   0.73191306  -0.01778266
+  -0.08639108   0.01876777   0.51610287  -0.22833166  -3.58200874]
+
+Current sigma:
+[  6.94531217e-03   7.53574640e+00   1.77665888e-02   9.25885509e-03
+   1.15256854e-02   4.59411070e-02   3.18103447e-03   8.32271890e-01
+   2.54172719e-01   5.22639465e-02]
+2018-06-23 12:49:24,521 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 54 --
+2018-06-23 12:49:24,522 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:49:24,522 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0044
+2018-06-23 12:49:24,522 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0174
+2018-06-23 12:49:24,523 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.2055838961476958, 'T': 0.626312391043975, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7302602600361577, 'weight_baseline': -3.592851323085201, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.19851399081900745, 'second_bias_rate': 0.028123977371109277, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:49:24,524 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.6282023   12.00796291   0.21352384   0.73269848  -0.01613284
+  -0.10224023   0.01945251   0.23464758  -0.20097533  -3.58451063]
+
+Current sigma:
+[  6.37261345e-03   8.23395299e+00   1.84236104e-02   9.10095938e-03
+   1.18373462e-02   4.86040750e-02   2.95806105e-03   8.46168403e-01
+   2.37893660e-01   5.01291082e-02]
+2018-06-23 12:49:46,432 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 55 --
+2018-06-23 12:49:46,432 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:49:46,432 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0054
+2018-06-23 12:49:46,432 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0182
+2018-06-23 12:49:46,433 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.6288323682279655, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7234365535853091, 'weight_baseline': -3.566658714903463, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.2188164432780652, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:49:46,434 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.6284799   10.99090083   0.21307958   0.73160117  -0.0183163
+  -0.1103322    0.01895731   0.29835512  -0.22407539  -3.60114487]
+
+Current sigma:
+[  5.09188792e-03   6.89412864e+00   1.67227564e-02   7.86524037e-03
+   1.23240324e-02   4.58207320e-02   2.79905409e-03   1.12137725e+00
+   2.53089199e-01   5.44760507e-02]
+2018-06-23 12:50:07,838 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 56 --
+2018-06-23 12:50:07,838 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:50:07,838 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0027
+2018-06-23 12:50:07,839 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0105
+2018-06-23 12:50:07,840 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.2456052376821732, 'T': 0.6258296822503413, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.748492958498124, 'weight_baseline': -3.4686502374502286, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.20204740649547745, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:50:07,840 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62793726  10.49711825   0.2090325    0.73195107  -0.02130885
+  -0.12023596   0.01975441   0.37631499  -0.19909781  -3.58980081]
+
+Current sigma:
+[  5.12019438e-03   8.58677086e+00   1.42399507e-02   1.02330820e-02
+   9.39059281e-03   4.17592599e-02   2.79549791e-03   9.53268066e-01
+   2.24267002e-01   5.50590406e-02]
+2018-06-23 12:50:29,663 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 57 --
+2018-06-23 12:50:29,663 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:50:29,663 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0046
+2018-06-23 12:50:29,664 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0154
+2018-06-23 12:50:29,665 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6239243565369775, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7439525494008219, 'weight_baseline': -3.547353312136999, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.21574045540013914, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:50:29,665 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62766411  12.05586219   0.2081171    0.73267451  -0.02191478
+  -0.12182717   0.02000157   0.47380675  -0.21113662  -3.59083191]
+
+Current sigma:
+[  4.78417908e-03   8.67517122e+00   1.65862305e-02   9.50233778e-03
+   9.68840781e-03   3.48130895e-02   3.29017448e-03   1.11180045e+00
+   2.17017560e-01   5.25154662e-02]
+2018-06-23 12:50:51,051 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 58 --
+2018-06-23 12:50:51,051 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:50:51,051 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0044
+2018-06-23 12:50:51,051 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0137
+2018-06-23 12:50:51,052 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.7192073415845627, 'T': 0.6334734577190297, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7196930075681259, 'weight_baseline': -3.6175355445004973, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.21306568091185654, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:50:51,053 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62758134  11.26654033   0.20707747   0.7300468   -0.02367238
+  -0.12502151   0.01978588   0.67428649  -0.26949586  -3.60006195]
+
+Current sigma:
+[  4.43126984e-03   8.71253950e+00   1.66855385e-02   9.56030435e-03
+   7.75238546e-03   3.54189894e-02   2.98368400e-03   1.09806998e+00
+   2.75035806e-01   5.47723907e-02]
+2018-06-23 12:51:12,744 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 59 --
+2018-06-23 12:51:12,744 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:51:12,744 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0023
+2018-06-23 12:51:12,744 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0110
+2018-06-23 12:51:12,745 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6198385696601584, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7279149523183002, 'weight_baseline': -3.5696089992446445, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.22820085478077956, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:51:12,746 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62637086  11.32480857   0.20340804   0.72751134  -0.02481014
+  -0.12729851   0.01955698   0.44102028  -0.33186523  -3.60433939]
+
+Current sigma:
+[  3.37510916e-03   9.41191646e+00   1.76955730e-02   8.45734945e-03
+   7.68350485e-03   3.60490443e-02   2.60345293e-03   1.23019825e+00
+   2.57289510e-01   4.55636028e-02]
+2018-06-23 12:51:34,701 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 60 --
+2018-06-23 12:51:34,701 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:51:34,701 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0055
+2018-06-23 12:51:34,701 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0166
+2018-06-23 12:51:34,702 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6289371353495244, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7370186758063847, 'weight_baseline': -3.5346979976309747, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.1918287120145618, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:51:34,703 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62624909  11.34715699   0.20105867   0.72908593  -0.02389735
+  -0.12480178   0.02004383   0.38589628  -0.32142222  -3.60447662]
+
+Current sigma:
+[  3.58319977e-03   1.01449355e+01   2.09208796e-02   8.68494330e-03
+   8.60696440e-03   3.49051068e-02   2.34472297e-03   1.42967854e+00
+   2.54240837e-01   4.64968045e-02]
+2018-06-23 12:51:56,344 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 61 --
+2018-06-23 12:51:56,344 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:51:56,344 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0023
+2018-06-23 12:51:56,345 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0106
+2018-06-23 12:51:56,346 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6212366726975675, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7326422911829706, 'weight_baseline': -3.6320491509267216, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.19666168002243903, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:51:56,346 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62599978  14.51750942   0.194437     0.73007537  -0.02291838
+  -0.13530286   0.01960933   0.65569338  -0.31434126  -3.61406266]
+
+Current sigma:
+[  3.28135556e-03   1.07567533e+01   1.81232943e-02   8.36892298e-03
+   7.55637076e-03   3.08222398e-02   2.49613763e-03   1.07657748e+00
+   2.40894621e-01   4.57181415e-02]
+2018-06-23 12:52:17,848 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 62 --
+2018-06-23 12:52:17,849 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:52:17,849 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0040
+2018-06-23 12:52:17,849 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0121
+2018-06-23 12:52:17,850 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.7054006112372347, 'T': 0.6279509476375068, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7352514384489016, 'weight_baseline': -3.5267274249316594, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.19463629587333298, 'second_bias_rate': 0.05503591616459552, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:52:17,851 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62678154  15.26857392   0.19176061   0.73102867  -0.02256935
+  -0.14050323   0.01940986   0.3248618   -0.30031997  -3.60522089]
+
+Current sigma:
+[  3.56350228e-03   9.19394116e+00   1.78991926e-02   9.33787437e-03
+   6.64626434e-03   2.74552166e-02   2.48005708e-03   1.04886725e+00
+   2.38341789e-01   4.71982912e-02]
+2018-06-23 12:52:39,224 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 63 --
+2018-06-23 12:52:39,225 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:52:39,225 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0045
+2018-06-23 12:52:39,225 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0238
+2018-06-23 12:52:39,226 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.6239607448430522, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7303935576384489, 'weight_baseline': -3.568833311163941, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.18896578003855263, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:52:39,227 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.26664238e-01   1.61029530e+01   1.88540951e-01   7.30948727e-01
+  -2.21424429e-02  -1.40068193e-01   1.96328963e-02  -1.32928957e-03
+  -3.42227227e-01  -3.60369215e+00]
+
+Current sigma:
+[  4.38975757e-03   8.69784934e+00   1.55832502e-02   9.38057883e-03
+   5.51263361e-03   2.40738744e-02   2.30590934e-03   1.43345499e+00
+   2.37708257e-01   4.69730968e-02]
+2018-06-23 12:53:00,646 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 64 --
+2018-06-23 12:53:00,646 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:53:00,646 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0036
+2018-06-23 12:53:00,646 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0147
+2018-06-23 12:53:00,647 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.8672689639620812, 'T': 0.62362883158516, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7465010635911541, 'weight_baseline': -3.6722066115179897, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.1905482000710175, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:53:00,648 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62558418  17.39089057   0.19128028   0.73281178  -0.02117149
+  -0.13424392   0.0197675    0.20203935  -0.39831194  -3.61006529]
+
+Current sigma:
+[  5.09529637e-03   7.53715240e+00   1.32429067e-02   9.94552399e-03
+   6.13945079e-03   2.63534878e-02   2.52237168e-03   1.28318904e+00
+   2.51025370e-01   4.90754393e-02]
+2018-06-23 12:53:22,048 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 65 --
+2018-06-23 12:53:22,048 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:53:22,049 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0040
+2018-06-23 12:53:22,049 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0123
+2018-06-23 12:53:22,050 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.6275173089092191, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7466340998049285, 'weight_baseline': -3.579898508323127, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.18149157764831728, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:53:22,051 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62514337  17.48432224   0.18572732   0.73406167  -0.02146468
+  -0.13362665   0.02032445   0.06345178  -0.45190926  -3.61185122]
+
+Current sigma:
+[  3.92996178e-03   6.29642073e+00   1.31183529e-02   9.59464655e-03
+   6.67099668e-03   2.59269579e-02   2.58870209e-03   1.37961745e+00
+   2.16446887e-01   4.41658830e-02]
+2018-06-23 12:53:43,365 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 66 --
+2018-06-23 12:53:43,365 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:53:43,365 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0023
+2018-06-23 12:53:43,365 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0123
+2018-06-23 12:53:43,366 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6253471600930716, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.746196341882434, 'weight_baseline': -3.635778710187294, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.19916354493748736, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:53:43,367 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62607474  18.1873737    0.18459466   0.73385878  -0.02157094
+  -0.13608081   0.02017442   0.12420208  -0.43438451  -3.62083098]
+
+Current sigma:
+[  3.62983819e-03   7.07417642e+00   1.17824778e-02   8.55405740e-03
+   6.09584245e-03   2.52043278e-02   2.18438220e-03   1.38847827e+00
+   2.07221267e-01   4.33448362e-02]
+2018-06-23 12:54:05,043 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 67 --
+2018-06-23 12:54:05,043 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:54:05,043 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0031
+2018-06-23 12:54:05,043 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0120
+2018-06-23 12:54:05,044 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.6187134805909996, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.755410944221668, 'weight_baseline': -3.5615258954472497, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.18860141798780192, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:54:05,045 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  6.24786865e-01   1.87189681e+01   1.84821278e-01   7.34874291e-01
+  -2.09594043e-02  -1.39585942e-01   1.99532881e-02   5.93580213e-04
+  -4.67944045e-01  -3.61068761e+00]
+
+Current sigma:
+[  4.62457926e-03   8.32254098e+00   9.91584012e-03   1.10600377e-02
+   5.90183300e-03   3.00503918e-02   2.16011146e-03   1.28715129e+00
+   2.18351562e-01   4.65234934e-02]
+2018-06-23 12:54:26,397 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 68 --
+2018-06-23 12:54:26,398 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:54:26,398 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0040
+2018-06-23 12:54:26,398 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0151
+2018-06-23 12:54:26,399 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.6273061283401054, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7288323634839672, 'weight_baseline': -3.712396810487733, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.19321732343091239, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:54:26,400 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62433085  16.40794671   0.18351278   0.73358454  -0.02060692
+  -0.13669344   0.02033549  -0.09113578  -0.46590968  -3.62142978]
+
+Current sigma:
+[  4.13156618e-03   7.08672549e+00   1.18666761e-02   1.19379248e-02
+   6.59147005e-03   3.13365081e-02   2.45740171e-03   1.26255962e+00
+   2.16964332e-01   5.41322655e-02]
+2018-06-23 12:54:47,948 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 69 --
+2018-06-23 12:54:47,948 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:54:47,948 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0036
+2018-06-23 12:54:47,948 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0135
+2018-06-23 12:54:47,949 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.6270662800515737, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7516524062835989, 'weight_baseline': -3.6283840785816173, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.17225118923060567, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:54:47,950 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62451308  14.49600607   0.17870872   0.73586234  -0.01951045
+  -0.14756394   0.02080065  -0.30950426  -0.48966295  -3.60515259]
+
+Current sigma:
+[  3.49493652e-03   7.80783102e+00   1.42193229e-02   1.15618680e-02
+   6.88820900e-03   3.21833922e-02   2.41566124e-03   1.26551860e+00
+   1.97654665e-01   4.83287529e-02]
+2018-06-23 12:55:09,556 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 70 --
+2018-06-23 12:55:09,556 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:55:09,556 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0018
+2018-06-23 12:55:09,556 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0110
+2018-06-23 12:55:09,557 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6236069990485061, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7386417408826613, 'weight_baseline': -3.626227921214067, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.16270657362256125, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:55:09,558 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62398821  14.20475161   0.17042601   0.73821497  -0.02171551
+  -0.15056042   0.0215422   -0.37390733  -0.44059025  -3.61160334]
+
+Current sigma:
+[  2.98611200e-03   8.28755591e+00   1.48701742e-02   1.08732292e-02
+   6.61599379e-03   3.01144669e-02   2.63091458e-03   1.14996904e+00
+   2.09819173e-01   3.75361295e-02]
+2018-06-23 12:55:31,158 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 71 --
+2018-06-23 12:55:31,158 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:55:31,159 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0034
+2018-06-23 12:55:31,159 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0154
+2018-06-23 12:55:31,160 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6214427075547826, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.739416491896276, 'weight_baseline': -3.6687108894918756, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.17665831550643807, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:55:31,161 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62399916  12.7781336    0.16848071   0.73796215  -0.02097244
+  -0.16299217   0.02179199   0.09107559  -0.42223638  -3.62402283]
+
+Current sigma:
+[  2.35167215e-03   8.31698603e+00   1.64587138e-02   1.11022601e-02
+   6.40183758e-03   3.51807752e-02   2.75334542e-03   1.28077138e+00
+   1.88557502e-01   3.38996733e-02]
+2018-06-23 12:55:52,626 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 72 --
+2018-06-23 12:55:52,626 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:55:52,626 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0047
+2018-06-23 12:55:52,627 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0150
+2018-06-23 12:55:52,628 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6230251949479331, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7385437951235153, 'weight_baseline': -3.641405690915632, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.17303122330399462, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:55:52,628 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62410104  12.62208634   0.17142092   0.73848736  -0.02041855
+  -0.16141594   0.02234836   0.19326261  -0.43588926  -3.62054644]
+
+Current sigma:
+[  3.60094819e-03   7.62973656e+00   1.61558784e-02   1.04550018e-02
+   6.29469395e-03   3.26030489e-02   2.87849236e-03   1.06259437e+00
+   1.98288448e-01   3.09233763e-02]
+2018-06-23 12:56:14,295 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 73 --
+2018-06-23 12:56:14,295 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:56:14,295 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0065
+2018-06-23 12:56:14,295 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0199
+2018-06-23 12:56:14,296 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.4351842630944492, 'T': 0.6219891045856275, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7439012059920085, 'weight_baseline': -3.6113266368782764, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.13063349695786886, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:56:14,297 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62493006  11.29706313   0.17324549   0.73792881  -0.02149956
+  -0.16807129   0.02225477   0.2818563   -0.44526206  -3.61489692]
+
+Current sigma:
+[  3.63824460e-03   7.03747040e+00   2.46860736e-02   1.07951692e-02
+   5.61194258e-03   3.21742497e-02   2.95940880e-03   1.12584641e+00
+   1.94834980e-01   3.22572212e-02]
+2018-06-23 12:56:35,791 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 74 --
+2018-06-23 12:56:35,792 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:56:35,792 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0044
+2018-06-23 12:56:35,792 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0112
+2018-06-23 12:56:35,793 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.9294410501332406, 'T': 0.6203771207195048, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7490532263686988, 'weight_baseline': -3.6280131217704206, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.1596388552712973, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:56:35,794 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.6237037   12.62502632   0.16895814   0.73990116  -0.02143166
+  -0.16865183   0.02232382   0.2954081   -0.44692175  -3.61379026]
+
+Current sigma:
+[  3.90413580e-03   5.72901077e+00   2.14598960e-02   1.10051976e-02
+   6.77900218e-03   3.01518807e-02   3.55585659e-03   1.09261349e+00
+   1.58239066e-01   3.58987378e-02]
+2018-06-23 12:56:57,421 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 75 --
+2018-06-23 12:56:57,421 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:56:57,421 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0049
+2018-06-23 12:56:57,421 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0179
+2018-06-23 12:56:57,423 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1.0, 'T': 0.6254124603376896, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7297347493954948, 'weight_baseline': -3.621795820399825, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.18834204631651869, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:56:57,423 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62458876  13.50692972   0.16882737   0.7383918   -0.02133177
+  -0.1752234    0.02355728   0.52442976  -0.43029802  -3.62081432]
+
+Current sigma:
+[  3.77023681e-03   6.00971414e+00   2.14247472e-02   1.15647570e-02
+   6.05715535e-03   2.93729923e-02   4.17758733e-03   1.28290647e+00
+   1.38775676e-01   3.12561683e-02]
+2018-06-23 12:57:19,123 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 76 --
+2018-06-23 12:57:19,123 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:57:19,123 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0038
+2018-06-23 12:57:19,123 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0127
+2018-06-23 12:57:19,124 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 0.9461093054631193, 'T': 0.6245686530734839, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7447355678752229, 'weight_baseline': -3.6198972279234423, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.18054960467982878, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:57:19,125 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62526243  12.8222595    0.17255511   0.742134    -0.02096694
+  -0.17450188   0.02331279   0.47963604  -0.42786644  -3.62724919]
+
+Current sigma:
+[  3.81217771e-03   5.69719303e+00   2.43709610e-02   1.26075007e-02
+   6.71053490e-03   3.04897933e-02   4.07836205e-03   1.28687144e+00
+   1.23762663e-01   3.14803142e-02]
+2018-06-23 12:57:40,604 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 77 --
+2018-06-23 12:57:40,605 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:57:40,605 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0039
+2018-06-23 12:57:40,605 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0176
+2018-06-23 12:57:40,606 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.622276831076853, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7567104889971544, 'weight_baseline': -3.6275821086569664, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.1591163307424788, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:57:40,607 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62478843  12.82417319   0.17509206   0.74758408  -0.0228335
+  -0.18299041   0.0234364    0.44203263  -0.41628409  -3.6310184 ]
+
+Current sigma:
+[  3.89512569e-03   5.49048538e+00   2.15905605e-02   1.23400541e-02
+   7.61250502e-03   3.36306662e-02   4.53531104e-03   1.29737332e+00
+   1.27995472e-01   2.87663010e-02]
+2018-06-23 12:58:02,471 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 78 --
+2018-06-23 12:58:02,471 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:58:02,471 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0048
+2018-06-23 12:58:02,471 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0244
+2018-06-23 12:58:02,472 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.6249981486699845, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7168413896677532, 'weight_baseline': -3.5901137392570313, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.17991074599655252, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:58:02,473 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62497798  13.08679194   0.17243223   0.7466972   -0.02354114
+  -0.19874938   0.022471    -0.25735854  -0.39948457  -3.62486138]
+
+Current sigma:
+[  3.76294711e-03   5.90101436e+00   1.67471499e-02   1.53358583e-02
+   8.12025553e-03   4.30925242e-02   4.29989875e-03   1.48128129e+00
+   1.35782831e-01   3.09339551e-02]
+2018-06-23 12:58:23,792 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of generation 79 --
+2018-06-23 12:58:23,792 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Evaluated 96 individuals
+2018-06-23 12:58:23,792 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Best Fitness: -0.0038
+2018-06-23 12:58:23,792 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    :   Average Fitness: 0.0115
+2018-06-23 12:58:23,793 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Best run individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.6156839955498056, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7134076762312157, 'weight_baseline': -3.658178103798335, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.14504649410696377, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:58:23,794 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Current mu:
+[  0.62335556  15.20392668   0.1666601    0.74408829  -0.02455765  -0.20588
+   0.02262297  -0.69419488  -0.41729791  -3.62903518]
+
+Current sigma:
+[  4.67337341e-03   6.67761980e+00   1.61565249e-02   1.64990142e-02
+   8.50329475e-03   3.92258504e-02   4.12165925e-03   1.50884472e+00
+   1.12892365e-01   2.70237890e-02]
+2018-06-23 12:59:56,801 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Final individual:
+{'relative_bias_spike_rate': 1e-05, 'T': 0.6156839955498056, 'bias_baseline': 0.0, 'exp_term_prob_scale': 0.7134076762312157, 'weight_baseline': -3.658178103798335, 'final_stdp_rate': 0.0, 'exp_term_prob': 0.14504649410696377, 'second_bias_rate': 0.0, 'first_bias_rate': 0.0, 'initial_stdp_rate': 0.01}
+2018-06-23 12:59:56,801 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Final fitness:
+-0.0038179301149802634
+2018-06-23 12:59:56,802 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : Final mu:
+[  0.62335556  15.20392668   0.1666601    0.74408829  -0.02455765  -0.20588
+   0.02262297  -0.69419488  -0.41729791  -3.62903518]
+
+Final sigma:
+[  4.67337341e-03   6.67761980e+00   1.61565249e-02   1.64990142e-02
+   8.50329475e-03   3.92258504e-02   4.12165925e-03   1.50884472e+00
+   1.12892365e-01   2.70237890e-02]
+2018-06-23 12:59:56,802 optimizers.naturalevolutionstrategies 3ede199403e0 8185 INFO    : -- End of (successful) ES optimization --
