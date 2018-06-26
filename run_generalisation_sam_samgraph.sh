@@ -1,7 +1,7 @@
 source ../NEST/bin/nest_vars.sh
 
-python -m scoop -n 96 bin/ltl-sam-ga.py -n SAM-0_1ms-GA-Random -r 0.1 -fd 0.1 
-python -m scoop -n 96 bin/ltl-sam-nes.py -n SAM-0_1ms-NES-Random -r 0.1 -fd 0.1 
+python -m scoop -n 96 bin/ltl-sam-ga.py -n SAM-0_2ms-GA-Random -r 0.1 -fd 0.2
+python -m scoop -n 96 bin/ltl-sam-nes.py -n SAM-0_2ms-NES-Random -r 0.1 -fd 0.2 
 
-python -m scoop -n 96 bin/ltl-samgraph-ga.py -n SAMGRAPH-0_1ms-GA-Random-handling_first -r 0.1 -fd 0.1 -s first
-python -m scoop -n 96 bin/ltl-samgraph-nes.py -n SAMGRAPH-0_1ms-NES-Random-handling_first -r 0.1 -fd 0.1 -s first
+python -m scoop -n 96 bin/ltl-samgraph-ga.py -n SAMGRAPH-0_2ms-GA-Random-handling_first -r 0.1 -fd 0.2 -s first
+python -m scoop -n 96 bin/ltl-samgraph-nes.py -n SAMGRAPH-0_2ms-NES-Random-handling_first -r 0.1 -fd 0.2 -s first

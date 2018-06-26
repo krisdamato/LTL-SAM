@@ -24,6 +24,10 @@ loggers:
     level: INFO
     handlers: [file]
     propagate: no
+  ltl-spi-nes:
+    level: INFO
+    handlers: [file]
+    propagate: no
   ltl-samgraph-sa:
     level: INFO
     handlers: [file]

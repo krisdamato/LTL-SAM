@@ -1,24 +1,17 @@
-import argparse
 import logging.config
-import numpy as np
 import os
+import argparse
 
-from collections import OrderedDict
 from pypet import Environment, pypetconstants
 from ltl.logging_tools import create_shared_logger_data, configure_loggers
 from ltl.optimizers.naturalevolutionstrategies import NaturalEvolutionStrategiesOptimizer, NaturalEvolutionStrategiesParameters
 from ltl.paths import Paths
-from sam.optimizee import SPINetworkOptimizee
-from sam.spinetwork import SPINetwork
+from sam.optimizee import SPIConditionalNetworkOptimizee
 
-logger = logging.getLogger('bin.ltl-spigraph-nes')
+logger = logging.getLogger('bin.ltl-spi-nes')
 
-def main(path_name, 
-         resolution, 
-         min_delay, 
-         fixed_delay, 
-         max_delay, 
-         use_pecevski):
+
+def main(path_name, resolution, min_delay, fixed_delay, max_delay, use_pecevski):
     name = path_name
     try:
         with open('bin/path.conf') as f:
@@ -39,10 +32,11 @@ def main(path_name,
                       comment='{} data'.format(name),
                       add_time=True,
                       automatic_storing=True,
-                      use_scoop=True,
-                      multiproc=True,
-                      wrap_mode=pypetconstants.WRAP_MODE_LOCAL,
                       log_stdout=False,  # Sends stdout to logs
+                      multiproc=True,
+                      use_scoop=True,
+                      freeze_input=False,
+                      wrap_mode=pypetconstants.WRAP_MODE_LOCAL
                       )
 
     create_shared_logger_data(logger_names=['bin', 'optimizers'],
@@ -56,18 +50,18 @@ def main(path_name,
     traj = env.trajectory
 
     # NOTE: Innerloop simulator
-    optimizee = SPINetworkOptimizee(traj, 
-                                    n_NEST_threads=1, 
-                                    time_resolution=resolution, 
-                                    min_delay=min_delay, 
-                                    fixed_delay=fixed_delay,
-                                    max_delay=max_delay,
-                                    use_pecevski=use_pecevski,
-                                    plots_directory=paths.output_dir_path, 
-                                    num_fitness_trials=1)
+    optimizee = SPIConditionalNetworkOptimizee(traj, 
+                                                n_NEST_threads=1, 
+                                                time_resolution=resolution, 
+                                                min_delay=min_delay, 
+                                                fixed_delay=fixed_delay,
+                                                max_delay=max_delay,
+                                                use_pecevski=use_pecevski,
+                                                plots_directory=paths.output_dir_path, 
+                                                num_fitness_trials=1)
 
     # Get bounds for mu and sigma calculation.
-    param_spec = OrderedDict(sorted(SPINetwork.parameter_spec(4).items()))
+    param_spec = OrderedDict(sorted(SPINetwork.parameter_spec(1, "conditional").items()))
     names = [k for k, _ in param_spec.items()]
     mu = np.array([(v_min + v_max) / 2 for k, (v_min, v_max) in param_spec.items()])
     sigma = np.array([(v_max - v_min) / 2 for k, (v_min, v_max) in param_spec.items()])
@@ -76,7 +70,7 @@ def main(path_name,
 
     # NOTE: Outerloop optimizer initialization
     parameters = NaturalEvolutionStrategiesParameters(seed=0, pop_size=96,
-                                            n_iteration=40, 
+                                            n_iteration=80, 
                                             learning_rate_sigma=0.5,
                                             learning_rate_mu=0.5,
                                             mu=mu,
