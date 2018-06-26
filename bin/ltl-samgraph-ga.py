@@ -18,7 +18,8 @@ def main(path_name,
          resolution, 
          fixed_delay,
          state_handling,
-         use_pecevski):
+         use_pecevski,
+         num_trials):
     name = path_name
     try:
         with open('bin/path.conf') as f:
@@ -64,7 +65,7 @@ def main(path_name,
                                     use_pecevski=use_pecevski, 
                                     state_handling=state_handling,
                                     plots_directory=paths.output_dir_path, 
-                                    num_fitness_trials=5)
+                                    num_fitness_trials=num_trials)
 
     # NOTE: Outerloop optimizer initialization
     parameters = GeneticAlgorithmParameters(seed=0, popsize=200, CXPB=0.5,
@@ -101,6 +102,7 @@ if __name__ == '__main__':
     parser.add_argument('-fd', '--fixed_delay', required=True, type=float, help='Fixed delay')
     parser.add_argument('-p', '--use_pecevski', action='store_true', help='Use Pecevski distributions')
     parser.add_argument('-s', '--state_handling', required=True, help='State handling ("none", "first", "random"')
+    parser.add_argument('-nt', '--num_trials', required=True, help='Number of trials')
     args = parser.parse_args()
 
-    main(path_name=args.name, resolution=args.resolution, fixed_delay=args.fixed_delay, state_handling=args.state_handling, use_pecevski=args.use_pecevski)
+    main(path_name=args.name, resolution=args.resolution, fixed_delay=args.fixed_delay, state_handling=args.state_handling, use_pecevski=args.use_pecevski, num_trials=args.num_trials)

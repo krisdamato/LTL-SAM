@@ -13,7 +13,7 @@ from sam.sam import SAMModule
 
 logger = logging.getLogger('bin.ltl-sam-nes')
 
-def main(path_name, resolution, fixed_delay, use_pecevski):
+def main(path_name, resolution, fixed_delay, use_pecevski, num_trials):
     name = path_name
     try:
         with open('bin/path.conf') as f:
@@ -57,7 +57,7 @@ def main(path_name, resolution, fixed_delay, use_pecevski):
                             time_resolution=resolution,
                             fixed_delay=fixed_delay,
                             plots_directory=paths.output_dir_path, 
-                            num_fitness_trials=1)
+                            num_fitness_trials=num_trials)
 
     # Get bounds for mu and sigma calculation.
     param_spec = OrderedDict(sorted(SAMModule.parameter_spec().items()))
@@ -106,6 +106,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--resolution', required=True, type=float, help='Resolution')
     parser.add_argument('-fd', '--fixed_delay', required=True, type=float, help='Fixed delay')
     parser.add_argument('-p', '--use_pecevski', action='store_true', help='Use Pecevski distributions')
+    parser.add_argument('-nt', '--num_trials', required=True, help='Number of trials')
     args = parser.parse_args()
 
-    main(path_name=args.name, resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski)
+    main(path_name=args.name, resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials)
