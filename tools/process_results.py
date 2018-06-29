@@ -168,7 +168,7 @@ def process_files(filenames, hps, hps_latex, nes_gen_number):
     return best_dicts
 
 
-def run_best_sam(resolution, fixed_delay, use_pecevski, num_trials):
+def run_best_sam(resolution, fixed_delay, use_pecevski, num_trials, seed):
     '''Runs the best SAM setup in the log file chosen by the user.'''
 
     import logging.config
@@ -249,13 +249,14 @@ def run_best_sam(resolution, fixed_delay, use_pecevski, num_trials):
                             plots_directory='/home/krisdamato/LTL-SAM/plots/', 
                             forced_params=params,
                             plot_all=True,
+                            seed=seed,
                             num_fitness_trials=num_trials)
 
     # Run simulation with the forced params.
     optimizee.simulate(traj)
 
 
-def run_best_samgraph(resolution, fixed_delay, use_pecevski, num_trials, state_handling):
+def run_best_samgraph(resolution, fixed_delay, use_pecevski, num_trials, state_handling, seed):
     '''Runs the best SAM setup in the log file chosen by the user.'''
 
     import logging.config
@@ -334,6 +335,7 @@ def run_best_samgraph(resolution, fixed_delay, use_pecevski, num_trials, state_h
                             plots_directory='/home/krisdamato/LTL-SAM/plots/', 
                             forced_params=params,
                             plot_all=True,
+                            seed=seed,
                             state_handling=state_handling,
                             num_fitness_trials=num_trials)
 
@@ -354,13 +356,14 @@ if __name__ == "__main__":
     parser.add_argument('-maxd', '--max_delay', required=False, type=float, help='Max delay')
     parser.add_argument('-p', '--use_pecevski', action='store_true', help='Use Pecevski distributions')
     parser.add_argument('-nt', '--num_trials', required=False, type=int, help='Number of trials')
+    parser.add_argument('-sd', '--seed', required=False, type=int, help='Random seed')
     parser.add_argument('-s', '--state_handling', required=False, help='State interpretation type (none, first, random)')
 
     args = parser.parse_args()
 
     if args.copy: copy_log_files_to("D:\\LTL-SAM\\results\\")
-    elif args.run_sam: run_best_sam(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials)
-    elif args.run_sam_graph: run_best_samgraph(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling)
-    elif args.run_spi: run_best_spi(resolution=args.resolution, fixed_delay=args.fixed_delay, min_delay=args.min_delay, max_delay=args.max_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling)
-    elif args.run_spi_graph: run_best_spigraph(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling)
+    elif args.run_sam: run_best_sam(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, seed=args.seed)
+    elif args.run_sam_graph: run_best_samgraph(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling, seed=args.seed)
+    elif args.run_spi: run_best_spi(resolution=args.resolution, fixed_delay=args.fixed_delay, min_delay=args.min_delay, max_delay=args.max_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling, seed=args.seed)
+    elif args.run_spi_graph: run_best_spigraph(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling, seed=args.seed)
     else: process_samgraph_results(search_str='0_2*Random')
