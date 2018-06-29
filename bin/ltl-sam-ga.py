@@ -91,7 +91,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--resolution', required=True, type=float, help='Resolution')
     parser.add_argument('-fd', '--fixed_delay', required=True, type=float, help='Fixed delay')
     parser.add_argument('-p', '--use_pecevski', action='store_true', help='Use Pecevski distributions')
-    parser.add_argument('-nt', '--num_trials', required=True, help='Number of trials')
+    parser.add_argument('-nt', '--num_trials', required=True, type=int, help='Number of trials')
     args = parser.parse_args()
 
     main(path_name=args.name, resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials)
