@@ -52,7 +52,7 @@ def process_samgraph_results(log_dir="D:\\LTL results\\New", search_str=''):
 
 def process_spi_results(log_dir="D:\\LTL results\\New", search_str=''):
     # Set SPI HP order
-    hps = ['bias_baseline', 'weight_baseline', 'T', 'relative_bias_spike_rate', 'first_bias_rate', 'initial_stdp_rate', 'final_stdp_rate', 'exp_term_prob', 'exp_term_prob_scale',
+    hps = ['bias_baseline', 'weight_baseline', 'T', 'bias_relative_spike_rate', 'bias_rate_1', 'stdp_rate_initial', 'stdp_rate_final', 'prob_exp_term', 'prob_exp_term_scale',
            'connectivity_chi_chi', 'connectivity_chi_self', 'connectivity_chi_inh', 'connectivity_inh_self', 'connectivity_inh_chi',
             'weight_chi_chi_max', 'weight_chi_self', 'weight_chi_inhibitors', 'weight_inhibitors_self', 'weight_inhibitors_chi']
     hps_latex = ["$b_-$", 
@@ -343,8 +343,8 @@ def run_best_samgraph(resolution, fixed_delay, use_pecevski, num_trials, state_h
     optimizee.simulate(traj)
 
 
-def run_best_spi(resolution, fixed_delay, min_delay, max_delay, use_pecevski, num_trials, seed)
-     '''Runs the best SPI setup in the log file chosen by the user.'''
+def run_best_spi(resolution, fixed_delay, min_delay, max_delay, use_pecevski, num_trials, seed):
+    '''Runs the best SPI setup in the log file chosen by the user.'''
     import logging.config
     
     from sam.optimizee import SPIConditionalNetworkOptimizee
@@ -386,7 +386,7 @@ def run_best_spi(resolution, fixed_delay, min_delay, max_delay, use_pecevski, nu
 
     print("Running with resolution = {}, fixed delay = {}, use_pecevski = {}\n".format(resolution, fixed_delay, use_pecevski))
    
-    fns, hps = process_samgraph_results('/home/krisdamato/LTL-SAM/results/')
+    fns, hps = process_spi_results('/home/krisdamato/LTL-SAM/results/')
     print('')
     for i, fn in enumerate(fns):
         print("{}: {}".format(i, fn))
@@ -445,4 +445,4 @@ if __name__ == "__main__":
     elif args.run_sam_graph: run_best_samgraph(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling, seed=args.seed)
     elif args.run_spi: run_best_spi(resolution=args.resolution, fixed_delay=args.fixed_delay, min_delay=args.min_delay, max_delay=args.max_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, seed=args.seed)
     elif args.run_spi_graph: run_best_spigraph(resolution=args.resolution, fixed_delay=args.fixed_delay, min_delay=args.min_delay, max_delay=args.max_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, seed=args.seed)
-    else: process_samgraph_results(search_str='0_2*Random')
+    else: process_spi_results(search_str='')
