@@ -976,11 +976,6 @@ class SPINetworkOptimizee(Optimizee):
                 ax[0].set_xlabel('Time (s)')
                 ax[0].set_title('KL divergence between target and estimated joint distribution')
 
-            # Report weights before.
-            conns = nest.GetConnections(self.network.all_neurons, self.network.all_neurons)
-            weights = nest.GetStatus(conns, 'weight')
-            logging.info("Before:\n{}".format(weights))
-
             # Measure experimental KL divergence of entire network by averaging on a few runs.
             experimental_joint = self.network.measure_experimental_joint_distribution(duration=20000.0, 
                                                                              resolution=self.time_resolution, 
@@ -991,10 +986,6 @@ class SPINetworkOptimizee(Optimizee):
             this_kld_valid = helpers.get_KL_divergence(experimental_joint, distribution, exclude_invalid_states=True)
             kld_joint_experimental.append(this_kld)
             kld_joint_experimental_valid.append(this_kld_valid)
-
-            # Report weights after.
-            weights = nest.GetStatus(conns, 'weight')
-            logging.info("After:\n{}".format(weights))
 
             # Draw spiking of output neurons.
             if self.plot_all:

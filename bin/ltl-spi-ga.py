@@ -2,6 +2,7 @@ import logging.config
 import os
 import argparse
 
+from collections import OrderedDict
 from pypet import Environment, pypetconstants
 from ltl.logging_tools import create_shared_logger_data, configure_loggers
 from ltl.optimizers.evolution import GeneticAlgorithmOptimizer, GeneticAlgorithmParameters

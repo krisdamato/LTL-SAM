@@ -1,12 +1,15 @@
 import logging.config
 import os
 import argparse
+import numpy as np
 
+from collections import OrderedDict
 from pypet import Environment, pypetconstants
 from ltl.logging_tools import create_shared_logger_data, configure_loggers
 from ltl.optimizers.naturalevolutionstrategies import NaturalEvolutionStrategiesOptimizer, NaturalEvolutionStrategiesParameters
 from ltl.paths import Paths
 from sam.optimizee import SPIConditionalNetworkOptimizee
+from sam.spinetwork import SPINetwork
 
 logger = logging.getLogger('bin.ltl-spi-nes')
 
