@@ -50,6 +50,79 @@ def process_samgraph_results(log_dir="D:\\LTL results\\New", search_str=''):
     return filenames, best_dicts
 
 
+def process_spi_results(log_dir="D:\\LTL results\\New", search_str=''):
+    # Set SPI HP order
+    hps = ['bias_baseline', 'weight_baseline', 'T', 'relative_bias_spike_rate', 'first_bias_rate', 'initial_stdp_rate', 'final_stdp_rate', 'exp_term_prob', 'exp_term_prob_scale',
+           'connectivity_chi_chi', 'connectivity_chi_self', 'connectivity_chi_inh', 'connectivity_inh_self', 'connectivity_inh_chi',
+            'weight_chi_chi_max', 'weight_chi_self', 'weight_chi_inhibitors', 'weight_inhibitors_self', 'weight_inhibitors_chi']
+    hps_latex = ["$b_-$", 
+			"$w_-$", 
+			"$T$",
+			"$R$",
+			"$\eta'$", 
+			"$\eta_0$",
+			"$\eta_1$", 
+			"$c_1$", 
+			"$c_2$", 
+			"$\rho_{PP}$",
+			"$\rho_{E}$", 
+			"$\rho_{PI}$",
+			"$\rho_{I}$",
+			"$\rho_{IP}$",
+			"$w_{\textrm{MAX}}$", 
+			"$w_{E}$", 
+			"$w_{PI}$",
+			"$w_{I}$", 
+			"$w_{IP}$"]
+
+    # Find all files that contain "SAM" and "LOG" in them
+    directory = log_dir
+    filenames = glob.glob(directory + '/**/*SPI-*{}*_LOG.txt'.format(search_str), recursive=True)
+    filenames = sorted(filenames)
+
+    best_dicts = process_files(filenames, hps, hps_latex, 79)
+
+    return filenames, best_dicts
+
+
+def process_spigraph_results(log_dir="D:\\LTL results\\New", search_str=''):
+    # Set SPIGRAPH HP order
+    hps = ['bias_baseline', 'weight_baseline', 'T', 'relative_bias_spike_rate', 'first_bias_rate', 'initial_stdp_rate', 'final_stdp_rate', 'exp_term_prob', 'exp_term_prob_scale',
+           'connectivity_chi_chi', 'connectivity_chi_self', 'connectivity_chi_inh', 'connectivity_inh_self', 'connectivity_inh_chi',
+            'weight_chi_chi_max', 'weight_chi_self', 'weight_chi_inhibitors', 'weight_inhibitors_self', 'weight_inhibitors_chi']
+    hps_latex = ["$b^1_-$", "$b^2_-$", "$b^3_-$", "$b^4_-$" 
+			"$w_-$", 
+			"$T$",
+			"$R$",
+			"$\eta'$", 
+			"$\eta_0$",
+			"$\eta_1$", 
+			"$c_1$", 
+			"$c_2$", 
+			"$\rho_{PP}$",
+			"$\rho_{E}$", 
+			"$\rho_{PI}$",
+			"$\rho_{I}$",
+			"$\rho_{IP}$",
+			"$w^1_{\textrm{MAX}}$", 
+			"$w^2_{\textrm{MAX}}$", 
+			"$w^3_{\textrm{MAX}}$", 
+			"$w^4_{\textrm{MAX}}$", 
+			"$w_{E}$", 
+			"$w_{PI}$",
+			"$w_{I}$", 
+			"$w_{IP}$"]
+
+    # Find all files that contain "SAM" and "LOG" in them
+    directory = log_dir
+    filenames = glob.glob(directory + '/**/*SPIGRAPH-*{}*_LOG.txt'.format(search_str), recursive=True)
+    filenames = sorted(filenames)
+
+    best_dicts = process_files(filenames, hps, hps_latex, 39)
+
+    return filenames, best_dicts
+
+
 def process_files(filenames, hps, hps_latex, nes_gen_number):
     # Create dictionary of hp:value dictionaries
     best_dicts = {}
@@ -273,8 +346,12 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--copy', action='store_true', help='Just copy log files to LTL-SAM folder')
     parser.add_argument('-rs', '--run_sam', action='store_true', help='Run best SAM in log files, asking for user input to select which log file to use.')
     parser.add_argument('-rsg', '--run_sam_graph', action='store_true', help='Run best SAMGRAPH in log files, asking for user input to select which log file to use.')
+    parser.add_argument('-rspi', '--run_spi', action='store_true', help='Run best SPI in log files, asking for user input to select which log file to use.')
+    parser.add_argument('-rspig', '--run_spi_graph', action='store_true', help='Run best SPIGRAPH in log files, asking for user input to select which log file to use.')
     parser.add_argument('-r', '--resolution', required=False, type=float, help='Resolution')
     parser.add_argument('-fd', '--fixed_delay', required=False, type=float, help='Fixed delay')
+    parser.add_argument('-mind', '--min_delay', required=False, type=float, help='Min delay')
+    parser.add_argument('-maxd', '--max_delay', required=False, type=float, help='Max delay')
     parser.add_argument('-p', '--use_pecevski', action='store_true', help='Use Pecevski distributions')
     parser.add_argument('-nt', '--num_trials', required=False, type=int, help='Number of trials')
     parser.add_argument('-s', '--state_handling', required=False, help='State interpretation type (none, first, random)')
@@ -284,4 +361,6 @@ if __name__ == "__main__":
     if args.copy: copy_log_files_to("D:\\LTL-SAM\\results\\")
     elif args.run_sam: run_best_sam(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials)
     elif args.run_sam_graph: run_best_samgraph(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling)
-    else: process_samgraph_results(search_str='NES')
+    elif args.run_spi: run_best_spi(resolution=args.resolution, fixed_delay=args.fixed_delay, min_delay=args.min_delay, max_delay=args.max_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling)
+    elif args.run_spi_graph: run_best_spigraph(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling)
+    else: process_samgraph_results(search_str='0_2*Random')
