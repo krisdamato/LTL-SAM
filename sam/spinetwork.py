@@ -1187,7 +1187,7 @@ class SPINetwork:
             if new_pos != last_pos:
                 this_list += [0] * (new_pos - last_pos - 1)
                 this_list += [1]
-            else:
+            elif last_pos >= 0:
                 this_list[last_pos] += 1
 
         end_pos = int(round((end_time - start_time) / timestep))
