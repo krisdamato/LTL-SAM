@@ -30,7 +30,7 @@ def process_sam_results(log_dir="D:\\LTL results\\New", search_str=''):
     filenames = glob.glob(directory + '/**/*SAM-*{}*_LOG.txt'.format(search_str), recursive=True)
     filenames = sorted(filenames)
 
-    best_dicts = process_files(filenames, hps, hps_latex, 79)
+    best_dicts, _, _ = process_files(filenames, hps, hps_latex)
 
     return filenames, best_dicts
 
@@ -45,7 +45,7 @@ def process_samgraph_results(log_dir="D:\\LTL results\\New", search_str=''):
     filenames = glob.glob(directory + '/**/*SAMGRAPH-*{}*_LOG.txt'.format(search_str), recursive=True)
     filenames = sorted(filenames)
 
-    best_dicts = process_files(filenames, hps, hps_latex, 39)
+    best_dicts, _, _ = process_files(filenames, hps, hps_latex)
 
     return filenames, best_dicts
 
@@ -59,17 +59,17 @@ def process_spi_results(log_dir="D:\\LTL results\\New", search_str=''):
 			"$w_-$", 
 			"$T$",
 			"$R$",
-			"$\eta'$", 
-			"$\eta_0$",
-			"$\eta_1$", 
+			"$\\eta'$", 
+			"$\\eta_0$",
+			"$\\eta_1$", 
 			"$c_1$", 
 			"$c_2$", 
-			"$\rho_{PP}$",
-			"$\rho_{E}$", 
-			"$\rho_{PI}$",
-			"$\rho_{I}$",
-			"$\rho_{IP}$",
-			"$w_{\textrm{MAX}}$", 
+			"$\\rho_{PP}$",
+			"$\\rho_{E}$", 
+			"$\\rho_{PI}$",
+			"$\\rho_{I}$",
+			"$\\rho_{IP}$",
+			"$w_{\\textrm{MAX}}$", 
 			"$w_{E}$", 
 			"$w_{PI}$",
 			"$w_{I}$", 
@@ -80,7 +80,7 @@ def process_spi_results(log_dir="D:\\LTL results\\New", search_str=''):
     filenames = glob.glob(directory + '/**/*SPI-*{}*_LOG.txt'.format(search_str), recursive=True)
     filenames = sorted(filenames)
 
-    best_dicts = process_files(filenames, hps, hps_latex, 79)
+    best_dicts, _, _ = process_files(filenames, hps, hps_latex)
 
     return filenames, best_dicts
 
@@ -94,20 +94,20 @@ def process_spigraph_results(log_dir="D:\\LTL results\\New", search_str=''):
 			"$w_-$", 
 			"$T$",
 			"$R$",
-			"$\eta'$", 
-			"$\eta_0$",
-			"$\eta_1$", 
+			"$\\eta'$", 
+			"$\\eta_0$",
+			"$\\eta_1$", 
 			"$c_1$", 
 			"$c_2$", 
-			"$\rho_{PP}$",
-			"$\rho_{E}$", 
-			"$\rho_{PI}$",
-			"$\rho_{I}$",
-			"$\rho_{IP}$",
-			"$w^1_{\textrm{MAX}}$", 
-			"$w^2_{\textrm{MAX}}$", 
-			"$w^3_{\textrm{MAX}}$", 
-			"$w^4_{\textrm{MAX}}$", 
+			"$\\rho_{PP}$",
+			"$\\rho_{E}$", 
+			"$\\rho_{PI}$",
+			"$\\rho_{I}$",
+			"$\\rho_{IP}$",
+			"$w^1_{\\textrm{MAX}}$", 
+			"$w^2_{\\textrm{MAX}}$", 
+			"$w^3_{\\textrm{MAX}}$", 
+			"$w^4_{\\textrm{MAX}}$", 
 			"$w_{E}$", 
 			"$w_{PI}$",
 			"$w_{I}$", 
@@ -118,27 +118,62 @@ def process_spigraph_results(log_dir="D:\\LTL results\\New", search_str=''):
     filenames = glob.glob(directory + '/**/*SPIGRAPH-*{}*_LOG.txt'.format(search_str), recursive=True)
     filenames = sorted(filenames)
 
-    best_dicts = process_files(filenames, hps, hps_latex, 39)
+    best_dicts, _, _ = process_files(filenames, hps, hps_latex)
 
     return filenames, best_dicts
 
 
-def process_files(filenames, hps, hps_latex, nes_gen_number):
+def process_files(filenames, hps, hps_latex):
     # Create dictionary of hp:value dictionaries
     best_dicts = {}
+    best_fitnesses = {}
+    best_gen_fitnesses = {}
     
     for filename in filenames:
         with open(filename) as f:
             best_n = 100000000
-            for n, line in enumerate(f):
-                search_string = "generation 19" if "GA" in filename else "generation {}".format(nes_gen_number)
-                if search_string in line:
-                    best_n = n + 2 if "GA" in filename else n + 5
-                if n == best_n:
-                    dict_str = line[line.find("{"):line.find("}") + 1]
-                    best_dict = ast.literal_eval(dict_str)
-                    best_dict = OrderedDict((k, best_dict[k]) for k in hps if k in best_dict)
-                    best_dicts[filename] = best_dict
+            best_fitness_ind = 10000000
+            best_fitness_gen = 10000000
+            if "GA" in filename:
+                for n, line in enumerate(f):
+                    search_string = "generation 19"
+                    if search_string in line:
+                        best_n = n + 2
+                    if n == best_n:
+                        dict_str = line[line.find("{"):line.find("}") + 1]
+                        best_dict = ast.literal_eval(dict_str)
+                        best_dict = OrderedDict((k, best_dict[k]) for k in hps if k in best_dict)
+                        best_dicts[filename] = best_dict
+                        best_fitness_ind = float(line[line.find("(") + 1:line.find(",)")])
+
+                # Fill in fitnesses dictionary.
+                best_fitnesses[filename] = best_fitness_ind
+            else: # It's a NES run
+                for n, line in enumerate(f):
+                    best_fitness_string = "Best Fitness: "
+                    avg_fitness_string = "Average Fitness: "
+                    if best_fitness_string in line:
+                        this_fitness = -float(line[line.find(best_fitness_string):].replace(best_fitness_string, ""))
+                        if this_fitness < best_fitness_ind:
+                            best_fitness_ind = this_fitness
+                            best_n = n + 3
+                    if avg_fitness_string in line:
+                        this_fitness_gen = float(line[line.find(avg_fitness_string):].replace(avg_fitness_string, ""))
+                        if this_fitness_gen < best_fitness_gen:
+                            best_fitness_gen= this_fitness_gen
+                
+                # Go through them again to find the best individual
+                f.seek(0)
+                for n, line in enumerate(f):
+                    if n == best_n:
+                        dict_str = line[line.find("{"):line.find("}") + 1]
+                        best_dict = ast.literal_eval(dict_str)
+                        best_dict = OrderedDict((k, best_dict[k]) for k in hps if k in best_dict)
+                        best_dicts[filename] = best_dict
+
+                # Fill in fitnesses dictionaries.
+                best_fitnesses[filename] = best_fitness_ind
+                best_gen_fitnesses[filename] = best_fitness_gen
 
     # Remove files that do not have all the variables
     remove_list = []
@@ -149,9 +184,20 @@ def process_files(filenames, hps, hps_latex, nes_gen_number):
 
     for i in remove_list:
         best_dicts.pop(i)
+        best_fitnesses.pop(i)
+        best_fitnesses_gen.pop(i)
 
     # Print table of HPs
     relevant_fns = [fn for fn in filenames if fn in best_dicts]
+    for fn in relevant_fns:
+        last_slash_pos = fn.rfind('\\')
+        last_dot_post = fn.rfind('.')
+        print("{}:".format(fn[last_slash_pos + 1:last_dot_post]))
+        print("Best fitness: {}".format(best_fitnesses[fn]))
+        if "NES" in fn:
+            print("Best gen. fitness: {}".format(best_gen_fitnesses[fn]))
+        print("")
+
     for fn in relevant_fns:
         last_slash_pos = fn.rfind('\\')
         last_dot_post = fn.rfind('.')
@@ -165,7 +211,7 @@ def process_files(filenames, hps, hps_latex, nes_gen_number):
         var_strings = ["{:.4f}".format(v) for v in vars]
         print(" & ".join(var_strings), "\\\\")
 
-    return best_dicts
+    return best_dicts, best_fitnesses, best_gen_fitnesses
 
 
 def run_best_sam(resolution, fixed_delay, use_pecevski, num_trials, seed):
@@ -445,4 +491,4 @@ if __name__ == "__main__":
     elif args.run_sam_graph: run_best_samgraph(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling, seed=args.seed)
     elif args.run_spi: run_best_spi(resolution=args.resolution, fixed_delay=args.fixed_delay, min_delay=args.min_delay, max_delay=args.max_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, seed=args.seed)
     elif args.run_spi_graph: run_best_spigraph(resolution=args.resolution, fixed_delay=args.fixed_delay, min_delay=args.min_delay, max_delay=args.max_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, seed=args.seed)
-    else: process_spi_results(search_str='')
+    else: process_spi_results(search_str='0_2ms*Random')
