@@ -283,9 +283,9 @@ def run_best_sam(resolution, fixed_delay, use_pecevski, num_trials, seed):
 
     # Get best hps in the chosen log file.
     params = hps[fns[i]]
-    params['stdp_time_fraction'] = 0.5
-    params['intrinsic_step_time_fraction'] = 0.5
-    params['learning_time'] = 600000
+    params['stdp_time_fraction'] = 1.0
+    params['intrinsic_step_time_fraction'] = 1.0
+    params['learning_time'] = 300000
     params['delay'] = delay
 
     # Create the SAM optimizee.
@@ -296,7 +296,7 @@ def run_best_sam(resolution, fixed_delay, use_pecevski, num_trials, seed):
                             fixed_delay=fixed_delay,
                             plots_directory='/home/krisdamato/LTL-SAM/plots/', 
                             forced_params=params,
-                            plot_all=True,
+                            plot_all=False,
                             seed=seed,
                             num_fitness_trials=num_trials)
 
@@ -382,7 +382,7 @@ def run_best_samgraph(resolution, fixed_delay, use_pecevski, num_trials, state_h
                             fixed_delay=fixed_delay,
                             plots_directory='/home/krisdamato/LTL-SAM/plots/', 
                             forced_params=params,
-                            plot_all=True,
+                            plot_all=False,
                             seed=seed,
                             state_handling=state_handling,
                             num_fitness_trials=num_trials)
@@ -451,6 +451,9 @@ def run_best_spi(resolution, fixed_delay, min_delay, max_delay, use_pecevski, nu
 
     # Get best hps in the chosen log file.
     params = hps[fns[i]]
+    params['intrinsic_step_time_fraction'] = 1.0
+    params['stdp_time_fraction'] = 1.0
+    params['learning_time'] = 300000
 
     # Create the SAM optimizee.
     optimizee = SPIConditionalNetworkOptimizee(traj, 
@@ -462,7 +465,7 @@ def run_best_spi(resolution, fixed_delay, min_delay, max_delay, use_pecevski, nu
                             fixed_delay=fixed_delay,
                             plots_directory='/home/krisdamato/LTL-SAM/plots/', 
                             forced_params=params,
-                            plot_all=True,
+                            plot_all=False,
                             seed=seed,
                             num_fitness_trials=num_trials)
 
