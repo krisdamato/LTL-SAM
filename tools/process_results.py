@@ -516,7 +516,7 @@ def run_best_spigraph(resolution, fixed_delay, min_delay, max_delay, use_pecevsk
 
     print("Running with resolution = {}, fixed delay = {}, use_pecevski = {}\n".format(resolution, fixed_delay, use_pecevski))
    
-    fns, hps = process_spi_results('/home/krisdamato/LTL-SAM/results/')
+    fns, hps = process_spigraph_results('/home/krisdamato/LTL-SAM/results/')
     print('')
     for i, fn in enumerate(fns):
         print("{}: {}".format(i, fn))
