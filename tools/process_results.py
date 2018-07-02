@@ -92,7 +92,7 @@ def process_spigraph_results(log_dir="D:\\LTL results\\New", search_str=''):
            'connectivity_chi_chi', 'connectivity_chi_self', 'connectivity_chi_inh', 'connectivity_inh_self', 'connectivity_inh_chi',
             'weight_chi_chi_max_1', 'weight_chi_chi_max_2', 'weight_chi_chi_max_3', 'weight_chi_chi_max_4', 
             'weight_chi_self', 'weight_chi_inhibitors', 'weight_inhibitors_self', 'weight_inhibitors_chi']
-    hps_latex = ["$b^1_-$", "$b^2_-$", "$b^3_-$", "$b^4_-$" 
+    hps_latex = ["$b^1_-$", "$b^2_-$", "$b^3_-$", "$b^4_-$",
 			"$w_-$", 
 			"$T$",
 			"$R$",

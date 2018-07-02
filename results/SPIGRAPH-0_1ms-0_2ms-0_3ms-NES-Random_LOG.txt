@@ -412,3 +412,945 @@ Current sigma:
    4.80923669e+00   4.35771603e+00   3.53188415e+00   2.69640809e+00
    3.97942153e+00   6.93239981e+00   6.10843982e+00   7.15903291e+00
    8.14574398e+00]
+2018-07-02 09:47:36,886 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 0 --
+2018-07-02 09:47:36,886 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 09:47:36,886 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2165
+2018-07-02 09:47:36,887 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 5.1060
+2018-07-02 09:47:36,888 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -50.0, 'connectivity_chi_inh': 0.35811522280832725, 'connectivity_chi_self': 0.6410979383452176, 'stdp_rate_final': 0.006467425274446888, 'bias_relative_spike_rate': 0.07778206896923989, 'stdp_rate_initial': 0.00041389228942071993, 'weight_inhibitors_self': -14.0, 'connectivity_chi_chi': 1.0, 'bias_baseline_1': -22.37550747452616, 'weight_baseline': -4.714785661689059, 'weight_inhibitors_chi': -3.986766616799449, 'weight_chi_inhibitors': 8.14278464183225, 'weight_chi_self': 7.60518697897733, 'weight_chi_chi_max_1': 0.5024765391066426, 'prob_exp_term': 1.5110404635801098, 'connectivity_inh_self': 1.0, 'bias_rate_1': 0.1, 'bias_baseline_3': 0.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 0.21212493244609076, 'weight_chi_chi_max_2': 8.0, 'T': 0.0, 'weight_chi_chi_max_3': 5.615737285863886, 'bias_baseline_4': -28.84111152039166, 'connectivity_inh_chi': 1.0}
+2018-07-02 09:47:36,889 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  4.49222130e-01  -2.41626505e+01  -2.48416744e+01  -2.64495985e+01
+  -2.50672270e+01   5.59092670e-02   5.04593501e-01   5.40820438e-01
+   4.48118783e-01   4.99664757e-01   5.17407154e-01   5.15032509e-01
+   1.12948914e+00   1.06108582e+00   4.78240847e-03   5.09755391e-03
+  -5.06722024e+00   3.94856550e+00   4.28217199e+00   3.96677836e+00
+   4.10965593e+00   7.19036304e+00   6.81274784e+00  -7.20981234e+00
+  -7.76632081e+00]
+
+Current sigma:
+[  5.20662611e-01   2.46201666e+01   2.53331245e+01   2.42313683e+01
+   2.46668092e+01   5.23163650e-02   4.98221800e-01   5.02749930e-01
+   4.83630819e-01   5.09759594e-01   5.67617717e-01   5.03329722e-01
+   9.19777648e-01   2.42621176e+00   5.13247603e-03   5.02329978e-03
+   4.85371955e+00   4.00220701e+00   3.79470383e+00   3.86910345e+00
+   4.09582434e+00   6.70863059e+00   6.95974125e+00   6.72688908e+00
+   6.86308218e+00]
+2018-07-02 10:32:14,182 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 1 --
+2018-07-02 10:32:14,182 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 10:32:14,182 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2171
+2018-07-02 10:32:14,182 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 4.0922
+2018-07-02 10:32:14,183 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -49.13329303947668, 'connectivity_chi_inh': 0.3118816669902123, 'connectivity_chi_self': 0.03292712050384888, 'stdp_rate_final': 0.008703140017187163, 'bias_relative_spike_rate': 0.02789062099335532, 'stdp_rate_initial': 0.01, 'weight_inhibitors_self': 0.0, 'connectivity_chi_chi': 0.40020677783237657, 'bias_baseline_1': -5.9054188537951795, 'weight_baseline': -10.0, 'weight_inhibitors_chi': 0.0, 'weight_chi_inhibitors': 3.380088803476731, 'weight_chi_self': 10.64377816873246, 'weight_chi_chi_max_1': 5.9984215326141745, 'prob_exp_term': 1.7860354527177478, 'connectivity_inh_self': 1.0, 'bias_rate_1': 0.06924796298233307, 'bias_baseline_3': -50.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 1.9372768336890038, 'weight_chi_chi_max_2': 5.986027248250075, 'T': 0.0017167096797856551, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': 0.0, 'connectivity_inh_chi': 0.9651782116961682}
+2018-07-02 10:32:14,185 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.01987668e-01  -2.30148397e+01  -2.31535918e+01  -2.88481487e+01
+  -2.48952587e+01   5.81462040e-02   5.61763759e-01   5.74280180e-01
+   4.47754350e-01   4.80846634e-01   4.83182158e-01   5.51403043e-01
+   1.30471653e+00  -7.69235897e-02   4.78044299e-03   5.43225844e-03
+  -4.88508044e+00   4.10428539e+00   4.62903073e+00   3.90597594e+00
+   3.73120135e+00   7.32833061e+00   6.26002194e+00  -7.72122999e+00
+  -7.65918025e+00]
+
+Current sigma:
+[  5.25204257e-01   2.35110612e+01   2.48984685e+01   2.53200521e+01
+   2.68602595e+01   5.22431586e-02   5.09132493e-01   5.18063433e-01
+   4.81434196e-01   4.99778070e-01   5.93912009e-01   5.03448863e-01
+   8.13757670e-01   2.58453940e+00   4.95561710e-03   5.26711192e-03
+   4.94512555e+00   3.93584768e+00   3.85845793e+00   3.84028776e+00
+   4.39402988e+00   6.68828007e+00   6.39934265e+00   6.72320993e+00
+   7.17701161e+00]
+2018-07-02 11:15:32,269 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 2 --
+2018-07-02 11:15:32,269 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 11:15:32,270 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2091
+2018-07-02 11:15:32,270 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 2.9835
+2018-07-02 11:15:32,271 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -12.54135872150521, 'connectivity_chi_inh': 0.7350602309941945, 'connectivity_chi_self': 0.0, 'stdp_rate_final': 0.01, 'bias_relative_spike_rate': 0.8849836338992878, 'stdp_rate_initial': 0.0032450860428629687, 'weight_inhibitors_self': 0.0, 'connectivity_chi_chi': 0.6446705293179191, 'bias_baseline_1': -48.37319526745041, 'weight_baseline': -10.0, 'weight_inhibitors_chi': -9.450919351319788, 'weight_chi_inhibitors': 11.017429979988199, 'weight_chi_self': 9.71003193510619, 'weight_chi_chi_max_1': 0.01, 'prob_exp_term': 1.7962530826968817, 'connectivity_inh_self': 0.6356061586699601, 'bias_rate_1': 0.1, 'bias_baseline_3': -20.36461890783391, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 7.912927326754199, 'weight_chi_chi_max_2': 3.9465186774248084, 'T': 0.9886312693586461, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -20.91208172728146, 'connectivity_inh_chi': 0.9726531180804769}
+2018-07-02 11:15:32,273 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.12412356e-01  -2.42302289e+01  -2.50071420e+01  -3.03655060e+01
+  -2.72775558e+01   6.11050958e-02   5.19878950e-01   5.60084211e-01
+   4.14395786e-01   5.09487647e-01   5.25778843e-01   5.32676752e-01
+   1.35106103e+00  -1.19748184e+00   4.81769316e-03   5.22111876e-03
+  -5.09623751e+00   3.97560214e+00   4.54604019e+00   3.77878139e+00
+   3.83812476e+00   6.84665921e+00   6.58779131e+00  -7.48672258e+00
+  -7.15208953e+00]
+
+Current sigma:
+[  5.34226618e-01   2.40053831e+01   2.42182930e+01   2.46524545e+01
+   2.65490137e+01   5.16272882e-02   5.19744485e-01   5.27507385e-01
+   4.63749841e-01   5.26621203e-01   5.91394051e-01   4.94333920e-01
+   7.46327714e-01   2.77252295e+00   4.93321855e-03   5.47172771e-03
+   4.89957826e+00   3.86207109e+00   3.81420663e+00   3.90481660e+00
+   4.22833767e+00   6.91747432e+00   6.36870713e+00   6.65970506e+00
+   7.55051834e+00]
+2018-07-02 11:34:56,195 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 3 --
+2018-07-02 11:34:56,196 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 11:34:56,196 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1968
+2018-07-02 11:34:56,196 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 2.0429
+2018-07-02 11:34:56,197 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': 0.0, 'connectivity_chi_inh': 0.32868542391901895, 'connectivity_chi_self': 0.28495379382601294, 'stdp_rate_final': 0.0068006050150303705, 'bias_relative_spike_rate': 0.16189303865608962, 'stdp_rate_initial': 0.0026544953725513563, 'weight_inhibitors_self': -7.557015648352536, 'connectivity_chi_chi': 0.0, 'bias_baseline_1': -50.0, 'weight_baseline': 0.0, 'weight_inhibitors_chi': -14.0, 'weight_chi_inhibitors': 2.896479215814762, 'weight_chi_self': 11.034530062090877, 'weight_chi_chi_max_1': 2.5478485946773417, 'prob_exp_term': 1.6442170998677168, 'connectivity_inh_self': 1.0, 'bias_rate_1': 0.07571387883299409, 'bias_baseline_3': -47.74037870366443, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 7.13977186181623, 'weight_chi_chi_max_2': 8.0, 'T': 1.0, 'weight_chi_chi_max_3': 0.9273791810498224, 'bias_baseline_4': 0.0, 'connectivity_inh_chi': 0.5150138943134659}
+2018-07-02 11:34:56,199 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.54258852e-01  -2.70744002e+01  -2.12370763e+01  -3.16733627e+01
+  -2.55899472e+01   6.72129694e-02   4.73109573e-01   5.59472669e-01
+   4.34048941e-01   5.46649790e-01   5.42616461e-01   5.22669422e-01
+   1.40561488e+00  -1.86872678e+00   5.16140878e-03   4.73859137e-03
+  -5.29910252e+00   3.87696901e+00   4.66314574e+00   3.57301805e+00
+   3.98921663e+00   7.04339642e+00   7.05123246e+00  -7.56629545e+00
+  -7.58643236e+00]
+
+Current sigma:
+[  5.22309445e-01   2.37146530e+01   2.45236029e+01   2.41482447e+01
+   2.73783640e+01   5.03017743e-02   5.18348405e-01   5.13611530e-01
+   4.62980103e-01   5.25507276e-01   5.57020207e-01   4.94491015e-01
+   6.86224730e-01   2.62744903e+00   5.12863299e-03   5.55197524e-03
+   4.90933883e+00   3.89978875e+00   4.01704397e+00   3.86850582e+00
+   4.11838021e+00   6.42347696e+00   6.52620036e+00   6.86592875e+00
+   6.94660629e+00]
+2018-07-02 11:57:36,848 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 4 --
+2018-07-02 11:57:36,848 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 11:57:36,849 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2102
+2018-07-02 11:57:36,849 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 1.4056
+2018-07-02 11:57:36,850 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -10.618475688295048, 'connectivity_chi_inh': 0.7086881669087438, 'connectivity_chi_self': 0.03275986330315761, 'stdp_rate_final': 0.0071686227479109705, 'bias_relative_spike_rate': 1e-05, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': -3.2001254547552254, 'connectivity_chi_chi': 0.0, 'bias_baseline_1': -20.322960574485272, 'weight_baseline': 0.0, 'weight_inhibitors_chi': -12.292271435839353, 'weight_chi_inhibitors': 5.169455033617803, 'weight_chi_self': 7.453277719234162, 'weight_chi_chi_max_1': 0.01, 'prob_exp_term': 1.7685733107668626, 'connectivity_inh_self': 0.773228242636141, 'bias_rate_1': 0.07904514902116, 'bias_baseline_3': -28.65439823885739, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 0.01, 'weight_chi_chi_max_2': 8.0, 'T': 1.0, 'weight_chi_chi_max_3': 2.629470658678534, 'bias_baseline_4': -50.0, 'connectivity_inh_chi': 0.6903977373349621}
+2018-07-02 11:57:36,852 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.75815780e-01  -2.53706784e+01  -2.20613763e+01  -3.17878157e+01
+  -2.58724958e+01   6.65836263e-02   4.23411353e-01   5.57295955e-01
+   4.53065743e-01   5.76983176e-01   5.79933976e-01   5.16303987e-01
+   1.46583414e+00  -2.37480947e+00   4.82800767e-03   3.84895349e-03
+  -4.81097959e+00   3.35964161e+00   4.44436315e+00   3.71528129e+00
+   3.85553036e+00   7.03331043e+00   6.91765133e+00  -7.11150218e+00
+  -7.57862798e+00]
+
+Current sigma:
+[  5.07827193e-01   2.36104043e+01   2.44941148e+01   2.51591803e+01
+   2.80387995e+01   4.79826185e-02   5.02129180e-01   5.15116618e-01
+   4.43298642e-01   5.18646349e-01   5.42416760e-01   4.82065607e-01
+   6.25594492e-01   2.49727280e+00   4.97762501e-03   6.13910140e-03
+   4.93254793e+00   3.74637072e+00   4.20528613e+00   4.06610637e+00
+   4.25381239e+00   6.07807976e+00   6.50431958e+00   6.93804461e+00
+   6.65252641e+00]
+2018-07-02 12:20:54,774 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 5 --
+2018-07-02 12:20:54,774 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 12:20:54,774 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1913
+2018-07-02 12:20:54,774 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 1.3586
+2018-07-02 12:20:54,776 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -38.958718053742885, 'connectivity_chi_inh': 0.3008259303202828, 'connectivity_chi_self': 0.7285090704130208, 'stdp_rate_final': 0.004071681356123283, 'bias_relative_spike_rate': 0.31525300464323364, 'stdp_rate_initial': 0.003056098952738182, 'weight_inhibitors_self': -13.388650810490768, 'connectivity_chi_chi': 0.0, 'bias_baseline_1': -21.02598055268495, 'weight_baseline': -7.9466974881331875, 'weight_inhibitors_chi': -10.56008755079246, 'weight_chi_inhibitors': 0.0, 'weight_chi_self': 0.0, 'weight_chi_chi_max_1': 0.01, 'prob_exp_term': 2.0, 'connectivity_inh_self': 1.0, 'bias_rate_1': 0.028028962599034396, 'bias_baseline_3': -31.472272698851185, 'prob_exp_term_scale': 0.9572471613799074, 'weight_chi_chi_max_4': 0.01, 'weight_chi_chi_max_2': 7.834807758699975, 'T': 0.4950778168885971, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -38.84202469806703, 'connectivity_inh_chi': 0.0}
+2018-07-02 12:20:54,777 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.26713860e-01  -2.52662300e+01  -2.05111019e+01  -3.08277463e+01
+  -2.69375563e+01   6.32011411e-02   4.11938676e-01   5.44584999e-01
+   4.03334795e-01   5.98534018e-01   5.83077514e-01   5.64881734e-01
+   1.53528837e+00  -2.51668500e+00   4.79565265e-03   3.87376915e-03
+  -4.92789357e+00   3.45309252e+00   4.18821540e+00   3.58678022e+00
+   3.97440428e+00   7.47763009e+00   6.88325207e+00  -7.31958260e+00
+  -7.52163204e+00]
+
+Current sigma:
+[  5.01227113e-01   2.38015822e+01   2.48459583e+01   2.41782725e+01
+   2.64397476e+01   4.88261642e-02   4.97925625e-01   4.90473162e-01
+   4.46011515e-01   5.29674704e-01   5.29752843e-01   5.01554805e-01
+   5.63544668e-01   2.27651552e+00   4.78754877e-03   6.18467217e-03
+   5.01400865e+00   3.91551455e+00   4.08219571e+00   4.06697556e+00
+   4.30673511e+00   5.95413539e+00   6.68893120e+00   6.87921538e+00
+   6.36283428e+00]
+2018-07-02 12:35:05,516 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 6 --
+2018-07-02 12:35:05,516 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 12:35:05,516 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1821
+2018-07-02 12:35:05,516 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.9960
+2018-07-02 12:35:05,518 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -26.725624074284294, 'connectivity_chi_inh': 0.0, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.01, 'bias_relative_spike_rate': 1.0, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': -9.446221063878653, 'connectivity_chi_chi': 0.8665269666174065, 'bias_baseline_1': -2.858654102164053, 'weight_baseline': -1.1429547126632214, 'weight_inhibitors_chi': 0.0, 'weight_chi_inhibitors': 5.064494342222661, 'weight_chi_self': 14.0, 'weight_chi_chi_max_1': 5.21344172440607, 'prob_exp_term': 1.435299357775205, 'connectivity_inh_self': 0.77879613841779, 'bias_rate_1': 0.1, 'bias_baseline_3': 0.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 6.294233809875509, 'weight_chi_chi_max_2': 4.702896912886139, 'T': 0.2633868070201384, 'weight_chi_chi_max_3': 7.315636392806393, 'bias_baseline_4': -38.61747016289462, 'connectivity_inh_chi': 0.5774639217673767}
+2018-07-02 12:35:05,519 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.36857339e-01  -2.42769482e+01  -1.75919430e+01  -3.05549088e+01
+  -2.91012758e+01   6.86944370e-02   4.52457442e-01   5.46935409e-01
+   4.15343964e-01   6.30213071e-01   6.06395190e-01   5.29611044e-01
+   1.55247127e+00  -2.84946238e+00   4.98757097e-03   3.23987298e-03
+  -5.12516743e+00   3.41006106e+00   4.38536998e+00   3.72631384e+00
+   3.60342027e+00   6.77916361e+00   7.76248602e+00  -7.34647055e+00
+  -7.88927465e+00]
+
+Current sigma:
+[  5.22831737e-01   2.46905997e+01   2.54077098e+01   2.45073033e+01
+   2.59333188e+01   4.75960135e-02   4.94336305e-01   4.97877464e-01
+   4.65705896e-01   5.57462396e-01   5.20814765e-01   4.66064669e-01
+   5.01136233e-01   2.18627530e+00   4.98034121e-03   6.23107032e-03
+   4.95581671e+00   3.87097822e+00   3.94615609e+00   3.86793591e+00
+   4.28713268e+00   6.13407509e+00   6.90875856e+00   6.55964239e+00
+   6.43192660e+00]
+2018-07-02 12:46:31,531 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 7 --
+2018-07-02 12:46:31,531 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 12:46:31,531 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1798
+2018-07-02 12:46:31,532 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.3790
+2018-07-02 12:46:31,533 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -0.48361158465439047, 'connectivity_chi_inh': 0.08021375071402942, 'connectivity_chi_self': 0.5069723945061537, 'stdp_rate_final': 0.009911481352063614, 'bias_relative_spike_rate': 0.9163382317407855, 'stdp_rate_initial': 0.01, 'weight_inhibitors_self': -14.0, 'connectivity_chi_chi': 0.3574447374668027, 'bias_baseline_1': -23.885793757491914, 'weight_baseline': -10.0, 'weight_inhibitors_chi': -14.0, 'weight_chi_inhibitors': 7.832688480780847, 'weight_chi_self': 3.3620236229207707, 'weight_chi_chi_max_1': 4.754070904251458, 'prob_exp_term': 0.811582387468859, 'connectivity_inh_self': 0.4077259631386564, 'bias_rate_1': 0.07056630461966942, 'bias_baseline_3': -44.72087902999739, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 2.659674636580383, 'weight_chi_chi_max_2': 8.0, 'T': 1.0, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -47.33559501910719, 'connectivity_inh_chi': 0.3087264553752347}
+2018-07-02 12:46:31,534 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.79363790e-01  -2.17335803e+01  -1.82587570e+01  -2.89669904e+01
+  -2.81795631e+01   6.41478770e-02   4.48392957e-01   5.45350002e-01
+   3.79674890e-01   6.36042551e-01   5.72050483e-01   5.05098704e-01
+   1.58794866e+00  -2.78727116e+00   5.52429110e-03   3.07375226e-03
+  -5.50556504e+00   3.55815731e+00   4.83396018e+00   4.41787743e+00
+   3.74330383e+00   7.28398236e+00   7.55583233e+00  -6.70452528e+00
+  -8.31566105e+00]
+
+Current sigma:
+[  5.26536408e-01   2.35711265e+01   2.59718116e+01   2.50001199e+01
+   2.74503786e+01   4.43695780e-02   5.19640776e-01   5.04341716e-01
+   4.79162033e-01   5.59559876e-01   5.24031514e-01   4.65190600e-01
+   4.95119755e-01   2.15622426e+00   5.36144437e-03   6.75921956e-03
+   4.94750012e+00   4.04472493e+00   4.01402955e+00   4.36701951e+00
+   4.36350038e+00   5.97949452e+00   7.42686204e+00   6.91746680e+00
+   6.31959584e+00]
+2018-07-02 12:59:45,069 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 8 --
+2018-07-02 12:59:45,069 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 12:59:45,069 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1992
+2018-07-02 12:59:45,069 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.6528
+2018-07-02 12:59:45,071 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': 0.0, 'connectivity_chi_inh': 0.12261831347271623, 'connectivity_chi_self': 0.3523145920945618, 'stdp_rate_final': 0.001965588757781259, 'bias_relative_spike_rate': 0.4002941928139387, 'stdp_rate_initial': 0.006154595492776832, 'weight_inhibitors_self': -14.0, 'connectivity_chi_chi': 0.2668756319610655, 'bias_baseline_1': -31.757892076510025, 'weight_baseline': -8.67048269587496, 'weight_inhibitors_chi': -6.603358317087323, 'weight_chi_inhibitors': 13.091920212743407, 'weight_chi_self': 3.116241519572986, 'weight_chi_chi_max_1': 2.327208814650259, 'prob_exp_term': 1.2229648565425655, 'connectivity_inh_self': 0.0, 'bias_rate_1': 0.06735938350168914, 'bias_baseline_3': -26.779813235776988, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 6.282301659626725, 'weight_chi_chi_max_2': 0.023137893878812932, 'T': 0.5534067103363924, 'weight_chi_chi_max_3': 2.2041506084255733, 'bias_baseline_4': -16.577824862048345, 'connectivity_inh_chi': 0.6308450089440197}
+2018-07-02 12:59:45,072 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.91511001e-01  -2.33995696e+01  -1.89090064e+01  -2.77900207e+01
+  -2.96467349e+01   6.56847247e-02   4.65681291e-01   5.37341367e-01
+   3.85491623e-01   6.67810862e-01   5.57650938e-01   4.27708552e-01
+   1.60322014e+00  -2.70736998e+00   4.86210535e-03   2.95348646e-03
+  -4.96200245e+00   3.77093112e+00   4.72107926e+00   4.20189713e+00
+   3.61846195e+00   7.31736659e+00   7.72753341e+00  -6.46515740e+00
+  -8.77691841e+00]
+
+Current sigma:
+[  4.96314319e-01   2.41641131e+01   2.70285499e+01   2.51812417e+01
+   3.01996027e+01   4.44847168e-02   4.83176292e-01   4.84311088e-01
+   4.68086792e-01   5.40338903e-01   5.23014790e-01   4.55291884e-01
+   4.68962257e-01   2.05039599e+00   5.45558168e-03   6.52111222e-03
+   4.44914677e+00   4.06779019e+00   3.76700006e+00   4.35235251e+00
+   4.22457985e+00   5.79494895e+00   7.51275938e+00   6.91712884e+00
+   6.38653219e+00]
+2018-07-02 13:10:58,096 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 9 --
+2018-07-02 13:10:58,096 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 13:10:58,096 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2037
+2018-07-02 13:10:58,096 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.6487
+2018-07-02 13:10:58,098 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -35.534747434034045, 'connectivity_chi_inh': 0.3115579636753754, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.006764575269990502, 'bias_relative_spike_rate': 0.36986813668178353, 'stdp_rate_initial': 0.01, 'weight_inhibitors_self': -3.2681479563270504, 'connectivity_chi_chi': 0.3526419767925778, 'bias_baseline_1': -3.635718518890034, 'weight_baseline': -1.748592501146244, 'weight_inhibitors_chi': -4.917871667266134, 'weight_chi_inhibitors': 0.0, 'weight_chi_self': 0.0, 'weight_chi_chi_max_1': 6.249021670178731, 'prob_exp_term': 1.131718499693116, 'connectivity_inh_self': 0.5107730814738203, 'bias_rate_1': 0.09297959908419313, 'bias_baseline_3': -50.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 0.01, 'weight_chi_chi_max_2': 6.995023746331324, 'T': 0.5887339123274284, 'weight_chi_chi_max_3': 5.094389529044614, 'bias_baseline_4': -46.64416040399938, 'connectivity_inh_chi': 0.5969054461009369}
+2018-07-02 13:10:58,099 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.46117969e-01  -2.25130140e+01  -2.19607385e+01  -2.89606407e+01
+  -2.78290121e+01   6.48138887e-02   4.68741405e-01   4.97435240e-01
+   3.89693066e-01   6.68525016e-01   5.68028553e-01   4.24721328e-01
+   1.59176384e+00  -2.82326477e+00   4.75293908e-03   2.66729008e-03
+  -4.74888379e+00   3.67221971e+00   4.38329457e+00   4.28759562e+00
+   3.84992594e+00   6.96180352e+00   7.62350281e+00  -6.24851855e+00
+  -8.58783531e+00]
+
+Current sigma:
+[  5.04191429e-01   2.25550297e+01   2.76861127e+01   2.59030936e+01
+   2.95049705e+01   4.23423031e-02   4.78370537e-01   4.77369044e-01
+   4.49112993e-01   5.52008855e-01   5.23762102e-01   4.44853610e-01
+   4.33329548e-01   1.85049104e+00   5.21090038e-03   6.74371126e-03
+   4.55979385e+00   4.08792111e+00   3.86714395e+00   4.28891943e+00
+   4.22677006e+00   5.73713931e+00   7.71228313e+00   6.99623241e+00
+   6.00461000e+00]
+2018-07-02 13:22:26,292 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 10 --
+2018-07-02 13:22:26,292 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 13:22:26,292 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1982
+2018-07-02 13:22:26,292 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.4822
+2018-07-02 13:22:26,294 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -40.23902955910333, 'connectivity_chi_inh': 1.0, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.0047318951413245595, 'bias_relative_spike_rate': 0.9027860071502677, 'stdp_rate_initial': 0.001133142195802096, 'weight_inhibitors_self': -11.740724784199303, 'connectivity_chi_chi': 1.0, 'bias_baseline_1': -19.72199001430112, 'weight_baseline': -2.1820162066672104, 'weight_inhibitors_chi': -12.605748349315942, 'weight_chi_inhibitors': 13.671750956547386, 'weight_chi_self': 0.0, 'weight_chi_chi_max_1': 4.549190066043337, 'prob_exp_term': 1.462464543529057, 'connectivity_inh_self': 0.12648622588304764, 'bias_rate_1': 0.045574030979870755, 'bias_baseline_3': -50.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 8.0, 'weight_chi_chi_max_2': 6.897279009270079, 'T': 0.1926970268568607, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -23.68253311170325, 'connectivity_inh_chi': 0.45591406667652534}
+2018-07-02 13:22:26,295 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.46119667e-01  -2.14445925e+01  -2.34525176e+01  -3.07038356e+01
+  -2.70470220e+01   6.59154431e-02   4.96642631e-01   5.48209142e-01
+   3.84700916e-01   6.85618330e-01   5.85958171e-01   4.32146938e-01
+   1.62273012e+00  -2.81964651e+00   4.58314884e-03   2.56556596e-03
+  -4.48046622e+00   3.77451503e+00   4.59705790e+00   4.48093697e+00
+   4.02761516e+00   7.29991484e+00   7.16642537e+00  -6.64235004e+00
+  -8.58067588e+00]
+
+Current sigma:
+[  4.81111365e-01   2.15511658e+01   2.80824514e+01   2.67891140e+01
+   2.99258546e+01   4.06277479e-02   4.38543725e-01   4.71390603e-01
+   4.52552961e-01   5.66588856e-01   5.04165278e-01   4.32019594e-01
+   4.22161773e-01   1.70146154e+00   4.99045262e-03   6.69573570e-03
+   4.49676459e+00   4.03607998e+00   3.76133797e+00   4.31701833e+00
+   4.26432684e+00   5.66073146e+00   8.35756422e+00   6.94752756e+00
+   6.42411517e+00]
+2018-07-02 13:34:04,949 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 11 --
+2018-07-02 13:34:04,949 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 13:34:04,949 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1722
+2018-07-02 13:34:04,949 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.4222
+2018-07-02 13:34:04,951 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -3.9584029687377864, 'connectivity_chi_inh': 0.47388577044712854, 'connectivity_chi_self': 0.9254083235660037, 'stdp_rate_final': 0.004398791629386867, 'bias_relative_spike_rate': 0.8367082323531604, 'stdp_rate_initial': 0.005748705277144311, 'weight_inhibitors_self': -1.931245198263749, 'connectivity_chi_chi': 0.2190750502727834, 'bias_baseline_1': 0.0, 'weight_baseline': -8.740706775963702, 'weight_inhibitors_chi': -13.82317970786189, 'weight_chi_inhibitors': 13.322359750101402, 'weight_chi_self': 14.0, 'weight_chi_chi_max_1': 8.0, 'prob_exp_term': 2.0, 'connectivity_inh_self': 1.0, 'bias_rate_1': 0.05559075406669449, 'bias_baseline_3': -42.65238608113063, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 0.42396857489591966, 'weight_chi_chi_max_2': 4.236826439499973, 'T': 0.6860761998474697, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -17.038677528767828, 'connectivity_inh_chi': 0.7292814583126409}
+2018-07-02 13:34:04,952 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.38671592e-01  -2.02462165e+01  -2.36157596e+01  -3.04108562e+01
+  -2.78227090e+01   6.48175658e-02   4.83220275e-01   5.64208984e-01
+   3.81870007e-01   7.04694386e-01   5.56507338e-01   4.15922452e-01
+   1.64533297e+00  -2.83739143e+00   4.45318745e-03   3.46423527e-03
+  -4.73199409e+00   3.91568842e+00   4.48679239e+00   4.33657389e+00
+   3.81494773e+00   6.83738915e+00   7.68449144e+00  -6.63307121e+00
+  -8.79833976e+00]
+
+Current sigma:
+[  4.70332279e-01   2.09845983e+01   2.82716052e+01   2.57825195e+01
+   2.91943638e+01   4.21619086e-02   4.41147338e-01   4.93267587e-01
+   4.59920764e-01   6.17919618e-01   5.70032439e-01   4.50950103e-01
+   4.16756108e-01   1.63825757e+00   5.01133023e-03   6.79174509e-03
+   4.73076478e+00   3.94609957e+00   3.90453976e+00   4.29366401e+00
+   4.26140094e+00   5.65309714e+00   8.34314043e+00   6.68078855e+00
+   6.92747929e+00]
+2018-07-02 13:45:46,899 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 12 --
+2018-07-02 13:45:46,899 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 13:45:46,899 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2000
+2018-07-02 13:45:46,899 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.4857
+2018-07-02 13:45:46,901 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -19.505036003547303, 'connectivity_chi_inh': 0.6727925741302531, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.008254814071690455, 'bias_relative_spike_rate': 0.17568104518923955, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': -6.662681753452367, 'connectivity_chi_chi': 0.1701161382092946, 'bias_baseline_1': 0.0, 'weight_baseline': -5.383421762275442, 'weight_inhibitors_chi': -14.0, 'weight_chi_inhibitors': 14.0, 'weight_chi_self': 14.0, 'weight_chi_chi_max_1': 8.0, 'prob_exp_term': 1.7207949552407849, 'connectivity_inh_self': 0.0, 'bias_rate_1': 0.07591278140126223, 'bias_baseline_3': -3.9408663176291867, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 8.0, 'weight_chi_chi_max_2': 4.821540483786475, 'T': 0.0, 'weight_chi_chi_max_3': 0.3048377511093694, 'bias_baseline_4': -50.0, 'connectivity_inh_chi': 0.048379956402116564}
+2018-07-02 13:45:46,902 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.37880618e-01  -2.01167482e+01  -2.44818450e+01  -2.78723014e+01
+  -3.03598749e+01   6.48387427e-02   4.59859047e-01   5.75991038e-01
+   4.06367265e-01   7.19199978e-01   5.47424100e-01   4.07082118e-01
+   1.66527037e+00  -2.87743833e+00   4.31117811e-03   3.31758707e-03
+  -4.43049915e+00   4.39143911e+00   4.96695351e+00   4.09683041e+00
+   3.89373652e+00   6.69687647e+00   8.18261888e+00  -6.50654466e+00
+  -8.20805833e+00]
+
+Current sigma:
+[  4.92520608e-01   2.33713970e+01   2.77863460e+01   2.56150667e+01
+   2.58763179e+01   4.17898896e-02   4.57451816e-01   5.20401997e-01
+   4.53207130e-01   6.15517331e-01   5.60841930e-01   4.51670675e-01
+   4.12530359e-01   1.52123671e+00   4.99025530e-03   6.97619152e-03
+   4.49720770e+00   4.22623993e+00   3.98072230e+00   4.39140578e+00
+   4.37217138e+00   5.92487318e+00   8.63462874e+00   7.06151208e+00
+   6.84792816e+00]
+2018-07-02 14:00:10,961 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 13 --
+2018-07-02 14:00:10,961 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 14:00:10,961 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1994
+2018-07-02 14:00:10,961 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.3722
+2018-07-02 14:00:10,962 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': 0.0, 'connectivity_chi_inh': 0.038992430958954494, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.0019999774358710537, 'bias_relative_spike_rate': 1e-05, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': -9.913376223721846, 'connectivity_chi_chi': 0.49986816036674, 'bias_baseline_1': -18.596791991195868, 'weight_baseline': -10.0, 'weight_inhibitors_chi': -7.281592677082203, 'weight_chi_inhibitors': 0.0, 'weight_chi_self': 1.1251402535358492, 'weight_chi_chi_max_1': 5.9668828747594045, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.7866159613245078, 'bias_rate_1': 0.03068547845929593, 'bias_baseline_3': -14.274265795308642, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 0.01, 'weight_chi_chi_max_2': 6.034285601121388, 'T': 0.7217140942743387, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -8.589268231875625, 'connectivity_inh_chi': 1.0}
+2018-07-02 14:00:10,964 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.18136819e-01  -1.74706441e+01  -2.26545388e+01  -2.85827561e+01
+  -3.14470935e+01   6.50542081e-02   4.16801319e-01   5.47250320e-01
+   3.57968409e-01   7.66635149e-01   6.01250088e-01   4.05568491e-01
+   1.66841233e+00  -2.87889745e+00   3.69733647e-03   3.04366558e-03
+  -4.43463565e+00   4.51359440e+00   5.33157863e+00   4.50925542e+00
+   3.81207604e+00   6.37983809e+00   8.03296032e+00  -6.66614543e+00
+  -8.50550026e+00]
+
+Current sigma:
+[  4.67715821e-01   2.36795114e+01   2.91253647e+01   2.40417643e+01
+   2.49829599e+01   4.20462100e-02   4.49050528e-01   5.07423014e-01
+   4.47296401e-01   6.41319889e-01   5.70083873e-01   4.13098518e-01
+   4.41773250e-01   1.44901182e+00   5.08087103e-03   7.11184830e-03
+   4.53510190e+00   4.24397579e+00   3.99636598e+00   4.45297673e+00
+   4.37333722e+00   5.76951376e+00   8.72172380e+00   6.50518172e+00
+   6.76673278e+00]
+2018-07-02 14:11:44,131 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 14 --
+2018-07-02 14:11:44,131 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 14:11:44,131 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1908
+2018-07-02 14:11:44,132 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.3520
+2018-07-02 14:11:44,133 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -14.449465436345626, 'connectivity_chi_inh': 0.14270537134557024, 'connectivity_chi_self': 0.2486554115932761, 'stdp_rate_final': 0.006038857787967833, 'bias_relative_spike_rate': 1e-05, 'stdp_rate_initial': 0.01, 'weight_inhibitors_self': -12.225402916398613, 'connectivity_chi_chi': 0.0, 'bias_baseline_1': -50.0, 'weight_baseline': -0.6574249241840922, 'weight_inhibitors_chi': -7.344922320987426, 'weight_chi_inhibitors': 14.0, 'weight_chi_self': 14.0, 'weight_chi_chi_max_1': 3.9937408232149147, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.11197310381070391, 'bias_rate_1': 0.031726740831027896, 'bias_baseline_3': 0.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 3.2981140753587606, 'weight_chi_chi_max_2': 8.0, 'T': 0.07394941831758478, 'weight_chi_chi_max_3': 0.8566430046026534, 'bias_baseline_4': -39.25530501596165, 'connectivity_inh_chi': 0.6947303411198441}
+2018-07-02 14:11:44,134 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.38906281e-01  -1.83150055e+01  -2.12269873e+01  -2.61206867e+01
+  -3.20279279e+01   6.48557613e-02   4.25783013e-01   5.78964318e-01
+   3.79759099e-01   8.42991129e-01   5.63114769e-01   4.04928300e-01
+   1.72174560e+00  -2.91402592e+00   3.14472146e-03   2.74565034e-03
+  -4.70735303e+00   4.30277683e+00   5.27751572e+00   4.63952464e+00
+   3.73146713e+00   6.70005162e+00   8.51675339e+00  -6.26158356e+00
+  -8.90337000e+00]
+
+Current sigma:
+[  4.59989142e-01   2.53450264e+01   2.75182463e+01   2.35428932e+01
+   2.51334825e+01   4.14478103e-02   4.76121946e-01   5.46294660e-01
+   4.24498970e-01   6.14341856e-01   5.35498773e-01   3.82977848e-01
+   4.45413610e-01   1.37807330e+00   5.07139078e-03   7.00468311e-03
+   4.28230550e+00   4.27469604e+00   4.07822165e+00   4.32207099e+00
+   4.11450688e+00   5.68485804e+00   8.12961287e+00   6.67658180e+00
+   6.48901666e+00]
+2018-07-02 14:31:52,029 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 15 --
+2018-07-02 14:31:52,029 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 14:31:52,029 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1929
+2018-07-02 14:31:52,030 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.3092
+2018-07-02 14:31:52,034 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': 0.0, 'connectivity_chi_inh': 1.0, 'connectivity_chi_self': 0.5106323402904225, 'stdp_rate_final': 0.0007548642231989559, 'bias_relative_spike_rate': 1e-05, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': -14.0, 'connectivity_chi_chi': 0.5515111933271891, 'bias_baseline_1': 0.0, 'weight_baseline': -2.2549570419106453, 'weight_inhibitors_chi': -14.0, 'weight_chi_inhibitors': 6.749045954077589, 'weight_chi_self': 8.07333898757335, 'weight_chi_chi_max_1': 8.0, 'prob_exp_term': 1.5273404277058882, 'connectivity_inh_self': 0.19811831018587173, 'bias_rate_1': 0.1, 'bias_baseline_3': -40.90835576496919, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 0.01, 'weight_chi_chi_max_2': 4.901401339390287, 'T': 0.8421012929740592, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -21.15120995532171, 'connectivity_inh_chi': 1.0}
+2018-07-02 14:31:52,035 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.07864872e-01  -1.90682858e+01  -1.97093526e+01  -2.30502466e+01
+  -3.36441301e+01   6.42791112e-02   3.81075519e-01   6.05155003e-01
+   4.06770039e-01   7.36728270e-01   5.38646337e-01   4.12542692e-01
+   1.75431475e+00  -2.89883721e+00   2.60683423e-03   2.11964332e-03
+  -4.52266330e+00   4.11163423e+00   5.45533283e+00   4.23152718e+00
+   3.59276865e+00   6.83422660e+00   8.64333342e+00  -5.93723850e+00
+  -8.83071258e+00]
+
+Current sigma:
+[  4.70582417e-01   2.53234413e+01   2.95594749e+01   2.53225494e+01
+   2.39973002e+01   4.24988983e-02   5.28194467e-01   5.37513246e-01
+   4.72037030e-01   6.34597036e-01   5.33486616e-01   4.02103297e-01
+   4.50563911e-01   1.29214946e+00   4.84712776e-03   7.01741380e-03
+   4.34708325e+00   4.33307598e+00   3.94701757e+00   4.34947489e+00
+   4.03419415e+00   5.65238241e+00   8.58548522e+00   6.98949966e+00
+   6.36074095e+00]
+2018-07-02 14:43:28,748 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 16 --
+2018-07-02 14:43:28,748 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 14:43:28,748 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1944
+2018-07-02 14:43:28,749 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2750
+2018-07-02 14:43:28,750 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -25.3951364137938, 'connectivity_chi_inh': 0.4073863822400068, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.007308393261275328, 'bias_relative_spike_rate': 0.20587777622509149, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': -0.7989801365674065, 'connectivity_chi_chi': 0.6997260700065903, 'bias_baseline_1': -44.85281829648265, 'weight_baseline': -10.0, 'weight_inhibitors_chi': 0.0, 'weight_chi_inhibitors': 4.819630407808669, 'weight_chi_self': 9.118561406715598, 'weight_chi_chi_max_1': 3.9845614446767916, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.7753914324052826, 'bias_rate_1': 0.08148241764837216, 'bias_baseline_3': -10.247468660997368, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 2.9586650856616514, 'weight_chi_chi_max_2': 0.01, 'T': 0.863593187493038, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -42.03034509610842, 'connectivity_inh_chi': 0.4217573545450508}
+2018-07-02 14:43:28,751 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.27491246e-01  -1.68433067e+01  -2.29883318e+01  -2.38173538e+01
+  -3.33914820e+01   6.53715248e-02   3.38352951e-01   6.16709867e-01
+   4.15535846e-01   7.50659271e-01   5.51909966e-01   4.26396687e-01
+   1.76011575e+00  -2.90813339e+00   2.96680693e-03   1.99605635e-03
+  -4.84038402e+00   4.28866433e+00   5.12024755e+00   4.00763421e+00
+   3.12183618e+00   6.89392631e+00   8.38735662e+00  -6.07253796e+00
+  -8.58827472e+00]
+
+Current sigma:
+[  4.41304688e-01   2.59069775e+01   2.89756323e+01   2.55214665e+01
+   2.43973124e+01   3.99402761e-02   5.11584535e-01   5.08948100e-01
+   4.66839161e-01   6.76069436e-01   5.23959594e-01   4.06006331e-01
+   4.54941079e-01   1.26841872e+00   4.88796429e-03   7.43938199e-03
+   4.46254751e+00   4.42083619e+00   4.10188612e+00   4.63074060e+00
+   3.79681160e+00   5.85181382e+00   8.32729591e+00   6.99223554e+00
+   6.25687370e+00]
+2018-07-02 14:55:10,289 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 17 --
+2018-07-02 14:55:10,289 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 14:55:10,289 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1786
+2018-07-02 14:55:10,289 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2781
+2018-07-02 14:55:10,293 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': 0.0, 'connectivity_chi_inh': 0.235630268640873, 'connectivity_chi_self': 0.8192029231519307, 'stdp_rate_final': 0.002896415622206434, 'bias_relative_spike_rate': 1e-05, 'stdp_rate_initial': 0.002392698902256142, 'weight_inhibitors_self': -11.751321486822281, 'connectivity_chi_chi': 0.41707925857577477, 'bias_baseline_1': -24.175087369778122, 'weight_baseline': -5.374114959067119, 'weight_inhibitors_chi': -10.012621547191761, 'weight_chi_inhibitors': 5.371486040001061, 'weight_chi_self': 14.0, 'weight_chi_chi_max_1': 4.5095874644651435, 'prob_exp_term': 1.003089749498169, 'connectivity_inh_self': 0.787701336354079, 'bias_rate_1': 0.0, 'bias_baseline_3': -44.31433953814553, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 2.5891095766190446, 'weight_chi_chi_max_2': 4.821336865101593, 'T': 0.8924645901323587, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -12.193719138057379, 'connectivity_inh_chi': 1.0}
+2018-07-02 14:55:10,294 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.65179481e-01  -1.65660492e+01  -2.08698495e+01  -2.18329556e+01
+  -3.36680449e+01   6.35425837e-02   3.27009152e-01   6.51472248e-01
+   4.30181029e-01   7.59739900e-01   5.66627842e-01   4.21060939e-01
+   1.76141165e+00  -2.92116078e+00   2.65274707e-03   2.54853796e-03
+  -5.02642597e+00   4.21350201e+00   4.73288818e+00   3.71207294e+00
+   2.90799247e+00   7.45324779e+00   8.38348314e+00  -6.74647266e+00
+  -8.17527175e+00]
+
+Current sigma:
+[  4.80716609e-01   2.65839186e+01   2.74305357e+01   2.63036697e+01
+   2.38951576e+01   4.17482729e-02   4.98235997e-01   5.36044130e-01
+   4.69826180e-01   6.60225732e-01   5.48136783e-01   4.04577755e-01
+   4.88456562e-01   1.33785028e+00   4.76121209e-03   7.33761791e-03
+   4.63092290e+00   4.20674297e+00   4.08528278e+00   4.77544744e+00
+   3.75052264e+00   5.92563156e+00   8.69208299e+00   6.82691137e+00
+   6.26029559e+00]
+2018-07-02 15:07:05,065 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 18 --
+2018-07-02 15:07:05,065 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 15:07:05,065 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2144
+2018-07-02 15:07:05,065 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.3174
+2018-07-02 15:07:05,069 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': 0.0, 'connectivity_chi_inh': 0.599535636398796, 'connectivity_chi_self': 0.0, 'stdp_rate_final': 0.0034285146112434206, 'bias_relative_spike_rate': 0.8706533344218327, 'stdp_rate_initial': 0.00776280015419601, 'weight_inhibitors_self': -5.449778131893114, 'connectivity_chi_chi': 0.529026387796921, 'bias_baseline_1': -41.89370895944971, 'weight_baseline': -2.7581072041052113, 'weight_inhibitors_chi': 0.0, 'weight_chi_inhibitors': 8.979446464669126, 'weight_chi_self': 3.33566008002275, 'weight_chi_chi_max_1': 8.0, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.10962360627348344, 'bias_rate_1': 0.1, 'bias_baseline_3': 0.0, 'prob_exp_term_scale': 0.023385761228617685, 'weight_chi_chi_max_4': 8.0, 'weight_chi_chi_max_2': 0.4256020621539962, 'T': 0.4164449946419232, 'weight_chi_chi_max_3': 2.8227147539985378, 'bias_baseline_4': 0.0, 'connectivity_inh_chi': 0.0}
+2018-07-02 15:07:05,071 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.77292854e-01  -1.91946414e+01  -2.05393979e+01  -2.23431142e+01
+  -3.18904908e+01   6.48598370e-02   3.73697512e-01   7.25506597e-01
+   4.28132183e-01   7.46986920e-01   5.32177346e-01   4.23106854e-01
+   1.77892433e+00  -2.86112822e+00   2.46678810e-03   3.21511097e-03
+  -4.83358786e+00   4.16241296e+00   4.58640213e+00   3.64408118e+00
+   2.92869176e+00   7.33790778e+00   7.87898772e+00  -6.53389551e+00
+  -7.93012480e+00]
+
+Current sigma:
+[  4.88257418e-01   2.68597958e+01   2.56979812e+01   2.64848909e+01
+   2.29781286e+01   3.99048625e-02   5.07790609e-01   5.44397218e-01
+   4.54515724e-01   6.09458531e-01   5.16691032e-01   4.32865011e-01
+   4.65470438e-01   1.34586842e+00   4.87736604e-03   7.38801131e-03
+   4.78624092e+00   4.45271586e+00   4.04276996e+00   5.22224713e+00
+   3.72087516e+00   5.77805375e+00   9.21535627e+00   6.28523464e+00
+   6.52848910e+00]
+2018-07-02 15:19:24,374 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 19 --
+2018-07-02 15:19:24,374 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 15:19:24,375 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1800
+2018-07-02 15:19:24,375 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.4570
+2018-07-02 15:19:24,376 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': 0.0, 'connectivity_chi_inh': 0.0, 'connectivity_chi_self': 0.6829993370644155, 'stdp_rate_final': 0.0, 'bias_relative_spike_rate': 0.4775541319409418, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': -0.410922652764544, 'connectivity_chi_chi': 0.6729811269308892, 'bias_baseline_1': 0.0, 'weight_baseline': -9.168709777984603, 'weight_inhibitors_chi': -4.700198510726116, 'weight_chi_inhibitors': 7.154218180698787, 'weight_chi_self': 12.9207817928061, 'weight_chi_chi_max_1': 1.0204313847786182, 'prob_exp_term': 1.9646806547309497, 'connectivity_inh_self': 0.9153440477551844, 'bias_rate_1': 0.07702675882915559, 'bias_baseline_3': -1.8761406229721196, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 5.278308587123646, 'weight_chi_chi_max_2': 0.01, 'T': 0.2672918886436614, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -29.395111520113893, 'connectivity_inh_chi': 0.0}
+2018-07-02 15:19:24,377 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.26070476e-01  -1.96876945e+01  -1.92453481e+01  -2.17801114e+01
+  -3.05763923e+01   6.25756668e-02   3.43508654e-01   7.42364083e-01
+   4.21433609e-01   7.80449674e-01   4.93651772e-01   4.08311758e-01
+   1.80377975e+00  -3.04982011e+00   2.48437266e-03   3.18588742e-03
+  -4.95928293e+00   3.97743104e+00   4.40995583e+00   3.35725339e+00
+   3.15936802e+00   7.96799582e+00   8.63083478e+00  -6.23078684e+00
+  -7.81542805e+00]
+
+Current sigma:
+[  5.38911883e-01   2.69079400e+01   2.47657657e+01   2.63773763e+01
+   2.19815843e+01   3.86438012e-02   5.16662316e-01   5.47658300e-01
+   4.62824093e-01   6.14858202e-01   5.06580765e-01   4.18730020e-01
+   4.70493808e-01   1.30377903e+00   5.04766986e-03   7.36236134e-03
+   4.85617590e+00   4.66574190e+00   4.02854968e+00   5.57960020e+00
+   3.84748720e+00   5.53328743e+00   9.31462006e+00   6.31813875e+00
+   6.38689912e+00]
+2018-07-02 15:31:26,058 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 20 --
+2018-07-02 15:31:26,058 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 15:31:26,059 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2019
+2018-07-02 15:31:26,059 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2791
+2018-07-02 15:31:26,063 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': 0.0, 'connectivity_chi_inh': 0.439429145246741, 'connectivity_chi_self': 0.745960997486966, 'stdp_rate_final': 0.0, 'bias_relative_spike_rate': 0.30658512789740683, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': -14.0, 'connectivity_chi_chi': 0.6310419267326062, 'bias_baseline_1': -24.31008606332971, 'weight_baseline': -5.243762157604045, 'weight_inhibitors_chi': -2.587230753238167, 'weight_chi_inhibitors': 1.4970381487387465, 'weight_chi_self': 12.939000036424412, 'weight_chi_chi_max_1': 2.1858017275317456, 'prob_exp_term': 1.643921404434719, 'connectivity_inh_self': 0.0, 'bias_rate_1': 0.03898071678369189, 'bias_baseline_3': 0.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 0.01, 'weight_chi_chi_max_2': 3.9221142413285923, 'T': 0.6807457154196147, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -36.81101134671526, 'connectivity_inh_chi': 0.3836598989962686}
+2018-07-02 15:31:26,065 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.57927029e-01  -1.81527450e+01  -1.84635340e+01  -1.95751140e+01
+  -3.06458548e+01   6.24693187e-02   3.43229026e-01   6.84054790e-01
+   3.91235537e-01   8.47975237e-01   4.81926282e-01   3.70751287e-01
+   1.77768893e+00  -2.93263281e+00   2.60064606e-03   2.74229432e-03
+  -5.00637707e+00   4.12405061e+00   4.17383541e+00   3.49638257e+00
+   3.00612391e+00   8.14780019e+00   8.76850887e+00  -6.01290445e+00
+  -7.93772313e+00]
+
+Current sigma:
+[  5.35299790e-01   2.68876160e+01   2.47411269e+01   2.70640372e+01
+   2.23484718e+01   3.82793272e-02   4.94761913e-01   5.63253676e-01
+   4.68309990e-01   6.04159790e-01   4.72917502e-01   4.37711019e-01
+   4.96012429e-01   1.25331837e+00   4.63283992e-03   7.48784931e-03
+   4.63575946e+00   4.80251269e+00   3.92927039e+00   5.89895468e+00
+   3.64839759e+00   5.47775753e+00   8.84429261e+00   6.12388466e+00
+   6.47153428e+00]
+2018-07-02 15:43:16,165 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 21 --
+2018-07-02 15:43:16,166 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 15:43:16,166 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1889
+2018-07-02 15:43:16,166 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2894
+2018-07-02 15:43:16,168 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -23.909165017061998, 'connectivity_chi_inh': 0.13912538043971368, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.003019774440520236, 'bias_relative_spike_rate': 0.5423400576058429, 'stdp_rate_initial': 0.002652929529307329, 'weight_inhibitors_self': 0.0, 'connectivity_chi_chi': 0.7745380588035087, 'bias_baseline_1': -50.0, 'weight_baseline': -4.019443176028612, 'weight_inhibitors_chi': 0.0, 'weight_chi_inhibitors': 7.796732540637393, 'weight_chi_self': 14.0, 'weight_chi_chi_max_1': 3.5021686282408524, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.1615861884469816, 'bias_rate_1': 0.040551830411562656, 'bias_baseline_3': 0.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 2.867031585953197, 'weight_chi_chi_max_2': 1.4485815125789627, 'T': 0.5370681146722996, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -8.196448219467282, 'connectivity_inh_chi': 0.27362753713828003}
+2018-07-02 15:43:16,169 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.43034682e-01  -2.24848634e+01  -1.91807866e+01  -2.15969771e+01
+  -3.17814824e+01   6.01657224e-02   3.43190369e-01   6.98353603e-01
+   4.19477246e-01   8.92623679e-01   4.86190311e-01   3.37274709e-01
+   1.81156635e+00  -2.91785191e+00   2.48921204e-03   2.87360517e-03
+  -5.17473046e+00   4.18500270e+00   4.04884067e+00   3.75686607e+00
+   2.91229784e+00   7.81645843e+00   9.22314803e+00  -6.21459869e+00
+  -8.04281435e+00]
+
+Current sigma:
+[  5.30259843e-01   2.84058120e+01   2.33369994e+01   2.72025803e+01
+   2.35863747e+01   3.58515384e-02   4.88082151e-01   6.05264606e-01
+   5.18187079e-01   6.08711526e-01   4.61942136e-01   4.57358886e-01
+   5.06653199e-01   1.19430951e+00   4.31329482e-03   7.34479963e-03
+   4.95209245e+00   4.80856974e+00   3.92200705e+00   5.80236668e+00
+   3.42121431e+00   5.83046633e+00   1.00988670e+01   6.15186125e+00
+   6.28824674e+00]
+2018-07-02 15:55:05,723 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 22 --
+2018-07-02 15:55:05,724 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 15:55:05,724 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1815
+2018-07-02 15:55:05,724 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2878
+2018-07-02 15:55:05,725 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -6.489457977984641, 'connectivity_chi_inh': 0.18794976775560526, 'connectivity_chi_self': 0.0, 'stdp_rate_final': 0.0010114407326976195, 'bias_relative_spike_rate': 0.9685211593229759, 'stdp_rate_initial': 0.006169613599298251, 'weight_inhibitors_self': -11.518825973969607, 'connectivity_chi_chi': 1.0, 'bias_baseline_1': -42.22612658253334, 'weight_baseline': -2.642169197124179, 'weight_inhibitors_chi': -8.503211569502746, 'weight_chi_inhibitors': 10.932305463727253, 'weight_chi_self': 10.81898917899648, 'weight_chi_chi_max_1': 0.01, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.0, 'bias_rate_1': 0.04141558205803762, 'bias_baseline_3': 0.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 5.45248231402274, 'weight_chi_chi_max_2': 5.9380802184913275, 'T': 0.58564130877398, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -50.0, 'connectivity_inh_chi': 0.1394673721606251}
+2018-07-02 15:55:05,727 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.38045762e-01  -2.15100469e+01  -1.98329716e+01  -1.96132008e+01
+  -3.12127339e+01   5.95874743e-02   3.21040550e-01   6.58643971e-01
+   3.92350022e-01   8.21378877e-01   5.07780370e-01   3.13278919e-01
+   1.81780401e+00  -2.87776772e+00   2.55086125e-03   3.08404024e-03
+  -5.23467930e+00   3.66570586e+00   4.18185228e+00   3.59887473e+00
+   2.95913895e+00   8.21893689e+00   9.19093391e+00  -6.47834657e+00
+  -8.08524408e+00]
+
+Current sigma:
+[  5.41837613e-01   2.91944292e+01   2.30555406e+01   2.74137063e+01
+   2.63750460e+01   3.42625941e-02   4.97504864e-01   6.53294506e-01
+   5.07765601e-01   5.92808984e-01   4.80521379e-01   4.24721025e-01
+   4.80186813e-01   1.12930019e+00   4.20943433e-03   7.36977046e-03
+   5.01386358e+00   4.62324020e+00   3.84452211e+00   5.91143669e+00
+   3.40450445e+00   5.61152779e+00   1.01784780e+01   5.90422616e+00
+   6.59643336e+00]
+2018-07-02 16:06:56,884 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 23 --
+2018-07-02 16:06:56,884 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 16:06:56,884 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2029
+2018-07-02 16:06:56,884 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2976
+2018-07-02 16:06:56,889 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -15.08341681561171, 'connectivity_chi_inh': 0.0, 'connectivity_chi_self': 0.4774804975892492, 'stdp_rate_final': 0.0, 'bias_relative_spike_rate': 0.6481496344842138, 'stdp_rate_initial': 0.0017125210415964971, 'weight_inhibitors_self': -6.373372829769835, 'connectivity_chi_chi': 0.0, 'bias_baseline_1': -37.65364958236108, 'weight_baseline': -3.5136560433176225, 'weight_inhibitors_chi': -0.09916991341516557, 'weight_chi_inhibitors': 14.0, 'weight_chi_self': 4.662970041522868, 'weight_chi_chi_max_1': 0.08796423400776865, 'prob_exp_term': 1.0183007760691634, 'connectivity_inh_self': 0.0, 'bias_rate_1': 0.0842167545854709, 'bias_baseline_3': -23.809723941952935, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 3.0095509721980225, 'weight_chi_chi_max_2': 7.11640482990944, 'T': 0.17912643380556748, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -48.35054643364593, 'connectivity_inh_chi': 1.0}
+2018-07-02 16:06:56,890 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.88644252e-01  -2.28632869e+01  -2.21510209e+01  -1.88992030e+01
+  -3.31990463e+01   6.33696645e-02   3.12168327e-01   6.38469301e-01
+   4.02945678e-01   7.43772602e-01   5.38010207e-01   2.56423772e-01
+   1.80172756e+00  -2.93212333e+00   2.09008040e-03   3.73975593e-03
+  -5.08789090e+00   3.74616253e+00   4.59136208e+00   3.14046308e+00
+   2.88089606e+00   8.34023933e+00   8.70085604e+00  -6.29143138e+00
+  -7.85253708e+00]
+
+Current sigma:
+[  5.44331888e-01   2.69986136e+01   2.13576192e+01   2.66807670e+01
+   2.74744815e+01   3.27864064e-02   4.57115422e-01   6.42200180e-01
+   5.00363430e-01   6.15293176e-01   4.94067160e-01   4.67291172e-01
+   4.82792818e-01   1.05909377e+00   4.37462437e-03   7.69228503e-03
+   4.78050388e+00   4.48710281e+00   3.73462018e+00   5.96472603e+00
+   3.63958190e+00   5.56887986e+00   1.02080443e+01   5.53692897e+00
+   6.65583928e+00]
+2018-07-02 16:18:41,690 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 24 --
+2018-07-02 16:18:41,691 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 16:18:41,691 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1800
+2018-07-02 16:18:41,691 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2795
+2018-07-02 16:18:41,692 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': 0.0, 'connectivity_chi_inh': 0.716101181422973, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.0016730182213988932, 'bias_relative_spike_rate': 0.1290463894310667, 'stdp_rate_initial': 0.00907216177656996, 'weight_inhibitors_self': -3.7390017292746593, 'connectivity_chi_chi': 0.0, 'bias_baseline_1': -22.072372470520367, 'weight_baseline': 0.0, 'weight_inhibitors_chi': -1.8824639277888577, 'weight_chi_inhibitors': 7.040960127416092, 'weight_chi_self': 0.0, 'weight_chi_chi_max_1': 0.01, 'prob_exp_term': 1.3008947163850397, 'connectivity_inh_self': 0.5180995998311013, 'bias_rate_1': 0.042620551474549226, 'bias_baseline_3': -27.75083070666725, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 5.10094495270098, 'weight_chi_chi_max_2': 6.133872646084461, 'T': 0.5861844282200186, 'weight_chi_chi_max_3': 3.7414532057018106, 'bias_baseline_4': -50.0, 'connectivity_inh_chi': 0.7974119154927495}
+2018-07-02 16:18:41,694 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.73825882e-01  -2.29359146e+01  -2.15035596e+01  -1.72329073e+01
+  -2.98657330e+01   6.10320141e-02   3.22029565e-01   6.38177810e-01
+   4.44413912e-01   6.94152575e-01   5.39977522e-01   2.73623948e-01
+   1.78336585e+00  -2.90679946e+00   1.86405521e-03   3.72809044e-03
+  -5.29451430e+00   3.83430412e+00   4.62370852e+00   2.69348339e+00
+   3.28826491e+00   7.79532542e+00   8.08916039e+00  -5.86575896e+00
+  -8.10320742e+00]
+
+Current sigma:
+[  5.55160442e-01   2.57001254e+01   2.25878277e+01   2.61453319e+01
+   2.71742958e+01   3.38233279e-02   4.40254976e-01   6.56330694e-01
+   4.95055194e-01   5.94082180e-01   4.58397547e-01   4.51401479e-01
+   4.56761667e-01   1.07525519e+00   4.47321544e-03   7.18742594e-03
+   4.92727230e+00   4.40716860e+00   3.68336543e+00   6.38905720e+00
+   3.52225029e+00   5.34758975e+00   9.70157753e+00   5.50887299e+00
+   6.65661377e+00]
+2018-07-02 16:30:27,481 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 25 --
+2018-07-02 16:30:27,481 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 16:30:27,481 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2114
+2018-07-02 16:30:27,481 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2981
+2018-07-02 16:30:27,483 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -8.839029433532405, 'connectivity_chi_inh': 0.0, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.0, 'bias_relative_spike_rate': 0.4234279410312082, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': -1.5693676728921933, 'connectivity_chi_chi': 0.7021188559102348, 'bias_baseline_1': -46.79668091738165, 'weight_baseline': 0.0, 'weight_inhibitors_chi': -7.066284123058212, 'weight_chi_inhibitors': 4.5489108264969556, 'weight_chi_self': 1.7928871968405327, 'weight_chi_chi_max_1': 6.072310286532109, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.0008377166346658083, 'bias_rate_1': 0.05902221020968531, 'bias_baseline_3': -24.767954375619468, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 2.297569620284123, 'weight_chi_chi_max_2': 6.739642289078613, 'T': 0.5687093035092239, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -50.0, 'connectivity_inh_chi': 0.3779322388102946}
+2018-07-02 16:30:27,484 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.93578959e-01  -2.35896953e+01  -2.33341456e+01  -1.80584668e+01
+  -2.91998206e+01   6.07595708e-02   3.12155802e-01   5.90437168e-01
+   4.63923465e-01   6.62295669e-01   5.57323295e-01   2.48854942e-01
+   1.78623153e+00  -2.84112921e+00   1.95414413e-03   2.60519280e-03
+  -5.55594744e+00   4.22500327e+00   4.57460224e+00   2.67172512e+00
+   3.20710252e+00   7.61832416e+00   7.57918591e+00  -5.36502867e+00
+  -8.04370198e+00]
+
+Current sigma:
+[  5.44124140e-01   2.65304242e+01   2.18123685e+01   2.79964069e+01
+   2.81210329e+01   3.30966434e-02   4.24850344e-01   6.07588803e-01
+   4.98071297e-01   5.79047247e-01   4.72748687e-01   4.58283892e-01
+   4.54685368e-01   1.08838449e+00   4.38787756e-03   7.86021613e-03
+   5.12253761e+00   4.29438614e+00   3.76999941e+00   6.32426332e+00
+   3.40302732e+00   5.32841631e+00   9.68944531e+00   5.47477604e+00
+   7.43199171e+00]
+2018-07-02 16:42:13,518 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 26 --
+2018-07-02 16:42:13,519 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 16:42:13,519 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1924
+2018-07-02 16:42:13,519 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2774
+2018-07-02 16:42:13,520 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -7.552310732279389, 'connectivity_chi_inh': 0.3953801458178904, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.004194200719756562, 'bias_relative_spike_rate': 0.33778470519951764, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': -9.082022367137986, 'connectivity_chi_chi': 0.4454379458920289, 'bias_baseline_1': -50.0, 'weight_baseline': -9.27143447026752, 'weight_inhibitors_chi': -2.9426605619877626, 'weight_chi_inhibitors': 14.0, 'weight_chi_self': 0.0, 'weight_chi_chi_max_1': 0.01, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.17446522022788122, 'bias_rate_1': 0.08426555253881031, 'bias_baseline_3': -8.563885038150495, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 0.01, 'weight_chi_chi_max_2': 0.01, 'T': 1.0, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -41.9772484303002, 'connectivity_inh_chi': 0.9344960688815175}
+2018-07-02 16:42:13,522 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.54063879e-01  -2.47271201e+01  -2.30346319e+01  -1.79544969e+01
+  -3.13132902e+01   6.11825631e-02   3.18864830e-01   5.80700787e-01
+   4.69288351e-01   6.56168793e-01   5.16901956e-01   3.08102707e-01
+   1.82518018e+00  -2.86738585e+00   1.80107699e-03   2.07180735e-03
+  -5.45296968e+00   4.05422708e+00   4.80926235e+00   2.49291006e+00
+   2.80355187e+00   7.69268712e+00   8.28635072e+00  -5.51378266e+00
+  -7.90420748e+00]
+
+Current sigma:
+[  5.39907797e-01   2.62914919e+01   2.09991499e+01   2.72597642e+01
+   2.82640276e+01   3.30446962e-02   4.07874969e-01   5.92774845e-01
+   5.04736515e-01   6.12874552e-01   4.43987047e-01   4.63883429e-01
+   4.61168502e-01   1.07876131e+00   4.45927041e-03   7.96178904e-03
+   5.10901974e+00   4.55627398e+00   3.80064607e+00   6.77037411e+00
+   3.39854159e+00   5.64445775e+00   1.01303972e+01   5.43123713e+00
+   7.46074956e+00]
+2018-07-02 16:53:59,235 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 27 --
+2018-07-02 16:53:59,235 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 16:53:59,235 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1732
+2018-07-02 16:53:59,236 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.3085
+2018-07-02 16:53:59,237 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -34.52398318777772, 'connectivity_chi_inh': 0.21435378206753142, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.002166762439264183, 'bias_relative_spike_rate': 1e-05, 'stdp_rate_initial': 0.0027962512362980797, 'weight_inhibitors_self': -0.6397831059946295, 'connectivity_chi_chi': 0.0, 'bias_baseline_1': -33.565550771213736, 'weight_baseline': -5.570738388555747, 'weight_inhibitors_chi': -13.895810510257586, 'weight_chi_inhibitors': 14.0, 'weight_chi_self': 0.0, 'weight_chi_chi_max_1': 0.7631767378817353, 'prob_exp_term': 1.3639437763746827, 'connectivity_inh_self': 0.42802091977478596, 'bias_rate_1': 0.009188976513919561, 'bias_baseline_3': 0.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 6.946337201895666, 'weight_chi_chi_max_2': 7.73460562789419, 'T': 0.7166226085146021, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -10.892403619916248, 'connectivity_inh_chi': 0.4408788589506354}
+2018-07-02 16:53:59,239 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.57111627e-01  -2.24861527e+01  -2.34277905e+01  -2.15828618e+01
+  -3.19217149e+01   6.10655181e-02   3.15319319e-01   5.65014854e-01
+   4.87847136e-01   7.37670572e-01   4.83577460e-01   3.49591255e-01
+   1.84073130e+00  -2.92563077e+00   1.83396152e-03   1.99229135e-03
+  -5.11138368e+00   4.32974763e+00   4.81378996e+00   2.33170500e+00
+   3.00971387e+00   8.16009953e+00   8.45589738e+00  -5.33942786e+00
+  -8.11491430e+00]
+
+Current sigma:
+[  4.94236727e-01   2.64235042e+01   2.04878933e+01   2.81857646e+01
+   2.66596219e+01   3.38775490e-02   4.00360308e-01   6.37698985e-01
+   4.94048658e-01   6.02286764e-01   4.11864294e-01   4.38841562e-01
+   4.29109009e-01   1.04341090e+00   4.29029177e-03   7.84546183e-03
+   5.36194749e+00   4.25115926e+00   3.65805226e+00   6.63209477e+00
+   3.31998989e+00   5.58650218e+00   9.95920301e+00   5.48934754e+00
+   7.41438140e+00]
+2018-07-02 17:05:50,604 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 28 --
+2018-07-02 17:05:50,604 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 17:05:50,604 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1995
+2018-07-02 17:05:50,604 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2791
+2018-07-02 17:05:50,606 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': 0.0, 'connectivity_chi_inh': 0.0, 'connectivity_chi_self': 0.8848130341609151, 'stdp_rate_final': 0.0012398350232797298, 'bias_relative_spike_rate': 1.0, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': 0.0, 'connectivity_chi_chi': 0.7113795639679363, 'bias_baseline_1': -50.0, 'weight_baseline': 0.0, 'weight_inhibitors_chi': -5.742194829103201, 'weight_chi_inhibitors': 1.1218900436751067, 'weight_chi_self': 0.0, 'weight_chi_chi_max_1': 8.0, 'prob_exp_term': 1.6370767410697287, 'connectivity_inh_self': 0.1943720254633446, 'bias_rate_1': 0.1, 'bias_baseline_3': -12.345202930217154, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 6.777806493113771, 'weight_chi_chi_max_2': 4.059545845164331, 'T': 0.1541315561165929, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -23.041321364614817, 'connectivity_inh_chi': 0.0}
+2018-07-02 17:05:50,607 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.77834285e-01  -2.07126742e+01  -2.19269848e+01  -2.29038847e+01
+  -3.20526935e+01   6.08825646e-02   2.90450163e-01   6.04368914e-01
+   4.68756615e-01   7.29243725e-01   4.57109386e-01   3.67240047e-01
+   1.86987287e+00  -2.88800949e+00   1.80360611e-03   1.91282882e-03
+  -4.57081125e+00   4.62058166e+00   4.44929489e+00   9.47970144e-01
+   3.24273885e+00   7.14594396e+00   8.06168118e+00  -5.21322058e+00
+  -7.50646397e+00]
+
+Current sigma:
+[  4.97488730e-01   2.67734692e+01   2.17109458e+01   2.84740901e+01
+   2.83449861e+01   3.37788779e-02   4.08932581e-01   6.19938220e-01
+   4.78742013e-01   6.32199970e-01   4.08811976e-01   4.41771428e-01
+   4.39062169e-01   1.03657347e+00   4.26806979e-03   7.49628235e-03
+   5.23550388e+00   4.20249834e+00   3.62409541e+00   6.77612793e+00
+   3.30702882e+00   5.60283170e+00   1.05258030e+01   5.39409606e+00
+   7.57867873e+00]
+2018-07-02 17:17:34,921 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 29 --
+2018-07-02 17:17:34,921 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 17:17:34,922 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2018
+2018-07-02 17:17:34,922 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2841
+2018-07-02 17:17:34,923 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -49.556733769151734, 'connectivity_chi_inh': 0.6718626266975511, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.003506966100462172, 'bias_relative_spike_rate': 1e-05, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': -4.307452533432368, 'connectivity_chi_chi': 1.0, 'bias_baseline_1': -50.0, 'weight_baseline': -3.6937832879431847, 'weight_inhibitors_chi': -0.13221675100453822, 'weight_chi_inhibitors': 0.0, 'weight_chi_self': 12.690985673693019, 'weight_chi_chi_max_1': 8.0, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.3272112259998907, 'bias_rate_1': 0.0, 'bias_baseline_3': 0.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 0.01, 'weight_chi_chi_max_2': 5.055553405223426, 'T': 0.7774514904792017, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -45.30830553619049, 'connectivity_inh_chi': 0.29454533604441174}
+2018-07-02 17:17:34,925 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.33012587e-01  -2.30109979e+01  -2.39114833e+01  -2.31937519e+01
+  -3.37891739e+01   6.04223309e-02   2.21358172e-01   6.19037830e-01
+   4.78499149e-01   8.02357181e-01   4.34389487e-01   4.02348621e-01
+   1.91279960e+00  -3.07780756e+00   1.51380275e-03   2.81581751e-03
+  -4.41036444e+00   4.66085226e+00   4.33623242e+00   1.40233689e+00
+   2.88846504e+00   6.99695224e+00   7.67017061e+00  -4.84612276e+00
+  -8.11368795e+00]
+
+Current sigma:
+[  4.85536808e-01   2.71185395e+01   2.31925999e+01   2.88476919e+01
+   2.73912111e+01   3.61085046e-02   4.48099030e-01   5.81252904e-01
+   4.73317431e-01   7.02794537e-01   4.14617464e-01   4.16027268e-01
+   4.39330550e-01   9.69395727e-01   4.28511967e-03   7.81506829e-03
+   5.11220610e+00   4.20998342e+00   3.68763200e+00   6.67836314e+00
+   3.38205752e+00   5.65065403e+00   9.84167819e+00   5.76999359e+00
+   8.11359447e+00]
+2018-07-02 17:29:05,392 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 30 --
+2018-07-02 17:29:05,392 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 17:29:05,392 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2160
+2018-07-02 17:29:05,392 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2805
+2018-07-02 17:29:05,394 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -30.63630641069239, 'connectivity_chi_inh': 0.0, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.002699586158741248, 'bias_relative_spike_rate': 1e-05, 'stdp_rate_initial': 0.0035557649402755765, 'weight_inhibitors_self': -5.151234325224597, 'connectivity_chi_chi': 0.6505656134936418, 'bias_baseline_1': -50.0, 'weight_baseline': -10.0, 'weight_inhibitors_chi': -0.9056097385127013, 'weight_chi_inhibitors': 5.286482165089882, 'weight_chi_self': 0.0, 'weight_chi_chi_max_1': 4.431039028202275, 'prob_exp_term': 1.7304920472100371, 'connectivity_inh_self': 0.3127572816386745, 'bias_rate_1': 0.056843395400934464, 'bias_baseline_3': -13.453735235435257, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 1.4918571769988795, 'weight_chi_chi_max_2': 6.703127738430252, 'T': 1.0, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -50.0, 'connectivity_inh_chi': 1.0}
+2018-07-02 17:29:05,395 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.86111653e-01  -2.49105826e+01  -2.34462155e+01  -2.25867116e+01
+  -3.42764882e+01   6.09818446e-02   1.82223855e-01   6.16934952e-01
+   4.37870585e-01   8.69388998e-01   4.18580920e-01   4.00932822e-01
+   1.90819782e+00  -3.11876284e+00   1.43320281e-03   3.13274945e-03
+  -4.53484286e+00   4.35521344e+00   4.31680004e+00   1.40336563e+00
+   3.01447232e+00   7.01042272e+00   7.53341549e+00  -5.16892862e+00
+  -7.65238022e+00]
+
+Current sigma:
+[  5.08898464e-01   2.73760208e+01   2.24004142e+01   2.78089354e+01
+   2.85194743e+01   3.50776857e-02   4.47777717e-01   5.41275550e-01
+   4.58738948e-01   6.88035346e-01   4.06936863e-01   4.13669540e-01
+   4.20407554e-01   8.97749443e-01   4.17984276e-03   8.01790851e-03
+   5.07579617e+00   4.10196091e+00   3.37206547e+00   6.98890691e+00
+   3.44961610e+00   5.55462896e+00   1.00133286e+01   5.98123034e+00
+   7.73035810e+00]
+2018-07-02 17:40:51,316 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 31 --
+2018-07-02 17:40:51,316 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 17:40:51,317 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2035
+2018-07-02 17:40:51,317 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2792
+2018-07-02 17:40:51,318 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -8.625980100630212, 'connectivity_chi_inh': 0.30419960748103236, 'connectivity_chi_self': 0.9751617798984137, 'stdp_rate_final': 0.0029877467645380894, 'bias_relative_spike_rate': 1e-05, 'stdp_rate_initial': 0.01, 'weight_inhibitors_self': -14.0, 'connectivity_chi_chi': 0.09759723954932953, 'bias_baseline_1': -14.869986629465664, 'weight_baseline': 0.0, 'weight_inhibitors_chi': -1.0205166513677328, 'weight_chi_inhibitors': 3.588525315722527, 'weight_chi_self': 3.475342060453026, 'weight_chi_chi_max_1': 0.49001426061316655, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.7900195311303585, 'bias_rate_1': 0.009836534205400378, 'bias_baseline_3': -7.073046770206126, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 4.204433551906953, 'weight_chi_chi_max_2': 6.512329584485087, 'T': 0.14698674977704818, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -4.182589756171296, 'connectivity_inh_chi': 0.6272432048424282}
+2018-07-02 17:40:51,320 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.85844141e-01  -2.41402604e+01  -2.30255518e+01  -2.24382590e+01
+  -3.31697309e+01   6.16098351e-02   1.62576726e-01   5.91990086e-01
+   4.48521323e-01   8.27526532e-01   3.94003463e-01   4.51698370e-01
+   1.93315894e+00  -3.06771102e+00   1.62961714e-03   3.42636908e-03
+  -4.89966108e+00   4.20235201e+00   4.45995336e+00   1.73451975e+00
+   3.06959951e+00   7.51552520e+00   7.17091074e+00  -4.74759697e+00
+  -8.50886724e+00]
+
+Current sigma:
+[  4.81535410e-01   2.93634744e+01   2.10222392e+01   2.77815329e+01
+   2.95875553e+01   3.55808799e-02   4.50541696e-01   5.42905059e-01
+   4.70638010e-01   6.98497536e-01   4.02033754e-01   4.09898321e-01
+   4.27710699e-01   8.86916640e-01   3.96754599e-03   7.73722423e-03
+   5.28320056e+00   3.77692704e+00   3.40400988e+00   6.63607517e+00
+   3.39229039e+00   5.51308894e+00   1.00853823e+01   5.85663117e+00
+   7.36665747e+00]
+2018-07-02 17:52:35,038 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 32 --
+2018-07-02 17:52:35,039 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 17:52:35,039 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1890
+2018-07-02 17:52:35,039 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2754
+2018-07-02 17:52:35,040 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -50.0, 'connectivity_chi_inh': 0.31133576321726497, 'connectivity_chi_self': 0.8572740200953153, 'stdp_rate_final': 0.0, 'bias_relative_spike_rate': 1e-05, 'stdp_rate_initial': 0.006887017026591703, 'weight_inhibitors_self': -4.169140958450818, 'connectivity_chi_chi': 0.22641665451331228, 'bias_baseline_1': 0.0, 'weight_baseline': -1.9620163522167844, 'weight_inhibitors_chi': -7.756080192673469, 'weight_chi_inhibitors': 0.0, 'weight_chi_self': 10.594388232885724, 'weight_chi_chi_max_1': 1.9879698794079732, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.5647058166330404, 'bias_rate_1': 0.1, 'bias_baseline_3': 0.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 3.011735646247172, 'weight_chi_chi_max_2': 8.0, 'T': 0.0, 'weight_chi_chi_max_3': 6.971090494443492, 'bias_baseline_4': -42.12442794915664, 'connectivity_inh_chi': 0.11044367499507757}
+2018-07-02 17:52:35,042 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.69123740e-01  -2.00988922e+01  -2.44230428e+01  -2.30340759e+01
+  -3.43132852e+01   6.14541199e-02   1.47736915e-01   5.54236720e-01
+   4.28738589e-01   8.67814633e-01   4.26153583e-01   4.52749910e-01
+   1.94595679e+00  -3.10570553e+00   1.65614176e-03   4.24495069e-03
+  -4.44426764e+00   4.25292995e+00   4.40700706e+00   1.96116788e+00
+   3.10944888e+00   7.67172909e+00   6.53827758e+00  -4.83497341e+00
+  -8.05250875e+00]
+
+Current sigma:
+[  6.13092033e-01   3.13324345e+01   2.17527510e+01   2.65509346e+01
+   2.85185760e+01   3.66683995e-02   4.72119732e-01   5.28089323e-01
+   4.84317809e-01   7.27796295e-01   4.07975900e-01   4.20516493e-01
+   4.14909350e-01   9.12853600e-01   3.69022884e-03   7.68755118e-03
+   5.15331659e+00   3.85663200e+00   3.36793478e+00   6.61480111e+00
+   3.43037631e+00   5.57698868e+00   9.98713967e+00   5.50300658e+00
+   7.54168800e+00]
+2018-07-02 18:04:25,941 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 33 --
+2018-07-02 18:04:25,941 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 18:04:25,941 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1816
+2018-07-02 18:04:25,941 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2744
+2018-07-02 18:04:25,943 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -40.05548865112595, 'connectivity_chi_inh': 0.3467963135740016, 'connectivity_chi_self': 0.0, 'stdp_rate_final': 0.002553090827846864, 'bias_relative_spike_rate': 0.033002481383177296, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': -5.6153797577365205, 'connectivity_chi_chi': 0.7516567741898013, 'bias_baseline_1': -17.63643502509268, 'weight_baseline': -1.2281116183486698, 'weight_inhibitors_chi': -7.002372561856045, 'weight_chi_inhibitors': 3.530113818705079, 'weight_chi_self': 7.389221808971771, 'weight_chi_chi_max_1': 6.097575297492492, 'prob_exp_term': 1.7731956040878383, 'connectivity_inh_self': 0.8407211801401018, 'bias_rate_1': 0.07082242427992799, 'bias_baseline_3': -50.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 7.41375503612708, 'weight_chi_chi_max_2': 3.643768798762417, 'T': 1.0, 'weight_chi_chi_max_3': 1.6331872305385393, 'bias_baseline_4': -50.0, 'connectivity_inh_chi': 0.14665470909838563}
+2018-07-02 18:04:25,944 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.97391543e-01  -2.02015321e+01  -2.58331872e+01  -2.36016235e+01
+  -3.42448006e+01   6.11954095e-02   1.76681099e-01   5.57731103e-01
+   4.16271508e-01   8.85597641e-01   3.82431860e-01   4.69839681e-01
+   1.93695263e+00  -3.12997910e+00   1.53313968e-03   4.52674464e-03
+  -4.85373239e+00   4.61071603e+00   4.50724271e+00   1.71589827e+00
+   3.15179954e+00   7.71134918e+00   7.19646412e+00  -5.35581206e+00
+  -8.45301778e+00]
+
+Current sigma:
+[  6.20420720e-01   2.94618861e+01   2.23251040e+01   2.51591264e+01
+   2.75796928e+01   3.52319495e-02   4.70937314e-01   5.56032826e-01
+   4.85352153e-01   7.42573668e-01   3.84349174e-01   4.02382136e-01
+   4.24482124e-01   9.09592926e-01   3.55093570e-03   8.11172284e-03
+   5.00525535e+00   4.00879845e+00   3.28317030e+00   6.73550512e+00
+   3.29738906e+00   5.60846614e+00   1.04787109e+01   5.40600101e+00
+   7.36663622e+00]
+2018-07-02 18:16:04,595 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 34 --
+2018-07-02 18:16:04,596 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 18:16:04,596 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1983
+2018-07-02 18:16:04,596 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2803
+2018-07-02 18:16:04,601 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -30.809323685632158, 'connectivity_chi_inh': 0.15062385783919047, 'connectivity_chi_self': 0.43970054501231604, 'stdp_rate_final': 0.004840348314791295, 'bias_relative_spike_rate': 0.906828928821185, 'stdp_rate_initial': 0.0039396011121571395, 'weight_inhibitors_self': -7.150033610587356, 'connectivity_chi_chi': 0.0, 'bias_baseline_1': -25.128994769240023, 'weight_baseline': -2.262700999399932, 'weight_inhibitors_chi': -5.445050320333517, 'weight_chi_inhibitors': 3.5336456216720196, 'weight_chi_self': 9.170006491805625, 'weight_chi_chi_max_1': 5.286423073500977, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.7571159811519874, 'bias_rate_1': 0.02490559674823762, 'bias_baseline_3': -3.7521677324103457, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 4.473787595850043, 'weight_chi_chi_max_2': 6.704922993906752, 'T': 0.5957972449141226, 'weight_chi_chi_max_3': 4.671773110776357, 'bias_baseline_4': -50.0, 'connectivity_inh_chi': 0.0}
+2018-07-02 18:16:04,602 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  7.04916056e-01  -1.88567916e+01  -2.49868314e+01  -2.29367818e+01
+  -3.27666825e+01   5.87804599e-02   2.30642423e-01   5.47610795e-01
+   3.78782211e-01   9.28555522e-01   3.74312918e-01   4.81486923e-01
+   1.91895058e+00  -3.08581517e+00   1.80375167e-03   3.89787138e-03
+  -5.29091746e+00   4.72474528e+00   4.21397033e+00   1.48194419e+00
+   3.06356015e+00   7.81276845e+00   7.75559634e+00  -5.72220360e+00
+  -7.95582684e+00]
+
+Current sigma:
+[  6.31314987e-01   2.86623367e+01   2.15120007e+01   2.51472009e+01
+   3.09186758e+01   3.43527578e-02   4.88137506e-01   5.55499917e-01
+   4.92087581e-01   7.21930703e-01   3.71955761e-01   3.91883124e-01
+   4.00985238e-01   9.19958024e-01   3.74646546e-03   8.01097793e-03
+   5.00216496e+00   3.96311008e+00   3.49689997e+00   6.64879170e+00
+   3.36521580e+00   5.51083142e+00   1.01588042e+01   5.47201895e+00
+   7.63173772e+00]
+2018-07-02 18:27:56,550 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 35 --
+2018-07-02 18:27:56,550 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 18:27:56,550 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2002
+2018-07-02 18:27:56,550 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2724
+2018-07-02 18:27:56,552 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -38.589428130491406, 'connectivity_chi_inh': 0.2579098396400891, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.005659773299249473, 'bias_relative_spike_rate': 1e-05, 'stdp_rate_initial': 0.0, 'weight_inhibitors_self': 0.0, 'connectivity_chi_chi': 0.5528626871576237, 'bias_baseline_1': -29.63754377565072, 'weight_baseline': 0.0, 'weight_inhibitors_chi': -7.057982701202408, 'weight_chi_inhibitors': 5.302479983545172, 'weight_chi_self': 0.0, 'weight_chi_chi_max_1': 2.929650130363944, 'prob_exp_term': 1.3905797865059835, 'connectivity_inh_self': 0.9806933715857094, 'bias_rate_1': 0.1, 'bias_baseline_3': -50.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 5.320310319724992, 'weight_chi_chi_max_2': 0.6731321308375917, 'T': 1.0, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': 0.0, 'connectivity_inh_chi': 0.003389756562169055}
+2018-07-02 18:27:56,553 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  7.38595618e-01  -2.06166375e+01  -2.58221227e+01  -2.34714220e+01
+  -3.38647036e+01   6.31686220e-02   2.46266439e-01   4.78110653e-01
+   3.28603419e-01   1.00314454e+00   3.77713554e-01   5.14448326e-01
+   1.90899121e+00  -3.11851853e+00   1.48446914e-03   3.30644768e-03
+  -4.84671007e+00   4.39423301e+00   4.10713842e+00   1.77213886e+00
+   3.40815231e+00   7.84738683e+00   6.96796731e+00  -5.54011818e+00
+  -7.69349876e+00]
+
+Current sigma:
+[  6.32410609e-01   2.77628097e+01   2.23892243e+01   2.49916545e+01
+   3.02723281e+01   3.42469979e-02   4.91735850e-01   5.52838270e-01
+   4.74500752e-01   7.25928990e-01   3.76642393e-01   4.06797402e-01
+   4.05335421e-01   8.93434729e-01   3.56253468e-03   8.15285681e-03
+   4.79242246e+00   4.20310293e+00   3.59726729e+00   6.77638354e+00
+   3.33102572e+00   6.04947910e+00   9.78374981e+00   5.59060955e+00
+   7.59002747e+00]
+2018-07-02 18:39:43,385 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 36 --
+2018-07-02 18:39:43,386 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 18:39:43,386 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1980
+2018-07-02 18:39:43,386 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2797
+2018-07-02 18:39:43,388 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -28.1193381814403, 'connectivity_chi_inh': 0.5076524983282232, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.002580351953885872, 'bias_relative_spike_rate': 0.09714366607975564, 'stdp_rate_initial': 0.01, 'weight_inhibitors_self': 0.0, 'connectivity_chi_chi': 1.0, 'bias_baseline_1': -40.8265613763994, 'weight_baseline': -5.357275106901095, 'weight_inhibitors_chi': -4.527470918214091, 'weight_chi_inhibitors': 5.881229132110015, 'weight_chi_self': 13.269444790913354, 'weight_chi_chi_max_1': 0.01, 'prob_exp_term': 1.5370006186915053, 'connectivity_inh_self': 0.26720838293651045, 'bias_rate_1': 0.05869354436393442, 'bias_baseline_3': -23.56441454858947, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 8.0, 'weight_chi_chi_max_2': 1.3280658084264068, 'T': 0.6192431367300413, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -42.5349707809191, 'connectivity_inh_chi': 0.8147291199950253}
+2018-07-02 18:39:43,389 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.93084497e-01  -1.89863356e+01  -2.61609293e+01  -2.17523785e+01
+  -3.64389926e+01   6.19621516e-02   2.05783208e-01   4.96875563e-01
+   3.33254074e-01   1.05811253e+00   4.23072458e-01   4.98486786e-01
+   1.87591129e+00  -2.97917691e+00   1.34607630e-03   3.51029670e-03
+  -5.00526185e+00   4.45522126e+00   4.24484444e+00   2.08079810e+00
+   3.40931917e+00   7.72391852e+00   7.44681036e+00  -5.59851749e+00
+  -8.24382619e+00]
+
+Current sigma:
+[  5.87870334e-01   2.78868347e+01   2.14641907e+01   2.48104481e+01
+   2.98403179e+01   3.24276055e-02   4.89174055e-01   6.09562210e-01
+   4.87472547e-01   8.01198907e-01   3.97675495e-01   3.92570651e-01
+   3.87687444e-01   8.19423538e-01   3.48710943e-03   7.69529060e-03
+   4.47573015e+00   4.60117412e+00   3.45653137e+00   6.64782580e+00
+   3.46305072e+00   6.06047697e+00   1.01439669e+01   5.50633369e+00
+   7.77941923e+00]
+2018-07-02 18:51:18,876 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 37 --
+2018-07-02 18:51:18,876 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 18:51:18,876 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1627
+2018-07-02 18:51:18,876 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2813
+2018-07-02 18:51:18,878 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -26.931092128083232, 'connectivity_chi_inh': 0.3317458289062567, 'connectivity_chi_self': 0.3733549144907553, 'stdp_rate_final': 0.01, 'bias_relative_spike_rate': 1e-05, 'stdp_rate_initial': 0.0056222912043728855, 'weight_inhibitors_self': -1.2585688076328596, 'connectivity_chi_chi': 1.0, 'bias_baseline_1': 0.0, 'weight_baseline': -9.693176590402386, 'weight_inhibitors_chi': -2.570314060831188, 'weight_chi_inhibitors': 8.63777632592457, 'weight_chi_self': 13.578541047741547, 'weight_chi_chi_max_1': 1.2601452029282498, 'prob_exp_term': 2.0, 'connectivity_inh_self': 0.4324030939376488, 'bias_rate_1': 0.04123576224921992, 'bias_baseline_3': -10.379676049956991, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 4.317190848565454, 'weight_chi_chi_max_2': 2.7647272256398026, 'T': 0.0, 'weight_chi_chi_max_3': 0.01, 'bias_baseline_4': -27.631208462649994, 'connectivity_inh_chi': 0.21496239508677475}
+2018-07-02 18:51:18,879 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.33280437e-01  -1.73761650e+01  -2.71729809e+01  -2.14657121e+01
+  -3.75707602e+01   6.26919858e-02   2.30319803e-01   5.54863562e-01
+   3.15279472e-01   1.13961765e+00   4.51177343e-01   5.03882862e-01
+   1.82376103e+00  -2.99919673e+00   1.38306789e-03   3.43411427e-03
+  -4.80168040e+00   4.40531975e+00   4.12377190e+00   2.55339806e+00
+   3.28422982e+00   8.07249548e+00   6.94848630e+00  -5.62957050e+00
+  -8.36985108e+00]
+
+Current sigma:
+[  5.76000361e-01   2.79723693e+01   1.96829732e+01   2.46370652e+01
+   2.81974685e+01   3.20298980e-02   4.91678078e-01   6.07240345e-01
+   4.99190280e-01   8.01250426e-01   3.69450515e-01   3.92377769e-01
+   3.93199583e-01   8.77371569e-01   3.51495302e-03   7.92976556e-03
+   4.63084717e+00   4.45448193e+00   3.43227298e+00   7.78616209e+00
+   3.69863020e+00   5.85670819e+00   9.93441616e+00   5.44455118e+00
+   7.97380398e+00]
+2018-07-02 19:03:04,070 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 38 --
+2018-07-02 19:03:04,070 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 19:03:04,070 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.2054
+2018-07-02 19:03:04,070 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2798
+2018-07-02 19:03:04,072 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': 0.0, 'connectivity_chi_inh': 0.83461239319534, 'connectivity_chi_self': 0.8148606058048052, 'stdp_rate_final': 0.005357281648185993, 'bias_relative_spike_rate': 0.35982542432451337, 'stdp_rate_initial': 0.0062041227191092264, 'weight_inhibitors_self': -6.636874407953788, 'connectivity_chi_chi': 0.6804626521084443, 'bias_baseline_1': 0.0, 'weight_baseline': -5.522800853577419, 'weight_inhibitors_chi': 0.0, 'weight_chi_inhibitors': 4.249943998688352, 'weight_chi_self': 0.5450800406059697, 'weight_chi_chi_max_1': 0.01, 'prob_exp_term': 1.299722321830528, 'connectivity_inh_self': 0.4277983563887914, 'bias_rate_1': 0.047719468826773574, 'bias_baseline_3': -29.8275724281839, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 5.813354334470397, 'weight_chi_chi_max_2': 0.01, 'T': 1.0, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -30.166010482556903, 'connectivity_inh_chi': 0.03468395221943438}
+2018-07-02 19:03:04,073 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  5.72225996e-01  -1.73924414e+01  -2.71566336e+01  -1.97179383e+01
+  -4.02933646e+01   6.20814209e-02   2.37345689e-01   5.27398883e-01
+   3.23564073e-01   1.11188236e+00   3.89142633e-01   4.98222495e-01
+   1.81590368e+00  -2.94405652e+00   1.36201863e-03   3.87181495e-03
+  -5.89770871e+00   4.48346694e+00   3.88729052e+00   1.87565791e+00
+   3.29014505e+00   7.72037089e+00   7.05227336e+00  -4.94210153e+00
+  -8.41976719e+00]
+
+Current sigma:
+[  5.93969753e-01   2.70075700e+01   2.12849110e+01   2.38898391e+01
+   2.80239995e+01   3.24099352e-02   4.59200678e-01   5.60623923e-01
+   4.92042202e-01   7.85011102e-01   3.59549724e-01   3.91207846e-01
+   4.10707983e-01   9.35756534e-01   3.43223393e-03   8.08885224e-03
+   4.88211992e+00   4.36211442e+00   3.40206488e+00   8.13656831e+00
+   3.66542864e+00   5.91282175e+00   9.89734514e+00   5.55112520e+00
+   7.85167870e+00]
+2018-07-02 19:14:49,535 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of generation 39 --
+2018-07-02 19:14:49,535 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Evaluated 192 individuals
+2018-07-02 19:14:49,535 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Best Fitness: -0.1704
+2018-07-02 19:14:49,535 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    :   Average Fitness: 0.2761
+2018-07-02 19:14:49,537 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Best run individual:
+{'bias_baseline_2': -24.904777464476812, 'connectivity_chi_inh': 0.0, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.0, 'bias_relative_spike_rate': 0.4321752010522676, 'stdp_rate_initial': 0.01, 'weight_inhibitors_self': -14.0, 'connectivity_chi_chi': 0.431962172543657, 'bias_baseline_1': -13.771984913280166, 'weight_baseline': -9.565578726453023, 'weight_inhibitors_chi': -13.977137524276998, 'weight_chi_inhibitors': 8.490876987789228, 'weight_chi_self': 0.12605585162078992, 'weight_chi_chi_max_1': 7.0311431174660335, 'prob_exp_term': 1.7953655968214028, 'connectivity_inh_self': 0.700056602109357, 'bias_rate_1': 0.07302642058657333, 'bias_baseline_3': -50.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 6.074501325954099, 'weight_chi_chi_max_2': 7.023408547713473, 'T': 0.4322025785421466, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -50.0, 'connectivity_inh_chi': 0.0}
+2018-07-02 19:14:49,538 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Current mu:
+[  6.07220352e-01  -1.51214014e+01  -2.61187359e+01  -2.06055496e+01
+  -4.50201301e+01   5.80684490e-02   2.49407231e-01   4.72114391e-01
+   3.34465805e-01   1.10901684e+00   3.57256830e-01   5.14178341e-01
+   1.83599429e+00  -2.95627155e+00   1.47580073e-03   4.00969875e-03
+  -6.12508170e+00   4.55235793e+00   4.59772475e+00   2.62887076e+00
+   3.15580985e+00   7.57572857e+00   6.29397219e+00  -5.44995222e+00
+  -8.81598553e+00]
+
+Current sigma:
+[  5.74481776e-01   2.85324344e+01   2.18391164e+01   2.33595402e+01
+   2.87908264e+01   3.24804298e-02   4.00628988e-01   5.46784272e-01
+   4.76091262e-01   7.63030284e-01   3.60546883e-01   3.88557562e-01
+   4.05323585e-01   9.78339975e-01   3.51083615e-03   7.90808567e-03
+   5.41606259e+00   4.60871328e+00   3.49275567e+00   8.59814141e+00
+   3.87965528e+00   5.90770492e+00   1.00817031e+01   5.76411766e+00
+   8.52639174e+00]
+2018-07-02 19:17:53,270 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Final individual:
+{'bias_baseline_2': -24.904777464476812, 'connectivity_chi_inh': 0.0, 'connectivity_chi_self': 1.0, 'stdp_rate_final': 0.0, 'bias_relative_spike_rate': 0.4321752010522676, 'stdp_rate_initial': 0.01, 'weight_inhibitors_self': -14.0, 'connectivity_chi_chi': 0.431962172543657, 'bias_baseline_1': -13.771984913280166, 'weight_baseline': -9.565578726453023, 'weight_inhibitors_chi': -13.977137524276998, 'weight_chi_inhibitors': 8.490876987789228, 'weight_chi_self': 0.12605585162078992, 'weight_chi_chi_max_1': 7.0311431174660335, 'prob_exp_term': 1.7953655968214028, 'connectivity_inh_self': 0.700056602109357, 'bias_rate_1': 0.07302642058657333, 'bias_baseline_3': -50.0, 'prob_exp_term_scale': 0.0, 'weight_chi_chi_max_4': 6.074501325954099, 'weight_chi_chi_max_2': 7.023408547713473, 'T': 0.4322025785421466, 'weight_chi_chi_max_3': 8.0, 'bias_baseline_4': -50.0, 'connectivity_inh_chi': 0.0}
+2018-07-02 19:17:53,270 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Final fitness:
+-0.1703776805649158
+2018-07-02 19:17:53,271 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : Final mu:
+[  6.07220352e-01  -1.51214014e+01  -2.61187359e+01  -2.06055496e+01
+  -4.50201301e+01   5.80684490e-02   2.49407231e-01   4.72114391e-01
+   3.34465805e-01   1.10901684e+00   3.57256830e-01   5.14178341e-01
+   1.83599429e+00  -2.95627155e+00   1.47580073e-03   4.00969875e-03
+  -6.12508170e+00   4.55235793e+00   4.59772475e+00   2.62887076e+00
+   3.15580985e+00   7.57572857e+00   6.29397219e+00  -5.44995222e+00
+  -8.81598553e+00]
+
+Final sigma:
+[  5.74481776e-01   2.85324344e+01   2.18391164e+01   2.33595402e+01
+   2.87908264e+01   3.24804298e-02   4.00628988e-01   5.46784272e-01
+   4.76091262e-01   7.63030284e-01   3.60546883e-01   3.88557562e-01
+   4.05323585e-01   9.78339975e-01   3.51083615e-03   7.90808567e-03
+   5.41606259e+00   4.60871328e+00   3.49275567e+00   8.59814141e+00
+   3.87965528e+00   5.90770492e+00   1.00817031e+01   5.76411766e+00
+   8.52639174e+00]
+2018-07-02 19:17:53,272 optimizers.naturalevolutionstrategies 688abad30661 16333 INFO    : -- End of (successful) ES optimization --
