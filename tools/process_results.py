@@ -87,9 +87,11 @@ def process_spi_results(log_dir="D:\\LTL results\\New", search_str=''):
 
 def process_spigraph_results(log_dir="D:\\LTL results\\New", search_str=''):
     # Set SPIGRAPH HP order
-    hps = ['bias_baseline', 'weight_baseline', 'T', 'relative_bias_spike_rate', 'first_bias_rate', 'initial_stdp_rate', 'final_stdp_rate', 'exp_term_prob', 'exp_term_prob_scale',
+    hps = ['bias_baseline_1', 'bias_baseline_2', 'bias_baseline_3', 'bias_baseline_4', 
+           'weight_baseline', 'T', 'bias_relative_spike_rate', 'bias_rate_1', 'stdp_rate_initial', 'stdp_rate_final', 'prob_exp_term', 'prob_exp_term_scale',
            'connectivity_chi_chi', 'connectivity_chi_self', 'connectivity_chi_inh', 'connectivity_inh_self', 'connectivity_inh_chi',
-            'weight_chi_chi_max', 'weight_chi_self', 'weight_chi_inhibitors', 'weight_inhibitors_self', 'weight_inhibitors_chi']
+            'weight_chi_chi_max_1', 'weight_chi_chi_max_2', 'weight_chi_chi_max_3', 'weight_chi_chi_max_4', 
+            'weight_chi_self', 'weight_chi_inhibitors', 'weight_inhibitors_self', 'weight_inhibitors_chi']
     hps_latex = ["$b^1_-$", "$b^2_-$", "$b^3_-$", "$b^4_-$" 
 			"$w_-$", 
 			"$T$",
@@ -185,7 +187,7 @@ def process_files(filenames, hps, hps_latex):
     for i in remove_list:
         best_dicts.pop(i)
         best_fitnesses.pop(i)
-        best_fitnesses_gen.pop(i)
+        best_gen_fitnesses.pop(i)
 
     # Print table of HPs
     relevant_fns = [fn for fn in filenames if fn in best_dicts]
@@ -491,4 +493,4 @@ if __name__ == "__main__":
     elif args.run_sam_graph: run_best_samgraph(resolution=args.resolution, fixed_delay=args.fixed_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, state_handling=args.state_handling, seed=args.seed)
     elif args.run_spi: run_best_spi(resolution=args.resolution, fixed_delay=args.fixed_delay, min_delay=args.min_delay, max_delay=args.max_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, seed=args.seed)
     elif args.run_spi_graph: run_best_spigraph(resolution=args.resolution, fixed_delay=args.fixed_delay, min_delay=args.min_delay, max_delay=args.max_delay, use_pecevski=args.use_pecevski, num_trials=args.num_trials, seed=args.seed)
-    else: process_spi_results(search_str='0_2ms*Random')
+    else: process_spigraph_results(search_str='0_2*Random')
